@@ -1,0 +1,27 @@
+
+name: Download Three.js
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Three.js
+        run: |
+          mkdir -p libs
+          curl -fL "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js" -o libs/three.min.js
+
+      - name: Commit file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add libs/three.min.js
+          git commit -m "Add Three.js r159"
+          git push
