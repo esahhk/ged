@@ -17,12 +17,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 .ld-fill{width:35%;height:100%;background:#c8b99a;animation:ld 1.1s infinite ease-in-out}
 @keyframes ld{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
 #hud{position:fixed;inset:0;pointer-events:none;z-index:20}
-.top-left{position:absolute;top:16px;left:18px;display:flex;flex-direction:column;gap:6px;max-width:46vw}
+.top-left{position:absolute;top:16px;left:18px;display:flex;flex-direction:column;gap:6px;max-width:40vw}
 .scene-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(18,19,22,.68);backdrop-filter:blur(8px);padding:7px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.09);font-size:13px;letter-spacing:1px}
 .scene-idx{color:#b9a88a;font-variant-numeric:tabular-nums;font-size:11px}
 .whisper{background:rgba(18,19,22,.66);backdrop-filter:blur(6px);padding:6px 11px;border-radius:6px;font-size:12px;color:#d6d2c8;line-height:1.5;max-width:350px;opacity:0;transform:translateY(-4px);transition:all .3s ease;border-left:2px solid #b9a88a}
 .whisper.show{opacity:1;transform:translateY(0)}
-.top-right{position:absolute;top:16px;right:18px;display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end}
+.top-right{position:absolute;top:14px;right:150px;display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end}
 .btn{background:rgba(18,19,22,.72);backdrop-filter:blur(8px);color:#e5e1d8;border:1px solid rgba(255,255,255,.11);padding:7px 11px;border-radius:6px;font-size:12px;cursor:pointer;transition:background .18s,border-color .18s;display:inline-flex;align-items:center;gap:5px}
 .btn:hover{background:rgba(36,38,44,.88);border-color:rgba(255,255,255,.24)}
 .btn.active{border-color:#c8b48c;color:#f3e7cf}
@@ -31,10 +31,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 #reticle.hit{transform:scale(1.8);background:#e7d3aa}
 #prompt{position:absolute;left:50%;bottom:22%;transform:translateX(-50%);background:rgba(16,17,20,.82);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:20px;font-size:12px;color:#f0ece2;letter-spacing:.5px;opacity:0;transition:opacity .15s;pointer-events:none;cursor:pointer;white-space:nowrap}
 #prompt.show{opacity:1;pointer-events:auto}
-#minimap-wrap{position:absolute;bottom:16px;left:16px;width:128px;height:128px;border-radius:8px;overflow:hidden;background:rgba(16,17,20,.66);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+#minimap-wrap{position:absolute;top:14px;right:16px;width:124px;height:124px;border-radius:8px;overflow:hidden;background:rgba(16,17,20,.66);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
 #minimap{width:100%;height:100%;display:block}
 #subbar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(235,232,224,.6);background:rgba(16,17,20,.45);padding:4px 10px;border-radius:12px;pointer-events:none;white-space:nowrap}
-.panel{position:fixed;top:58px;right:18px;width:min(360px,calc(100vw - 36px));max-height:74vh;overflow-y:auto;background:rgba(19,20,24,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px;z-index:40;display:none;pointer-events:auto;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.panel{position:fixed;top:58px;right:150px;width:min(360px,calc(100vw - 170px));max-height:74vh;overflow-y:auto;background:rgba(19,20,24,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px;z-index:40;display:none;pointer-events:auto;box-shadow:0 16px 40px rgba(0,0,0,.45)}
 .panel.open{display:block}
 .panel h3{font-size:13px;font-weight:500;letter-spacing:1px;color:#cbb893;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
@@ -73,12 +73,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 #inspect-actions{margin-top:14px;display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .act-left,.act-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #touch-ui{position:fixed;inset:0;pointer-events:none;z-index:25;display:none}
-#joy-zone{position:absolute;left:18px;bottom:156px;width:110px;height:110px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(20,21,24,.36);pointer-events:auto;touch-action:none}
-#joy-knob{position:absolute;left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;background:rgba(225,215,195,.48);border:1px solid rgba(255,255,255,.35)}
-#touch-act{position:absolute;right:22px;bottom:84px;width:62px;height:62px;border-radius:50%;background:rgba(200,180,140,.28);border:1px solid rgba(225,210,175,.5);color:#f2ead8;font-size:13px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
-#touch-jump{position:absolute;right:24px;bottom:160px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#e4e0d6;font-size:11px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
+#joy-zone{position:absolute;left:22px;bottom:28px;width:154px;height:154px;border-radius:50%;border:1.5px solid rgba(255,255,255,.24);background:rgba(20,21,24,.38);pointer-events:auto;touch-action:none}
+#joy-knob{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:rgba(225,215,195,.5);border:1px solid rgba(255,255,255,.38)}
+#touch-act{position:absolute;right:24px;bottom:34px;width:72px;height:72px;border-radius:50%;background:rgba(200,180,140,.32);border:1.5px solid rgba(225,210,175,.55);color:#f2ead8;font-size:14px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
+#touch-jump{position:absolute;right:31px;bottom:122px;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#e4e0d6;font-size:12px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
 #fb-retry{position:fixed;left:50%;top:calc(50% + 128px);transform:translateX(-50%);z-index:30;display:none}
-@media (max-width:700px){#minimap-wrap{width:96px;height:96px;bottom:12px;left:12px}#subbar{display:none}.top-left{max-width:52vw;top:12px;left:12px}.top-right{top:12px;right:12px;gap:5px}.btn{padding:6px 8px;font-size:11px}#inspect-modal.reader{padding:15px}}
+@media (max-width:700px){#minimap-wrap{width:88px;height:88px;top:10px;right:10px}#subbar{display:none}.top-left{max-width:44vw;top:10px;left:10px}.top-right{top:10px;right:106px;max-width:calc(100vw - 118px);gap:5px}.panel{top:104px;right:10px;width:calc(100vw - 20px)}.btn{padding:6px 8px;font-size:11px}#inspect-modal.reader{padding:15px}}
 </style>
 </head>
 <body>
@@ -86,8 +86,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 <canvas id="fallback"></canvas>
 <div id="loader"><div class="ld-title">路过十七处</div><div class="ld-sub">正在布置现场光线与材质</div><div class="ld-bar"><div class="ld-fill"></div></div></div>
 <div id="hud">
-  <div class="top-left"><div class="scene-badge"><span class="scene-idx" id="ui-idx">01/17</span><span id="ui-name">高处平台</span></div><div class="whisper" id="ui-whisper"></div></div>
-  <div class="top-right"><button class="btn" id="btn-prev" title="上一场景">◀</button><button class="btn" id="btn-next" title="下一场景">▶</button><button class="btn" id="btn-scenes">场景目录</button><button class="btn" id="btn-col">拾遗 <span id="col-count">0/17</span></button><button class="btn" id="btn-reset">恢复现场</button><button class="btn" id="btn-set">设置</button></div>
+  <div class="top-left"><div class="scene-badge"><span class="scene-idx" id="ui-idx">01/16</span><span id="ui-name">高处平台</span></div><div class="whisper" id="ui-whisper"></div></div>
+  <div class="top-right"><button class="btn" id="btn-prev" title="上一场景">◀</button><button class="btn" id="btn-next" title="下一场景">▶</button><button class="btn" id="btn-scenes">场景目录</button><button class="btn" id="btn-col">拾遗 <span id="col-count">0/16</span></button><button class="btn" id="btn-reset">恢复现场</button><button class="btn" id="btn-set">设置</button></div>
   <div id="reticle"></div><div id="prompt"></div>
   <div id="minimap-wrap"><canvas id="minimap" width="128" height="128"></canvas></div>
   <div id="subbar">点击画面锁定视角 · WASD移动 · Space跳跃 · E或左键互动 · Esc释放鼠标/关弹窗</div>
@@ -581,15 +581,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
     },
     {
       id: "convenience",
-      name: "街边便利店",
+      name: "便利店与修路木道",
       item: "关东煮竹签",
       desc: "上面烫着店名印章，关门前最后一根萝卜留下的。"
-    },
-    {
-      id: "roadwork",
-      name: "修路木板通道",
-      item: "粉笔标记木楔",
-      desc: "施工队用来垫平木板的楔子，画着白色箭头。"
     },
     {
       id: "subway",
@@ -904,8 +898,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         hospital: [190, 0.03],
         airport: [350, 0.05],
         waterpark: [820, 0.065],
-        convenience: [280, 0.025],
-        roadwork: [520, 0.05],
+        convenience: [320, 0.035],
         subway: [210, 0.075],
         studio: [380, 0.018],
         cave: [130, 0.055]
@@ -1218,6 +1211,32 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         }
       });
     }
+    function radiation(){
+      return get("rad_floor", 256, 256, (g, w, h) => {
+        g.fillStyle = "#e2b82b";
+        g.fillRect(0, 0, w, h);
+        g.strokeStyle = "#1c1b18";
+        g.lineWidth = 10;
+        g.strokeRect(10, 10, w - 20, h - 20);
+        const cx = w / 2;
+        const cy = h * 0.44;
+        g.fillStyle = "#1c1b18";
+        for(let k = 0; k < 3; k++){
+          const a0 = -Math.PI / 2 + k * ((Math.PI * 2) / 3) - Math.PI / 6;
+          g.beginPath();
+          g.arc(cx, cy, 62, a0, a0 + Math.PI / 3);
+          g.arc(cx, cy, 22, a0 + Math.PI / 3, a0, true);
+          g.closePath();
+          g.fill();
+        }
+        g.beginPath();
+        g.arc(cx, cy, 13, 0, Math.PI * 2);
+        g.fill();
+        g.font = "bold 24px sans-serif";
+        g.textAlign = "center";
+        g.fillText("注意电离辐射", cx, h * 0.84);
+      });
+    }
     return {
       get,
       concrete,
@@ -1226,7 +1245,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       hazard,
       sign,
       grass,
-      lava
+      lava,
+      radiation
     };
   }
 
@@ -1431,6 +1451,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       return it;
     }
 
+    function sceneIdxById(id){
+      return SCENES_META.findIndex(m => m.id === id);
+    }
+
     function restoreHover(it){
       if(!it || !it.mesh){
         return;
@@ -1459,10 +1483,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
     function setupShadows(){
       scene.traverse(o => {
         if(o.isDirectionalLight && o.castShadow){
-          o.shadow.camera.left = -25;
-          o.shadow.camera.right = 25;
-          o.shadow.camera.top = 25;
-          o.shadow.camera.bottom = -25;
+          o.shadow.camera.left = -28;
+          o.shadow.camera.right = 28;
+          o.shadow.camera.top = 28;
+          o.shadow.camera.bottom = -28;
           o.shadow.mapSize.set(2048, 2048);
           o.shadow.camera.updateProjectionMatrix();
         }
@@ -1741,15 +1765,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 
       // ---------------------------------------------------------------
       office(){
-        scene.background = new T.Color(0xc8ced4);
-        scene.fog = new T.Fog(0xc8ced4, 12, 40);
-        scene.add(new T.HemisphereLight(0xd9e0e6, 0x737980, 0.85));
-        const flLight = new T.PointLight(0xeef6ff, 1.0, 22);
+        scene.background = new T.Color(0xc2d0dc);
+        scene.fog = new T.Fog(0xc2d0dc, 18, 68);
+        scene.add(new T.HemisphereLight(0xeef4fa, 0x737980, 0.9));
+        const flLight = new T.PointLight(0xeef6ff, 0.9, 22);
         flLight.position.set(0, 3.6, 0);
         scene.add(flLight);
         const deskLamp = new T.PointLight(0xffd296, 0.95, 7);
         deskLamp.position.set(-3.2, 1.6, -2.5);
         scene.add(deskLamp);
+        const winSun = new T.DirectionalLight(0xfff5e4, 0.35);
+        winSun.position.set(16, 9, 2);
+        scene.add(winSun);
         const carpetTex = tex.tiles("#525c66", "#4b555f", "#3f4852", 6, "off_fl");
         carpetTex.repeat.set(3, 3);
         addBox(14, 0.2, 12, createMaterial({
@@ -1760,31 +1787,72 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           color: 0xe5e6e2,
           roughness: 0.9
         }), 0, 4.1, 0, false);
-        addBox(14, 4, 0.25, createMaterial({
+        const wallMat = createMaterial({
           color: 0xd8d6cf,
           roughness: 0.9
-        }), 0, 2, -6, true);
+        });
+        addBox(14, 4, 0.25, wallMat, 0, 2, -6, true);
         addBox(0.25, 4, 12, createMaterial({
           color: 0xd0cec6,
           roughness: 0.9
         }), -7, 2, 0, true);
-        addBox(0.25, 4, 12, createMaterial({
-          color: 0xa8c2d1,
+        addBox(14, 4, 0.25, wallMat, 0, 2, 6, true);
+        addBox(0.3, 0.85, 12, wallMat, 7, 0.425, 0, true);
+        addBox(0.3, 0.65, 12, wallMat, 7, 3.675, 0, true);
+        addBox(0.3, 2.5, 2.2, wallMat, 7, 2.1, -4.9, true);
+        addBox(0.3, 2.5, 2.2, wallMat, 7, 2.1, 4.9, true);
+        addBox(0.42, 0.08, 7.8, createMaterial({
+          color: 0xc2bcb0,
+          roughness: 0.5
+        }), 6.95, 0.88, 0, false);
+        addBox(0.04, 2.5, 7.6, createMaterial({
+          color: 0x9ec4d6,
           transparent: true,
-          opacity: 0.38,
-          roughness: 0.15
-        }), 7, 2, 0, true);
-        addBox(14, 4, 0.25, createMaterial({
-          color: 0xd8d6cf,
-          roughness: 0.9
-        }), 0, 2, 6, true);
-        const blinds = [];
-        for(let i = -4.5; i <= 4.5; i += 0.9){
-          blinds.push(addBox(0.05, 3.2, 0.82, createMaterial({
-            color: 0xebe9e0,
-            roughness: 0.7
-          }), 6.78, 2.1, i, false));
+          opacity: 0.26,
+          roughness: 0.1
+        }), 7.06, 2.1, 0, true);
+        for(const mz of [-3.8, -1.26, 1.26, 3.8]){
+          addBox(0.08, 2.5, 0.06, createMaterial({
+            color: 0x454a50,
+            metalness: 0.4
+          }), 7.02, 2.1, mz, false);
         }
+        addBox(40, 0.2, 60, createMaterial({
+          color: 0x7c8791,
+          roughness: 0.95
+        }), 27, -14, 0, false, false, false);
+        for(const [bx, bz, bh, col] of [[24, -10, 24, 0x87939e], [26, 4, 28, 0x77838e], [32, -3, 32, 0x95a1ab], [22, 14, 20, 0x808c96]]){
+          addBox(7, bh, 8, createMaterial({
+            color: col,
+            roughness: 0.9
+          }), bx, -8 + bh / 2, bz, false, false, false);
+          for(let wy = 0; wy < 6; wy++){
+            addBox(0.1, 0.7, 5.2, createMaterial({
+              color: 0xaed0e2,
+              emissive: 0x486275,
+              emissiveIntensity: 0.25
+            }), bx - 3.52, 0.5 + wy * 1.9, bz, false, false, false);
+          }
+        }
+        const blinds = [];
+        const slatMat = createMaterial({
+          color: 0xeceae0,
+          roughness: 0.65
+        });
+        const slatGeo = track(new T.BoxGeometry(0.085, 0.012, 2.42));
+        for(const bz of [-2.53, 0, 2.53]){
+          addBox(0.06, 0.06, 2.46, createMaterial({
+            color: 0xd0cec4
+          }), 6.82, 3.3, bz, false);
+          for(let r = 0; r < 18; r++){
+            const sl = addMesh(slatGeo, slatMat, 6.82, 0.98 + r * 0.13, bz, false, false);
+            sl.rotation.z = 1.32;
+            blinds.push(sl);
+          }
+        }
+        addCylinder(0.012, 0.012, 1.5, 6, createMaterial({
+          color: 0xe6e4dc
+        }), 6.72, 2.35, 3.7, false, false);
         let blindOpen = false;
         addBox(1.1, 1.15, 0.65, createMaterial({
           map: tex.wood("#7b5838", "#573b22")
@@ -1858,12 +1926,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           ]);
         });
         addInteract("off_book", V(-2.9, 0.85, -2.2), "翻阅桌角钉着的小册子", "《凌晨两点半的空白提示词》（长篇同人）", () => openBook("office"));
-        addInteract("off_blinds", V(6.2, 1.6, 0), "转动百叶窗拉杆", "调节玻璃幕墙采光", () => {
+        addInteract("off_blinds", V(6.4, 1.6, 2.8), "转动百叶窗拉杆", "水平翻转窗叶透出窗外楼群", () => {
           blindOpen = !blindOpen;
-          blinds.forEach(b => b.rotation.y = blindOpen ? 0.5 : 0);
-          flLight.intensity = blindOpen ? 1.35 : 0.9;
+          blinds.forEach(b => b.rotation.z = blindOpen ? 0.05 : 1.32);
+          flLight.intensity = blindOpen ? 1.25 : 0.9;
+          winSun.intensity = blindOpen ? 1.05 : 0.35;
           sfx.play("switch");
-          showWhisper(blindOpen ? "百叶窗斜开，外面阴天的白光铺了一地。" : "合上百叶，室内只剩顶灯和台灯的暖黄。");
+          showWhisper(blindOpen ? "横叶齐刷刷转平，窗玻璃外头的阴天楼群和光一下涌进屋来。" : "叶片垂落挡住窗外，室内只剩顶灯和台灯的暖黄。");
         });
         addInteract("off_lamp", V(-3.2, 0.9, -2.5), "开关办公桌台灯", "冷暖光切换", () => {
           deskLamp.intensity = deskLamp.intensity > 0 ? 0 : 0.95;
@@ -1881,7 +1950,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         return {
           pos: V(0, 1.65, 4),
           yaw: 0,
-          whisper: "屋里有打印纸和黑咖啡的味道，桌角还摊着一本订书机钉起来的小册子。"
+          whisper: "屋里有打印纸和黑咖啡的味道，东边窗台上的百叶窗还半合着。"
         };
       },
 
@@ -2009,16 +2078,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 
       // ---------------------------------------------------------------
       garage(){
-        scene.background = new T.Color(0x141618);
-        scene.fog = new T.FogExp2(0x141618, 0.032);
-        scene.add(new T.AmbientLight(0x3a424a, 0.68));
-        const tube1 = new T.PointLight(0xd9e8ec, 1.0, 16);
-        tube1.position.set(0, 3.2, -3);
+        scene.background = new T.Color(0x232830);
+        scene.fog = new T.FogExp2(0x232830, 0.015);
+        scene.add(new T.HemisphereLight(0xb2c0ce, 0x454a52, 0.95));
+        scene.add(new T.AmbientLight(0x707c88, 0.9));
+        const tube1 = new T.PointLight(0xeef6fa, 1.25, 22);
+        tube1.position.set(0, 3.2, -4);
         scene.add(tube1);
-        const tube2 = new T.PointLight(0xe6bd7a, 0.75, 14);
-        tube2.position.set(-5, 3.2, 4);
+        const tube2 = new T.PointLight(0xf2d194, 1.1, 20);
+        tube2.position.set(-6, 3.2, 5);
         scene.add(tube2);
-        const gTex = tex.concrete("#3a3c3e", 0.22, "gar");
+        const tube3 = new T.PointLight(0xeef6fa, 1.1, 20);
+        tube3.position.set(6, 3.2, 5);
+        scene.add(tube3);
+        const tube4 = new T.PointLight(0xeef6fa, 1.0, 20);
+        tube4.position.set(0, 3.2, -9);
+        scene.add(tube4);
+        const lampMat = createMaterial({
+          color: 0xffffff,
+          emissive: 0xe6f2f8,
+          emissiveIntensity: 1.2
+        });
+        for(const [lx, lz] of [[0, -4], [-6, 5], [6, 5], [0, -9]]){
+          addBox(2.4, 0.08, 0.24, lampMat, lx, 3.55, lz, false, false, false);
+        }
+        const gTex = tex.concrete("#5a5e63", 0.18, "gar");
         gTex.repeat.set(6, 6);
         addBox(24, 0.2, 24, createMaterial({
           map: gTex,
@@ -2026,29 +2110,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           metalness: 0.08
         }), 0, -0.1, 0, true, false, true);
         addBox(24, 0.3, 24, createMaterial({
-          color: 0x2b2d30,
+          color: 0x464a50,
           roughness: 0.95
         }), 0, 3.7, 0, false);
-        addBox(24, 3.8, 0.3, createMaterial({
-          color: 0x383a3c,
+        const wallMat = createMaterial({
+          color: 0x5c6066,
           roughness: 0.9
-        }), 0, 1.9, -12, true);
-        addBox(0.3, 3.8, 24, createMaterial({
-          color: 0x383a3c,
-          roughness: 0.9
-        }), -12, 1.9, 0, true);
-        addBox(0.3, 3.8, 24, createMaterial({
-          color: 0x383a3c,
-          roughness: 0.9
-        }), 12, 1.9, 0, true);
-        addBox(24, 3.8, 0.3, createMaterial({
-          color: 0x383a3c,
-          roughness: 0.9
-        }), 0, 1.9, 12, true);
+        });
+        addBox(24, 3.8, 0.3, wallMat, 0, 1.9, -12, true);
+        addBox(0.3, 3.8, 24, wallMat, -12, 1.9, 0, true);
+        addBox(0.3, 3.8, 24, wallMat, 12, 1.9, 0, true);
+        addBox(24, 3.8, 0.3, wallMat, 0, 1.9, 12, true);
         const haz = tex.hazard();
         for(const [cx, cz] of [[-5, -4], [5, -4], [-5, 4], [5, 4]]){
           addBox(0.75, 2.6, 0.75, createMaterial({
-            color: 0x606366,
+            color: 0x72767a,
             roughness: 0.9
           }), cx, 2.3, cz, true);
           addBox(0.77, 1.0, 0.77, createMaterial({
@@ -2061,18 +2137,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           map: haz
         }), 0, 0.04, 0, false);
         addCylinder(0.14, 0.14, 22, 8, createMaterial({
-          color: 0x555b60,
+          color: 0x6c737a,
           metalness: 0.4
         }), -3, 3.35, 0).rotation.x = Math.PI / 2;
         addCylinder(0.1, 0.1, 22, 8, createMaterial({
-          color: 0x8c392b,
+          color: 0x9c4232,
           metalness: 0.3
         }), 3, 3.4, 0).rotation.x = Math.PI / 2;
         addBox(0.65, 0.9, 0.22, createMaterial({
           color: 0xa82e24
         }), 5.4, 1.35, -4, false);
         const carMat = createMaterial({
-          color: 0x2d3c47,
+          color: 0x3b4d5c,
           roughness: 0.35,
           metalness: 0.5
         });
@@ -2102,14 +2178,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         addBox(0.4, 1.2, 0.4, createMaterial({
           color: 0xc98b2c
         }), -8.7, 0.6, 2, true);
+        addBox(3.4, 2.8, 0.25, createMaterial({
+          color: 0x79848c,
+          emissive: 0x2a3c47,
+          emissiveIntensity: 0.35
+        }), -9.8, 1.4, -11.7, false);
+        addSign(2.4, 0.85, tex.sign("↑ 出口往小区地面", "#d8c892", "#1e2022", "顺坡道返回林荫停车场"), -9.8, 2.4, -11.55);
         let gateUp = false;
-        let flicker = true;
+        let flicker = false;
         let carOn = false;
         updaters.push((dt, t) => {
           gateArm.rotation.z += ((gateUp ? 1.15 : 0) - gateArm.rotation.z) * Math.min(1, dt * 5);
           gateCol.active = (gateArm.rotation.z < 0.55);
           if(flicker){
-            tube1.intensity = Math.sin(t * 37) > 0.86 ? 0.25 : 1.0;
+            tube1.intensity = Math.sin(t * 37) > 0.86 ? 0.4 : 1.25;
           }
         });
         addInteract("gar_gate", V(-8.5, 1.0, 2.3), "刷卡抬起车库道闸", "道闸升起后可直接穿行", () => {
@@ -2119,17 +2201,25 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         }, {
           getLabel: () => gateUp ? "刷卡落下车库道闸" : "刷卡抬起车库道闸"
         });
+        addInteract("gar_exit", V(-9.8, 1.4, -11.2), "顺着坡道走出地面", "返回小区林荫停车场", () => {
+          const pi = sceneIdxById("park_lot");
+          if(pi !== -1){
+            sfx.play("door");
+            loadScene(pi);
+            showWhisper("顺着汽车坡道走回绿荫遮天的小区停车场。");
+          }
+        });
         addInteract("gar_car", V(7.1, 0.9, -4.5), "敲敲停着的旧轿车", "闪一下车大灯", () => {
           carOn = !carOn;
           carLight.intensity = carOn ? 2.4 : 0;
           sfx.play("chime");
           showWhisper(carOn ? "大灯啪地照亮潮湿的地面，水洼反着光。" : "车灯熄灭，水泥墙面退回阴影里。");
         });
-        addInteract("gar_light", V(-4.5, 1.5, -3.8), "按墙柱上的照明开关", "修好闪烁的灯管", () => {
+        addInteract("gar_light", V(-4.5, 1.5, -3.8), "按墙柱上的照明开关", "切换头顶灯管接触模式", () => {
           flicker = !flicker;
-          tube1.intensity = 1.1;
+          tube1.intensity = 1.25;
           sfx.play("switch");
-          showWhisper(flicker ? "灯管接触不良，又开始吱吱地跳闪。" : "拍了两下开关，白光终于稳了下来。");
+          showWhisper(flicker ? "灯管接触不良，又开始吱吱地跳闪。" : "白光稳稳亮着，整个地下车库亮堂了不少。");
         });
         addCollectible("garage", -8.2, 0.3, 1.5, 0xc7b588);
         bounds = {
@@ -2142,101 +2232,133 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         return {
           pos: V(0, 1.65, 7.5),
           yaw: 0,
-          whisper: "潮湿的水泥味混着一点机油气，减速带被压得缺了两块角。"
+          whisper: "几盏长条灯管把地下车库照得挺亮堂，地上还能看见轮胎压过的水印。"
         };
       },
 
       // ---------------------------------------------------------------
       infirmary(){
         scene.background = new T.Color(0xdbe8df);
-        scene.fog = new T.Fog(0xdbe8df, 12, 35);
-        scene.add(new T.HemisphereLight(0xf6fbf7, 0x8ea396, 0.95));
+        scene.fog = new T.Fog(0xdbe8df, 16, 48);
+        scene.add(new T.HemisphereLight(0xf6fbf7, 0x8ea396, 1.0));
         const sun = new T.DirectionalLight(0xfff4d9, 0.9);
-        sun.position.set(8, 10, 6);
+        sun.position.set(10, 12, 4);
         sun.castShadow = true;
         scene.add(sun);
-        addBox(10, 0.2, 9, createMaterial({
+        const l1 = new T.PointLight(0xffffff, 0.75, 14);
+        l1.position.set(0, 3.2, 4);
+        scene.add(l1);
+        const l2 = new T.PointLight(0xffffff, 0.75, 14);
+        l2.position.set(4.5, 3.2, -0.5);
+        scene.add(l2);
+        const l3 = new T.PointLight(0xffffff, 0.75, 14);
+        l3.position.set(4.5, 3.2, -7.8);
+        scene.add(l3);
+        const flMat = createMaterial({
           map: tex.tiles("#dde5df", "#d2dcd5", "#b7c4bb", 5, "inf_f"),
           roughness: 0.5
-        }), 0, -0.1, 0, true, false, true);
-        addBox(10, 3.6, 0.2, createMaterial({
+        });
+        const wMat = createMaterial({
           color: 0xeef3ef,
           roughness: 0.9
-        }), 0, 1.8, -4.5, true);
-        addBox(0.2, 3.6, 9, createMaterial({
+        });
+        const wMint = createMaterial({
           color: 0xd8e5dc,
           roughness: 0.9
-        }), -5, 1.8, 0, true);
-        addBox(0.2, 3.6, 9, createMaterial({
-          color: 0xe8efe9,
-          roughness: 0.9
-        }), 5, 1.8, 0, true);
-        addBox(10, 3.6, 0.2, createMaterial({
-          color: 0xeef3ef,
-          roughness: 0.9
-        }), 0, 1.8, 4.5, true);
-        addBox(2.0, 0.55, 1.05, createMaterial({
-          color: 0xf4f4f0,
-          roughness: 0.8
-        }), -2.8, 0.28, -2.4, true);
-        addBox(0.45, 0.16, 0.75, createMaterial({
-          color: 0xffffff
-        }), -3.5, 0.62, -2.4, false);
-        const curtain = addBox(0.05, 2.2, 2.4, createMaterial({
-          color: 0xa8cbb9,
-          roughness: 0.95
-        }), -1.4, 1.35, -2.3, false);
-        let curtOpen = false;
+        });
+        addBox(4, 0.2, 20, flMat, 0, -0.1, 0, true, false, true);
+        addBox(6, 0.2, 4, flMat, 5, -0.1, -0.5, true, false, true);
+        addBox(6, 0.2, 4.5, flMat, 5, -0.1, -7.75, true, false, true);
+        addBox(4, 0.2, 20, wMat, 0, 3.6, 0, false);
+        addBox(6, 0.2, 4, wMat, 5, 3.6, -0.5, false);
+        addBox(6, 0.2, 4.5, wMat, 5, 3.6, -7.75, false);
+        addBox(0.2, 3.6, 20, wMint, -2.0, 1.8, 0, true);
+        addBox(4.2, 3.6, 0.2, wMat, 0, 1.8, 10, true);
+        addBox(10.2, 3.6, 0.2, wMat, 3.0, 1.8, -10, true);
+        addBox(0.2, 3.6, 8.5, wMat, 2.0, 1.8, 5.75, true);
+        addBox(0.2, 3.6, 3.0, wMat, 2.0, 1.8, -4.0, true);
+        addBox(0.2, 3.6, 0.6, wMat, 2.0, 1.8, -2.2, true);
+        addBox(0.2, 3.6, 0.7, wMat, 2.0, 1.8, 1.15, true);
+        addBox(0.2, 3.6, 0.8, wMat, 2.0, 1.8, -9.6, true);
+        addBox(0.2, 3.6, 0.8, wMat, 2.0, 1.8, -5.9, true);
+        addBox(6.2, 3.6, 0.2, wMint, 5.0, 1.8, 1.5, true);
+        addBox(6.2, 3.6, 0.2, wMint, 5.0, 1.8, -2.5, true);
+        addBox(6.2, 3.6, 0.2, wMint, 5.0, 1.8, -5.5, true);
+        addBox(0.2, 3.6, 4.2, wMat, 8.0, 1.8, -0.5, true);
+        addBox(0.2, 3.6, 4.7, wMat, 8.0, 1.8, -7.75, true);
+        addBox(0.55, 0.45, 2.4, createMaterial({
+          map: tex.wood("#c4a47c", "#9d7e58")
+        }), -1.45, 0.23, 4.2, true);
+        addSign(1.8, 0.9, tex.sign("校医室走廊", "#eef4ef", "#2f5440", "前间：登记体检 · 尽头间：休息观察"), -1.88, 1.85, 5.5, Math.PI / 2);
         addBox(1.5, 0.75, 0.8, createMaterial({
           map: tex.wood("#c4a47c", "#9d7e58")
-        }), 2.4, 0.38, -2.8, true);
+        }), 5.6, 0.38, -1.6, true);
         addCylinder(0.06, 0.06, 0.14, 10, createMaterial({
           color: 0xe6ecea,
           transparent: true,
           opacity: 0.7
-        }), 2.1, 0.82, -2.6);
+        }), 5.2, 0.82, -1.4);
         addBox(1.1, 1.7, 0.45, createMaterial({
           color: 0xeaf0ec,
           roughness: 0.4
-        }), 4.1, 0.85, -3.8, true);
-        addSign(0.7, 1.15, tex.sign("E Ǝ Ш M", "#f9faf7", "#202220", "五米视力表"), 0, 1.85, -4.38);
+        }), 7.3, 0.85, -1.9, true);
+        addSign(0.7, 1.15, tex.sign("E Ǝ Ш M", "#f9faf7", "#202220", "五米视力表"), 3.6, 1.85, -2.38);
         addBox(0.18, 1.9, 0.25, createMaterial({
           color: 0xf3efe4
-        }), -4.78, 0.95, 1.2, true);
-        addSign(0.22, 1.6, tex.sign("150cm", "#f7f3e8", "#3a5c4a", "130cm  110cm"), -4.88, 1.1, 1.2, Math.PI / 2);
+        }), 7.82, 0.95, 0.4, true);
+        addSign(0.22, 1.6, tex.sign("150cm", "#f7f3e8", "#3a5c4a", "130cm  110cm"), 7.72, 1.1, 0.4, -Math.PI / 2);
         addCylinder(0.14, 0.11, 0.18, 8, createMaterial({
           color: 0x8a5b3e
-        }), 4.5, 0.9, 0.4);
+        }), 7.4, 0.9, -0.5);
         addMesh(new T.ConeGeometry(0.12, 0.32, 6), createMaterial({
           color: 0x4e8a4c
-        }), 4.5, 1.1, 0.4);
-        addInteract("inf_curtain", V(-1.4, 1.2, -2.3), "拉动病床隔帘", "切换遮挡/敞开", () => {
+        }), 7.4, 1.1, -0.5);
+        addBox(2.0, 0.55, 1.05, createMaterial({
+          color: 0xf4f4f0,
+          roughness: 0.8
+        }), 6.2, 0.28, -8.8, true);
+        addBox(0.45, 0.16, 0.75, createMaterial({
+          color: 0xffffff
+        }), 6.9, 0.62, -8.8, false);
+        addBox(2.0, 0.55, 1.05, createMaterial({
+          color: 0xf4f4f0,
+          roughness: 0.8
+        }), 6.2, 0.28, -6.7, true);
+        addBox(0.45, 0.16, 0.75, createMaterial({
+          color: 0xffffff
+        }), 6.9, 0.62, -6.7, false);
+        const curtain = addBox(0.05, 2.2, 3.6, createMaterial({
+          color: 0xa8cbb9,
+          roughness: 0.95
+        }), 4.6, 1.35, -7.75, false);
+        let curtOpen = false;
+        addInteract("inf_curtain", V(4.6, 1.2, -7.75), "拉动病床隔帘", "切换遮挡/敞开", () => {
           curtOpen = !curtOpen;
-          curtain.scale.z = curtOpen ? 0.25 : 1;
-          curtain.position.z = curtOpen ? -3.3 : -2.3;
+          curtain.scale.z = curtOpen ? 0.22 : 1;
+          curtain.position.z = curtOpen ? -9.1 : -7.75;
           sfx.play("paper");
-          showWhisper(curtOpen ? "布帘哗啦收拢，阳光顺着白床单摊开。" : "拉上浅绿布帘，午后的房间一下子安静下来。");
+          showWhisper(curtOpen ? "布帘哗啦收拢，尽头屋里两张白床单亮堂堂的。" : "拉上浅绿布帘，尽头的病床间安静下来。");
         });
-        addInteract("inf_eye", V(0, 1.6, -4.2), "站五米线看视力表", "翻看登记小本子", () => {
+        addInteract("inf_eye", V(3.6, 1.6, -2.2), "看视力表与登记本", "翻看登记小本子", () => {
           sfx.play("paper");
           openModal("登记簿最后一页", "「周三第三节体育课\n两个小孩跑完两圈捂着肚子进来，问了才知早饭喝了冰牛奶。\n给兑了点温糖水躺二十分钟，自己活蹦乱跳回班里去了。」");
         });
-        addInteract("inf_desk", V(2.4, 0.85, -2.8), "打开药箱抽屉", "拿一粒薄荷糖", () => {
+        addInteract("inf_desk", V(5.6, 0.85, -1.6), "打开药箱抽屉", "拿一粒薄荷糖", () => {
           sfx.play("chime");
           showWhisper("一股淡淡的碘伏和薄荷味，桌面擦得干干净净。");
         });
-        addCollectible("infirmary", 3.7, 0.9, -3.3, 0x99cbb2);
+        addCollectible("infirmary", 6.2, 0.72, -6.7, 0x99cbb2);
         bounds = {
-          minX: -4.3,
-          maxX: 4.3,
-          minZ: -3.9,
-          maxZ: 3.9
+          minX: -1.7,
+          maxX: 7.7,
+          minZ: -9.7,
+          maxZ: 9.7
         };
         surfaceFn = () => "stone";
         return {
-          pos: V(0, 1.65, 2.8),
+          pos: V(0, 1.65, 8.2),
           yaw: 0,
-          whisper: "操场上的铃声隔着窗户变得很远，窗台上的芦荟绿油油的。"
+          whisper: "这条F字形的长走廊右边靠着两间医务室，尽头那间摆着病床和绿隔帘。"
         };
       },
 
@@ -2332,7 +2454,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           emissive: 0x9e2508,
           emissiveIntensity: 0.9
         }), 6.5, 0.88, -2, false);
-        addSign(1.7, 0.8, tex.sign("老张炭火烧烤", "#f4e6c3", "#a82c1a", "羊肉串 3元 · 烤面筋 2元", true), 6.5, 1.45, -2.4);
+        addSign(1.7, 0.8, tex.sign("炭火烧烤", "#f4e6c3", "#a82c1a", "羊肉串 3元 · 烤面筋 2元", true), 6.5, 1.45, -2.4);
         addBox(0.45, 0.38, 0.45, createMaterial({
           color: 0x3a6fa8
         }), 8.0, 0.19, -0.8, true);
@@ -2423,127 +2545,175 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       // ---------------------------------------------------------------
       zigzag(){
         scene.background = new T.Color(0xcbdbe6);
-        scene.fog = new T.Fog(0xcbdbe6, 22, 70);
+        scene.fog = new T.Fog(0xcbdbe6, 26, 86);
         scene.add(new T.HemisphereLight(0xf6fbff, 0x67755f, 0.95));
         const sun = new T.DirectionalLight(0xfff5de, 1.1);
-        sun.position.set(14, 22, 12);
+        sun.position.set(16, 26, 14);
         sun.castShadow = true;
         scene.add(sun);
         const stoneTex = tex.concrete("#b8b2a6", 0.15, "zig_s");
-        addBox(24, 0.2, 24, createMaterial({
+        addBox(28, 0.2, 28, createMaterial({
           map: tex.grass("#5a7846", "#466136")
         }), 0, -0.1, 0, true, false, true);
         addBox(5, 0.4, 5, createMaterial({
           map: stoneTex
-        }), -3, 0.1, 6, false, true, true);
-        for(let i = 0; i < 8; i++){
+        }), -4.0, 0.1, 8.0, false, true, true);
+        for(let i = 0; i < 14; i++){
           addBox(3.4, 0.3, 0.65, createMaterial({
             map: stoneTex
-          }), -3, 0.15 + i * 0.26, 3.2 - i * 0.62, false, true, true);
+          }), -4.0, 0.15 + i * 0.26, 5.2 - i * 0.62, false, true, true);
         }
-        addBox(7.2, 2.25, 4.2, createMaterial({
+        addBox(12.4, 3.8, 4.4, createMaterial({
           map: stoneTex
-        }), -0.8, 1.125, -3.3, false, true, true);
-        addBox(4.8, 0.35, 1.2, createMaterial({
+        }), 0, 1.9, -5.2, false, true, true);
+        addBox(6.6, 0.35, 1.1, createMaterial({
           color: 0x8c5a44,
           roughness: 0.9
-        }), -0.4, 2.35, -3.3, true);
-        addBox(4.5, 0.15, 0.96, createMaterial({
+        }), 0, 3.9, -6.1, true);
+        addBox(6.3, 0.15, 0.9, createMaterial({
           color: 0x423023,
           roughness: 1
-        }), -0.4, 2.52, -3.3, false);
-        addSign(1.4, 0.75, tex.sign("一米花田", "#e8dfcc", "#3a5c3a", "之字形台阶 · 请勿踩踏", true), -0.4, 2.85, -3.95);
+        }), 0, 4.08, -6.1, false);
+        addSign(1.4, 0.75, tex.sign("一米花田", "#e8dfcc", "#3a5c3a", "之字形台阶 · 请勿踩踏", true), 0, 4.45, -6.72);
         const flowers = [];
         const fColors = [0xf0cf5b, 0xe87b70, 0xf5f2e6, 0xd685b8];
-        for(let i = 0; i < 36; i++){
-          const fx = -2.4 + Math.random() * 4.0;
-          const fz = -3.68 + Math.random() * 0.75;
+        for(let i = 0; i < 52; i++){
+          const fx = -3.0 + Math.random() * 6.0;
+          const fz = -6.45 + Math.random() * 0.7;
           addCylinder(0.015, 0.015, 0.28, 5, createMaterial({
             color: 0x4d7d3a
-          }), fx, 2.68, fz, false, false);
+          }), fx, 4.24, fz, false, false);
           flowers.push({
             petal: addMesh(new T.DodecahedronGeometry(0.075, 0), createMaterial({
               color: fColors[i % 4],
               roughness: 0.7
-            }), fx, 2.84, fz, false, false),
+            }), fx, 4.4, fz, false, false),
             phase: Math.random() * 6
           });
         }
-        for(let i = 0; i < 8; i++){
+        addBox(6.6, 0.16, 1.1, createMaterial({
+          color: 0x49535c
+        }), 0, 3.88, -4.4, true);
+        addBox(6.6, 0.9, 0.06, createMaterial({
+          color: 0x8cc2d4,
+          transparent: true,
+          opacity: 0.28,
+          roughness: 0.1
+        }), 0, 4.41, -3.88, true);
+        addBox(6.6, 0.9, 0.06, createMaterial({
+          color: 0x8cc2d4,
+          transparent: true,
+          opacity: 0.28,
+          roughness: 0.1
+        }), 0, 4.41, -4.92, true);
+        addBox(0.06, 0.9, 1.1, createMaterial({
+          color: 0x8cc2d4,
+          transparent: true,
+          opacity: 0.28,
+          roughness: 0.1
+        }), -3.27, 4.41, -4.4, true);
+        addBox(0.06, 0.9, 1.1, createMaterial({
+          color: 0x8cc2d4,
+          transparent: true,
+          opacity: 0.28,
+          roughness: 0.1
+        }), 3.27, 4.41, -4.4, true);
+        addBox(6.46, 0.72, 0.96, createMaterial({
+          color: 0x47b6cf,
+          transparent: true,
+          opacity: 0.42,
+          roughness: 0.12
+        }), 0, 4.32, -4.4, false);
+        const tankTop = addMesh(new T.PlaneGeometry(6.46, 0.96), createMaterial({
+          color: 0x72d8ed,
+          transparent: true,
+          opacity: 0.52,
+          roughness: 0.08
+        }), 0, 4.69, -4.4, false, false);
+        tankTop.rotation.x = -Math.PI / 2;
+        for(let i = 0; i < 14; i++){
           addBox(3.4, 0.3, 0.65, createMaterial({
             map: stoneTex
-          }), 3.6, 2.25 + i * 0.26, -3.2 + i * 0.62, false, true, true);
+          }), 4.0, 3.8 + i * 0.26, -2.86 + i * 0.62, false, true, true);
         }
-        addBox(5.5, 4.35, 5, createMaterial({
+        addBox(5.5, 7.45, 5, createMaterial({
           map: stoneTex
-        }), 3.6, 2.175, 4.2, false, true, true);
+        }), 4.0, 3.725, 7.8, false, true, true);
         addBox(1.5, 0.45, 0.6, createMaterial({
           map: tex.wood("#8c6540", "#634326")
-        }), 4.2, 4.55, 5.5, true);
+        }), 4.6, 7.65, 9.1, true);
         addCylinder(0.14, 0.16, 0.3, 8, createMaterial({
           color: 0x4c8a62
-        }), -3.2, 2.4, -2.9);
+        }), -4.2, 3.95, -5.6);
         let watered = false;
+        let ripple = 0;
         updaters.push((dt, t) => {
           flowers.forEach(f => {
             f.petal.scale.setScalar(watered ? 1.25 : 0.92);
             f.petal.position.x += Math.sin(t * 2 + f.phase) * 0.0006;
           });
+          ripple = Math.max(0, ripple - dt * 0.8);
+          tankTop.position.y = 4.69 + Math.sin(t * (2.5 + ripple * 10)) * (0.008 + ripple * 0.028);
         });
         heightFn = (x, z) => {
-          if(x >= 0.85 && x <= 6.35 && z >= 1.7 && z <= 6.7){
-            return 4.35;
+          if(x >= 1.25 && x <= 6.75 && z >= 5.3 && z <= 10.3){
+            return 7.45;
           }
-          if(x >= 1.9 && x <= 5.3 && z >= -3.525 && z < 1.7){
-            const step = Math.floor((z + 3.525) / 0.62);
-            return 2.4 + Math.min(7, Math.max(0, step)) * 0.26;
+          if(x >= 2.3 && x <= 5.7 && z >= -3.185 && z < 5.3){
+            const step = Math.floor((z + 3.185) / 0.62);
+            return 3.95 + Math.min(13, Math.max(0, step)) * 0.26;
           }
-          if(x >= -4.4 && x <= 2.8 && z >= -5.4 && z <= -1.2){
-            return 2.25;
+          if(x >= -6.2 && x <= 6.2 && z >= -7.4 && z <= -3.0){
+            return 3.8;
           }
-          if(x >= -4.7 && x <= -1.3 && z >= -1.465 && z <= 3.525){
-            const step = Math.floor((3.525 - z) / 0.62);
-            return 0.3 + Math.min(7, Math.max(0, step)) * 0.26;
+          if(x >= -5.7 && x <= -2.3 && z >= -3.185 && z <= 5.525){
+            const step = Math.floor((5.525 - z) / 0.62);
+            return 0.3 + Math.min(13, Math.max(0, step)) * 0.26;
           }
-          if(x >= -5.5 && x <= -0.5 && z > 3.5 && z <= 8.5){
+          if(x >= -6.5 && x <= -1.5 && z > 5.5 && z <= 10.5){
             return 0.3;
           }
           return 0;
         };
-        addInteract("zig_flower", V(-0.4, 2.8, -3.3), "给一米花田浇水", "长方形平台中央的野生小花", () => {
+        addInteract("zig_flower", V(0, 4.3, -6.1), "给一米花田浇水", "长方形平台中央的野生小花", () => {
           watered = true;
           sfx.play("splash");
-          showWhisper("水珠滚过花瓣，整块一米宽的长方形花田都精神了不少。");
+          showWhisper("水珠滚过花瓣，整条六米多长的花田都亮了些。");
         });
-        addInteract("zig_bench", V(4.2, 4.6, 5.5), "在顶层长椅歇脚", "俯瞰整段之字形石阶", () => {
+        addInteract("zig_tank", V(0, 4.4, -4.4), "轻敲等长空水族箱玻璃", "里面什么也没有，只有晃动的清水", () => {
+          ripple = 1;
+          sfx.play("splash");
+          showWhisper("咚咚两声，整条六米长的水族箱里只有清水轻轻起皱，空无一物。");
+        });
+        addInteract("zig_bench", V(4.6, 7.7, 9.1), "在顶层长椅歇脚", "俯瞰长长的之字形石阶", () => {
           sfx.play("wood");
-          showWhisper("往下看，中间折角夹着那条彩色花田，像本子中间夹了根彩绳书签。");
+          showWhisper("站在七米多高的顶层往下望，中间折角并排夹着花田和一缸清水。");
         });
-        addCollectible("zigzag", -2.2, 2.75, -3.3, 0xf2e394);
+        addCollectible("zigzag", -2.8, 4.32, -6.1, 0xf2e394);
         bounds = {
-          minX: -5.5,
-          maxX: 6.3,
-          minZ: -5.4,
-          maxZ: 6.7
+          minX: -6.5,
+          maxX: 6.7,
+          minZ: -7.4,
+          maxZ: 10.3
         };
         surfaceFn = (x, z) => heightFn(x, z) > 0.1 ? "stone" : "grass";
         return {
-          pos: V(-3, 1.95, 6.2),
+          pos: V(-4.0, 1.95, 8.8),
           yaw: 0,
-          whisper: "顺着之字形石阶往上走，中间平地长着一条正好一米宽的花田。"
+          whisper: "之字形石阶修得又长又高，中间平台并行摆着一米宽的花田和等长的空水箱。"
         };
       },
 
       // ---------------------------------------------------------------
       park_lot(){
         scene.background = new T.Color(0xc5dec9);
-        scene.fog = new T.Fog(0xc5dec9, 20, 62);
+        scene.fog = new T.Fog(0xc5dec9, 22, 68);
         scene.add(new T.HemisphereLight(0xf2faec, 0x49613f, 0.95));
         const sun = new T.DirectionalLight(0xfff4d4, 1.15);
         sun.position.set(16, 24, 10);
         sun.castShadow = true;
         scene.add(sun);
-        addBox(30, 0.2, 30, createMaterial({
+        addBox(34, 0.2, 34, createMaterial({
           map: tex.grass("#4c733a", "#37592a")
         }), 0, -0.1, 0, true, false, true);
         addBox(14, 0.08, 20, createMaterial({
@@ -2558,27 +2728,84 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           }), 5, 0.075, z, false);
         }
         const canopies = [];
-        [[-9, -8], [-10, 0], [-9, 8], [9, -7], [10, 2], [8, 9], [-4, -11], [4, -11]].forEach(([tx, tz], i) => {
-          addCylinder(0.28, 0.4, 4.2, 8, createMaterial({
+        [[-9, -8], [-10, 0], [-9, 8], [9, -7], [10, 2], [8, 9], [-5, -11], [5, -11], [-12, -4], [12, -3], [-12, 5], [12, 6]].forEach(([tx, tz], i) => {
+          addCylinder(0.28, 0.4, 4.4, 8, createMaterial({
             map: tex.wood("#634b35", "#473524")
-          }), tx, 2.1, tz, true);
+          }), tx, 2.2, tz, true);
           canopies.push({
-            m: addMesh(new T.DodecahedronGeometry(2.5 + (i % 2) * 0.4, 1), createMaterial({
+            m: addMesh(new T.DodecahedronGeometry(2.7 + (i % 2) * 0.45, 1), createMaterial({
               color: i % 2 ? 0x467a3e : 0x558c47,
               roughness: 0.9
-            }), tx, 4.6, tz, true),
+            }), tx, 4.8, tz, true),
             p: i
           });
         });
-        for(let z = -8; z <= 8; z += 2.2){
-          addBox(1.1, 0.85, 1.9, createMaterial({
-            color: 0x3f6b36,
+        const stemGeo = track(new T.CylinderGeometry(0.03, 0.04, 1.4, 5));
+        const bigHeadGeo = track(new T.DodecahedronGeometry(0.26, 0));
+        const bushGeo = track(new T.DodecahedronGeometry(0.75, 1));
+        const stemMat = createMaterial({
+          color: 0x3f6e33,
+          roughness: 0.9
+        });
+        const bushMats = [
+          createMaterial({
+            color: 0x3b6931,
             roughness: 0.95
-          }), -7.6, 0.42, z, true);
-          addBox(1.1, 0.85, 1.9, createMaterial({
-            color: 0x4b783e,
+          }),
+          createMaterial({
+            color: 0x4d803e,
             roughness: 0.95
-          }), 7.6, 0.42, z, true);
+          }),
+          createMaterial({
+            color: 0x5c8e47,
+            roughness: 0.95
+          })
+        ];
+        const bloomMats = [
+          createMaterial({
+            color: 0xf0ca4d,
+            roughness: 0.65
+          }),
+          createMaterial({
+            color: 0xe66f7a,
+            roughness: 0.65
+          }),
+          createMaterial({
+            color: 0xf4f0de,
+            roughness: 0.65
+          }),
+          createMaterial({
+            color: 0xc27ed9,
+            roughness: 0.65
+          }),
+          createMaterial({
+            color: 0xf08c4f,
+            roughness: 0.65
+          })
+        ];
+        for(let i = 0; i < 68; i++){
+          const side = i % 3;
+          let fx;
+          let fz;
+          if(side === 0){
+            fx = -7.6 - Math.random() * 6.5;
+            fz = -11 + Math.random() * 22;
+          }else if(side === 1){
+            fx = 7.6 + Math.random() * 6.5;
+            fz = -11 + Math.random() * 22;
+          }else{
+            fx = (Math.random() > 0.5 ? 1 : -1) * (3.2 + Math.random() * 9.5);
+            fz = -10.6 - Math.random() * 3.8;
+          }
+          if(i % 2 === 0){
+            addMesh(bushGeo, bushMats[i % 3], fx, 0.45, fz, false, true);
+          }
+          const hScale = 0.8 + Math.random() * 1.15;
+          const st = addMesh(stemGeo, stemMat, fx, 0.7 * hScale, fz, false, false);
+          st.scale.set(1, hScale, 1);
+          const hd = addMesh(bigHeadGeo, bloomMats[i % 5], fx, 1.42 * hScale, fz, false, false);
+          const bs = 0.85 + Math.random() * 0.65;
+          hd.scale.set(bs, bs * 0.75, bs);
         }
         addBox(3.6, 0.65, 1.75, createMaterial({
           color: 0xc8ced1,
@@ -2596,6 +2823,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         addCylinder(0.18, 0.2, 0.06, 10, createMaterial({
           color: 0xd69656
         }), 6.2, 0.06, 5.8);
+        const rampConc = createMaterial({
+          color: 0x5c6166,
+          roughness: 0.9
+        });
+        addBox(0.35, 2.8, 4.2, rampConc, -2.2, 1.4, -12.1, true);
+        addBox(0.35, 2.8, 4.2, rampConc, 2.2, 1.4, -12.1, true);
+        addBox(4.75, 0.4, 4.2, rampConc, 0, 2.8, -12.1, false);
+        addBox(4.1, 0.16, 4.2, createMaterial({
+          color: 0x45494d
+        }), 0, -0.35, -12.1, false).rotation.x = 0.24;
+        addBox(4.1, 2.4, 0.2, createMaterial({
+          color: 0x15181c
+        }), 0, 1.0, -14.1, false);
+        addSign(3.6, 0.72, tex.sign("地下车库入口  B1 / B2", "#d4ad33", "#1a1a18", "限高 2.2m · 走进去直达地下层"), 0, 2.35, -9.98);
         const leaves = [];
         const lGeo = new T.PlaneGeometry(0.14, 0.09);
         const lMat = createMaterial({
@@ -2610,6 +2851,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           });
         }
         let windShake = 0;
+        let enteredGarage = false;
         updaters.push((dt, t) => {
           windShake = Math.max(0, windShake - dt * 0.6);
           canopies.forEach(c => c.m.rotation.z = Math.sin(t * 1.2 + c.p) * (0.03 + windShake * 0.08));
@@ -2621,10 +2863,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
               l.m.position.y = 4.8;
             }
           });
+          if(!enteredGarage && Math.abs(player.pos.x) < 1.9 && player.pos.z <= -11.9){
+            enteredGarage = true;
+            const gi = sceneIdxById("garage");
+            if(gi !== -1){
+              sfx.play("door");
+              loadScene(gi);
+              showWhisper("顺着斜坡走进了地下车库。");
+            }
+          }
         });
         const onLot = (x, z) => Math.abs(x) <= 7 && Math.abs(z) <= 10;
-        heightFn = (x, z) => onLot(x, z) ? 0.06 : 0;
-        surfaceFn = (x, z) => onLot(x, z) ? "concrete" : "grass";
+        heightFn = (x, z) => {
+          if(Math.abs(x) < 2.0 && z < -10.0){
+            return Math.max(-0.9, (z + 10.0) * 0.25);
+          }
+          return onLot(x, z) ? 0.06 : 0;
+        };
+        surfaceFn = (x, z) => (onLot(x, z) || (Math.abs(x) < 2.0 && z < -10.0)) ? "concrete" : "grass";
         addInteract("park_bench", V(4.5, 0.6, 6.5), "坐在树荫木椅上听风", "让树冠再晃一会儿", () => {
           windShake = 1;
           sfx.play("grass");
@@ -2643,27 +2899,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
               player.pos.y = Math.max(player.pos.y, heightFn(player.pos.x, player.pos.z, player.pos.y - 1.65) + 1.65);
             }
           }, 2000);
-          showWhisper("树冠筛下碎碎的光斑，风掠过冬青丛沙沙响。");
+          showWhisper("树冠筛下碎碎的光斑，四周高高低低的花全在风里晃。");
         });
         addInteract("park_cat", V(6.2, 0.25, 5.8), "看看灌木丛边的小猫食盆", "放了一小把干猫粮", () => {
           sfx.play("cat");
-          showWhisper("灌木丛里窜出半条橘色尾巴，咪了一声，蹲回去继续吃。");
+          showWhisper("花丛里窜出半条橘色尾巴，咪了一声，蹲回去继续吃。");
         });
         addInteract("park_car", V(-4.5, 0.8, -4.5), "看看停在树下的白车", "挡风玻璃落了一层香樟花", () => {
           sfx.play("chime");
-          showWhisper("车顶落满了细碎的绿叶和香樟籽，车主大概几天没开了。");
+          showWhisper("车顶落满了细碎的绿叶和花瓣，车主大概几天没开了。");
         });
         addCollectible("park_lot", -6.2, 0.25, 4.2, 0x8cc775);
         bounds = {
           minX: -11,
           maxX: 11,
-          minZ: -10.5,
+          minZ: -13.2,
           maxZ: 10.5
         };
         return {
           pos: V(0, 1.71, 8.5),
           yaw: 0,
-          whisper: "香樟树和冬青把车位遮得严严实实，树荫底下一片凉快。"
+          whisper: "高高低低的大花把停车场四周铺得满满当当，北边斜坡写着地下车库入口。"
         };
       },
 
@@ -2690,8 +2946,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         }), -4.5, 2.1, 0, true);
         addBox(0.2, 4.2, 24, createMaterial({
           color: 0xe5eceb
-        }), 4.5, 2.1, 0, true);
-        addBox(0.28, 0.02, 20, createMaterial({
+        }), 4.5, 2.1, 0, true);        addBox(0.28, 0.02, 20, createMaterial({
           color: 0x3684a8
         }), -0.6, 0.025, 0, false);
         addBox(0.28, 0.02, 20, createMaterial({
@@ -2701,6 +2956,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           color: 0xd1823b
         }), 0.6, 0.025, 0, false);
         addSign(2.2, 0.9, tex.sign("蓝线:影像科  绿线:急诊  橙线:药房", "#f4f7f6", "#273336", "请沿地面标志线通行"), 0, 0.035, 5.5).rotation.x = -Math.PI / 2;
+        const radTex = tex.radiation();
+        addMesh(new T.PlaneGeometry(1.5, 1.5), createMaterial({
+          map: radTex,
+          side: T.DoubleSide
+        }), 0, 0.038, -1.6, false, false).rotation.x = -Math.PI / 2;
+        addMesh(new T.PlaneGeometry(1.5, 1.5), createMaterial({
+          map: radTex,
+          side: T.DoubleSide
+        }), 0, 0.038, -5.4, false, false).rotation.x = -Math.PI / 2;
         addBox(2.2, 4.2, 0.5, createMaterial({
           color: 0xd2dcdd
         }), -3.4, 2.1, -3.5, true);
@@ -2744,7 +3008,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         });
         addInteract("hosp_floor", V(0, 0.2, 5.5), "低头看地面彩色标志线", "核对走廊方向", () => {
           sfx.play("paper");
-          openModal("地面色彩导引", "蓝线往核磁和影像科（穿过大门过去）；\n绿线往一楼急诊分诊台；\n橙线往取药窗口和候诊长椅。\n\n地面打过蜡，走上去鞋底发出清脆响声。");
+          openModal("地面色彩导引", "蓝线往核磁和影像科（地上画着黄黑三叶防辐射标志）；\n绿线往一楼急诊分诊台；\n橙线往取药窗口和候诊长椅。\n\n地面打过蜡，走上去鞋底发出清脆响声。");
         });
         addCollectible("hospital", -3.4, 1.1, 3.2, 0x77b8d4);
         bounds = {
@@ -2757,7 +3021,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         return {
           pos: V(0, 1.65, 7.8),
           yaw: 0,
-          whisper: "脚下三条彩色导引线往前延申，尽头站着一扇半米厚的防辐射大门。"
+          whisper: "脚下三条彩色导引线往前延申，重门前面画着醒目的黄黑防辐射标志。"
         };
       },
 
@@ -2885,18 +3149,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       // ---------------------------------------------------------------
       waterpark(){
         scene.background = new T.Color(0xc2e6ec);
-        scene.fog = new T.Fog(0xc2e6ec, 20, 65);
-        scene.add(new T.HemisphereLight(0xeefdff, 0x649ea8, 1.0));
+        scene.fog = new T.Fog(0xc2e6ec, 24, 72);
+        scene.add(new T.HemisphereLight(0xeefdff, 0x649ea8, 1.05));
         const poolLight = new T.PointLight(0x66e3f2, 1.1, 22);
         poolLight.position.set(0, 3.5, -4);
         scene.add(poolLight);
-        addBox(26, 0.2, 24, createMaterial({
+        const upperLight = new T.PointLight(0xfff4e0, 0.9, 22);
+        upperLight.position.set(2, 9.2, 6);
+        scene.add(upperLight);
+        const tileMat = createMaterial({
           map: tex.tiles("#d8ecee", "#c6e2e6", "#9ac3c9", 6, "wp_f"),
           roughness: 0.25
-        }), 0, -0.1, 0, true, false, true);
+        });
+        addBox(26, 0.2, 24, tileMat, 0, -0.1, 0, true, false, true);
         addBox(26, 0.3, 24, createMaterial({
           color: 0xebf4f5
-        }), 0, 9.5, 0, false);
+        }), 0, 11.5, 0, false);
         addBox(12, 0.45, 8.6, createMaterial({
           color: 0x3f8fa6
         }), 0, 0.22, -5.5, false);
@@ -2925,7 +3193,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           roughness: 0.3
         }), -2, 0.3, -5.5);
         dolphin.scale.set(0.8, 0.7, 1.9);
-        for(const [cx, cz, col] of [[-8, 4, 0xf07f99], [-6.5, 6.2, 0xf2c95c], [8.2, 4.5, 0x9b7be0], [6.8, 6.5, 0x6bd4a5]]){
+        for(const [cx, cz, col] of [[-4.5, 0.6, 0xf07f99], [4.5, 0.6, 0xf2c95c], [8.6, 0.4, 0x9b7be0]]){
           addCylinder(0.1, 0.1, 2.2, 8, createMaterial({
             color: 0xf7f5f0
           }), cx, 1.1, cz);
@@ -2955,10 +3223,97 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         addCylinder(0.5, 0.5, 0.35, 12, createMaterial({
           color: 0xf7b2c6
         }), 8.7, 2.15, -1.4);
+
+        const cylX = -8.0;
+        const cylZ = 5.5;
+        const tubeWallMat = createMaterial({
+          color: 0x85dfeb,
+          transparent: true,
+          opacity: 0.22,
+          roughness: 0.1,
+          side: T.DoubleSide
+        });
+        addCylinder(2.15, 2.15, 6.4, 24, tubeWallMat, cylX, 3.2, cylZ, false, false);
+        for(let r = 0; r < 5; r++){
+          addMesh(new T.TorusGeometry(2.18, 0.06, 8, 24), createMaterial({
+            color: 0xd9f2f7
+          }), cylX, 1.1 + r * 1.25, cylZ, false, false).rotation.x = Math.PI / 2;
+        }
+        const cylSteps = [];
+        const stepGeo = track(new T.CylinderGeometry(0.86, 0.86, 0.16, 16));
+        const stepCols = [0x6fd8e6, 0xf29cb4, 0xf2d16b, 0x9b8ee8];
+        for(let i = 0; i < 12; i++){
+          const ang = i * 0.56;
+          const sx = cylX + Math.cos(ang) * 1.15;
+          const sz = cylZ + Math.sin(ang) * 1.15;
+          const sy = 0.45 * (i + 1);
+          addMesh(stepGeo, createMaterial({
+            color: stepCols[i % 4],
+            roughness: 0.3
+          }), sx, sy - 0.08, sz, true, true);
+          cylSteps.push({
+            x: sx,
+            z: sz,
+            y: sy
+          });
+        }
+
+        addBox(23, 0.25, 9.2, tileMat, 0, 5.28, 6.2, false, true, true);
+        addBox(23, 1.0, 0.12, createMaterial({
+          color: 0x90d0de,
+          transparent: true,
+          opacity: 0.35
+        }), 0, 5.9, 1.65, false);
+        colliders.push({
+          minX: -11.5,
+          maxX: 11.5,
+          minZ: 1.55,
+          maxZ: 1.75,
+          minY: 5.4,
+          maxY: 6.5,
+          active: true
+        });
+        addBox(9.2, 0.35, 5.4, createMaterial({
+          color: 0x3b8ca3
+        }), 3.2, 5.55, 6.2, false);
+        colliders.push({
+          minX: -1.4,
+          maxX: 7.8,
+          minZ: 3.5,
+          maxZ: 8.9,
+          minY: 5.4,
+          maxY: 6.2,
+          active: true
+        });
+        const upperWater = addMesh(new T.PlaneGeometry(8.6, 4.8), createMaterial({
+          color: 0x4ad5eb,
+          transparent: true,
+          opacity: 0.78,
+          roughness: 0.1
+        }), 3.2, 5.74, 6.2, false, false);
+        upperWater.rotation.x = -Math.PI / 2;
+        addMesh(new T.TorusGeometry(0.55, 0.16, 10, 20), createMaterial({
+          color: 0xf27d9b
+        }), 2.0, 5.76, 5.6, false, false).rotation.x = Math.PI / 2;
+        addMesh(new T.TorusGeometry(0.5, 0.15, 10, 20), createMaterial({
+          color: 0xf2cf5c
+        }), 4.6, 5.76, 6.8, false, false).rotation.x = Math.PI / 2;
+        for(const [cx, cz, col] of [[-4.2, 8.8, 0xf287a4], [9.8, 8.5, 0x89dbad], [-2.5, 3.2, 0xb18ce8]]){
+          addCylinder(0.12, 0.12, 2.4, 8, createMaterial({
+            color: 0xfaf7f2
+          }), cx, 6.6, cz);
+          addCylinder(0.72, 0.72, 0.24, 16, createMaterial({
+            color: col,
+            roughness: 0.35
+          }), cx, 7.9, cz).rotation.x = Math.PI / 2;
+        }
+        addSign(2.4, 0.9, tex.sign("二层水上滑道区", "#eefafd", "#216170", "可俯瞰一层海豚池"), -3.5, 6.6, 1.72);
+
         let jumping = 0;
         updaters.push((dt, t) => {
           portalRing.rotation.y += dt * 1.5;
           waterMesh.position.y = 0.46 + Math.sin(t * 2.5) * 0.025;
+          upperWater.position.y = 5.74 + Math.sin(t * 2.1 + 1.0) * 0.02;
           if(jumping > 0){
             jumping -= dt;
             const p = 1 - jumping / 1.4;
@@ -2972,8 +3327,40 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         });
         const onCandy = (x, z) => x >= 5.5 && x <= 9.5 && z >= -4.5 && z <= -0.5;
         const inPool = (x, z) => Math.abs(x) <= 6.0 && z >= -9.8 && z <= -1.2;
-        heightFn = (x, z, standingY = 0) => (onCandy(x, z) && standingY >= 1.3) ? 1.9 : (inPool(x, z) ? 0.22 : 0);
-        surfaceFn = (x, z) => onCandy(x, z) ? "stone" : (inPool(x, z) ? "water" : "stone");
+        const onUpper = (x, z) => x >= -11.5 && x <= 11.5 && z >= 1.6 && z <= 10.8;
+        const inUpperPool = (x, z) => x >= -1.4 && x <= 7.8 && z >= 3.5 && z <= 8.9;
+        heightFn = (x, z, standingY = 0) => {
+          let best = 0;
+          if(onUpper(x, z) && standingY >= 4.7){
+            best = inUpperPool(x, z) ? 5.55 : 5.4;
+          }
+          if(Math.hypot(x - cylX, z - cylZ) <= 2.3){
+            for(const s of cylSteps){
+              if(Math.hypot(x - s.x, z - s.z) <= 0.9 && s.y <= standingY + 0.56 && s.y > best){
+                best = s.y;
+              }
+            }
+          }
+          if(best > 0){
+            return best;
+          }
+          if(onCandy(x, z) && standingY >= 1.3){
+            return 1.9;
+          }
+          if(inPool(x, z)){
+            return 0.22;
+          }
+          return 0;
+        };
+        surfaceFn = (x, z, standingY = 0) => {
+          if(onUpper(x, z) && standingY >= 4.7){
+            return inUpperPool(x, z) ? "water" : "stone";
+          }
+          if(onCandy(x, z)){
+            return "stone";
+          }
+          return inPool(x, z) ? "water" : "stone";
+        };
         addInteract("wp_tp", V(-7.5, 1.0, -1.5), "踏入水幕传送装置", "传送至糖果观演高台", () => {
           if(player.pos.y > 2.5){
             return;
@@ -2984,13 +3371,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           showWhisper("凉丝丝的水汽掠过耳朵，人已经站上糖果高台！");
         });
         addInteract("wp_tp2", V(7.5, 2.5, -2.5), "从糖果高台传回地面", "返回表演池边", () => {
-          if(player.pos.y < 2.5){
+          if(player.pos.y < 2.5 || player.pos.y > 5.0){
             return;
           }
           player.pos.set(-7.5, 1.65, 0.9);
           player.vel.set(0, 0, 0);
           sfx.play("splash");
-          showWhisper("哗啦一下滑回池边地面，四周摆满了巨型草莓棒棒糖。");
+          showWhisper("哗啦一下滑回池边地面，旁边那根大圆筒阶梯一直通往二层乐园。");
+        });
+        addInteract("wp_cyl", V(cylX + 2.1, 1.2, cylZ), "走进圆长筒间隔阶梯", "踏上第一级台阶向上爬", () => {
+          player.pos.set(cylSteps[0].x, cylSteps[0].y + 1.65, cylSteps[0].z);
+          player.vel.set(0, 0, 0);
+          sfx.play("splash");
+          showWhisper("踩着圆筒里悬空的彩盘一级一级往上转，能直达二楼水上乐园。");
         });
         addInteract("wp_show", V(0, 0.8, -0.6), "敲响表演池边铃", "触发跃圈水花", () => {
           jumping = 1.4;
@@ -2998,34 +3391,42 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           setTimeout(() => sfx.play("splash"), 520);
           showWhisper("水面哗地炸开白花，灰蓝海豚稳稳穿过了橙色浮圈。");
         });
-        addCollectible("waterpark", -6.8, 0.6, 5.8, 0xf28aa8);
+        addInteract("wp_upper_bell", V(-2.2, 6.0, 2.2), "摇响二楼戏水池摇铃", "水花溅起一层薄雾", () => {
+          sfx.play("chime");
+          showWhisper("站在二层糖果看台边往下望，整个一楼表演池一目了然。");
+        });
+        addCollectible("waterpark", 9.6, 5.75, 5.5, 0xf28aa8);
         bounds = {
-          minX: -11.6,
-          maxX: 11.6,
+          minX: -11.4,
+          maxX: 11.4,
           minZ: -9.2,
-          maxZ: 10.5
+          maxZ: 10.4
         };
         return {
-          pos: V(0, 1.65, 7.2),
+          pos: V(0, 1.65, 3.6),
           yaw: 0,
-          whisper: "商场顶层藏着室内水上乐园，蓝色水幕传送门正对糖果看台。"
+          whisper: "水上乐园一边立着一根能踩着间隔阶梯盘旋上去的长圆筒，顶上还有一层乐园。"
         };
       },
 
       // ---------------------------------------------------------------
       convenience(){
         scene.background = new T.Color(0x1f2530);
-        scene.fog = new T.Fog(0x1f2530, 14, 45);
-        scene.add(new T.AmbientLight(0x526178, 0.75));
-        const storeLight = new T.PointLight(0xfff1d6, 1.35, 16);
-        storeLight.position.set(0, 3.1, -1);
+        scene.fog = new T.Fog(0x1f2530, 16, 54);
+        scene.add(new T.AmbientLight(0x5a687e, 0.82));
+        const storeLight = new T.PointLight(0xfff1d6, 1.4, 16);
+        storeLight.position.set(0, 3.1, -1.5);
         scene.add(storeLight);
-        const streetLamp = new T.PointLight(0xffb86c, 1.1, 15);
-        streetLamp.position.set(-5.5, 3.6, 6.5);
+        const streetLamp = new T.PointLight(0xffb86c, 1.25, 18);
+        streetLamp.position.set(-5.8, 4.0, 5.2);
         scene.add(streetLamp);
-        addBox(16, 0.2, 18, createMaterial({
-          map: tex.concrete("#3a3c42", 0.2, "st_asp")
-        }), 0, -0.1, 2, true, false, true);
+        const warnLamp = new T.PointLight(0xff9b26, 1.3, 10);
+        warnLamp.position.set(-3.2, 1.2, 10.1);
+        scene.add(warnLamp);
+
+        addBox(16, 0.2, 7.5, createMaterial({
+          map: tex.concrete("#65696e", 0.16, "cv_walk")
+        }), 0, -0.1, 1.2, true, false, true);
         addBox(10, 0.22, 9, createMaterial({
           map: tex.tiles("#e6e2d8", "#dad5c9", "#b5b0a4", 5, "cv_f"),
           roughness: 0.45
@@ -3095,88 +3496,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         addBox(0.32, 0.06, 0.24, createMaterial({
           color: 0xb89668
         }), 2.5, 0.98, 1.55, false);
-        let doorOpen = false;
-        let fridgeOn = true;
-        updaters.push((dt) => {
-          const near = player.pos.z > -0.6 && player.pos.z < 4.6 && Math.abs(player.pos.x) < 2.6;
-          if(near && !doorOpen){
-            doorOpen = true;
-            sfx.play("chime");
-          }
-          if(!near && doorOpen){
-            doorOpen = false;
-          }
-          const dx = doorOpen ? 1.95 : 0.7;
-          doorL.position.x += (-dx - doorL.position.x) * Math.min(1, dt * 6);
-          doorR.position.x += (dx - doorR.position.x) * Math.min(1, dt * 6);
-          syncColX(doorL, 0.7);
-          syncColX(doorR, 0.7);
-        });
-        addInteract("cv_oden", V(-2.9, 1.2, -1.3), "掀开不锈钢关东煮锅盖", "挑一串白萝卜与魔芋丝", () => {
-          sfx.play("sizzle");
-          showWhisper("热腾腾的柴鱼汤雾气扑在脸上，白萝卜已经煮得透亮。");
-        }, {
-          radius: 2.0
-        });
-        addInteract("cv_book", V(2.5, 1.05, 1.55), "翻看窗台边拴着的牛皮纸册", "《关东煮锅盖旁边的牛皮纸册》（夜归人四段故事）", () => openBook("convenience"));
-        addInteract("cv_fridge", V(0, 1.4, -5.9), "拨动冷柜灯开关", "切换冷柜照明", () => {
-          fridgeOn = !fridgeOn;
-          fridgeLight.intensity = fridgeOn ? 0.85 : 0.08;
-          sfx.play("switch");
-          showWhisper(fridgeOn ? "冰柜亮起一片冷白光，铝罐表面凝着细密水珠。" : "灯暗了，压缩机在墙脚嗡嗡低响。");
-        });
-        addCollectible("convenience", -3.2, 1.15, -2.1, 0xd4b277);
-        bounds = {
-          minX: -6.5,
-          maxX: 6.5,
-          minZ: -6.0,
-          maxZ: 8.5
-        };
-        surfaceFn = (x, z) => (Math.abs(x) < 5 && z > -7 && z < 2) ? "stone" : "concrete";
-        heightFn = (x, z) => (Math.abs(x) < 5 && z > -7 && z < 2) ? 0.13 : 0;
-        return {
-          pos: V(0, 1.65, 6.2),
-          yaw: 0,
-          whisper: "傍晚的柏油路有点凉，跨进便利店时门铃叮咚响了一声，窗台边拴着一本厚厚旧本子。"
-        };
-      },
 
-      // ---------------------------------------------------------------
-      roadwork(){
-        scene.background = new T.Color(0xc9ced1);
-        scene.fog = new T.Fog(0xc9ced1, 18, 55);
-        scene.add(new T.HemisphereLight(0xeef2f5, 0x6e6659, 0.95));
-        const sun = new T.DirectionalLight(0xfff1d6, 0.95);
-        sun.position.set(12, 18, 8);
-        sun.castShadow = true;
-        scene.add(sun);
         const asp = tex.concrete("#474a4d", 0.22, "rw_asp");
         asp.repeat.set(6, 6);
-        addBox(20, 0.4, 9, createMaterial({
+        addBox(20, 0.4, 3.2, createMaterial({
           map: asp,
           roughness: 0.85
-        }), 0, -0.2, 6.5, true, false, true);
-        addBox(20, 0.4, 9, createMaterial({
+        }), 0, -0.2, 4.1, true, false, true);
+        addBox(20, 0.4, 5.8, createMaterial({
           map: asp,
           roughness: 0.85
-        }), 0, -0.2, -6.5, true, false, true);
+        }), 0, -0.2, 12.6, true, false, true);
         addBox(20, 0.3, 4.2, createMaterial({
           color: 0x4f3d2d,
           roughness: 1
-        }), 0, -0.95, 0, true, false, true);
+        }), 0, -0.95, 7.6, true, false, true);
         addCylinder(0.28, 0.28, 18, 10, createMaterial({
           color: 0x467294
-        }), 0, -0.55, 0).rotation.z = Math.PI / 2;
+        }), 0, -0.55, 7.6).rotation.z = Math.PI / 2;
         const plankTex = tex.wood("#b88e5a", "#876338", "rw_pl");
         for(const px of [-2.2, -1.1, 0]){
           addBox(0.95, 0.14, 4.8, createMaterial({
             map: plankTex,
             roughness: 0.85
-          }), px, 0.08, 0, false, true, true);
+          }), px, 0.08, 7.6, false, true, true);
         }
         const sx = state.roadBridge ? 1.1 : 3.6;
         const sy = state.roadBridge ? 0.08 : 0.2;
-        const sz = state.roadBridge ? 0 : -3.8;
+        const sz = state.roadBridge ? 7.6 : 4.2;
         const sparePlank = addBox(0.95, 0.14, 4.8, createMaterial({
           map: tex.wood("#c79d68", "#946d3f")
         }), sx, sy, sz, true, true, true);
@@ -3193,16 +3540,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         for(const cx of [-4.5, -3.2, 2.2, 4.8]){
           addMesh(new T.ConeGeometry(0.25, 0.75, 10), createMaterial({
             color: 0xe36222
-          }), cx, 0.38, 2.6);
+          }), cx, 0.38, 10.1);
           addMesh(new T.ConeGeometry(0.25, 0.75, 10), createMaterial({
             color: 0xe36222
-          }), cx, 0.38, -2.6);
+          }), cx, 0.38, 5.1);
         }
-        addSign(1.9, 0.9, tex.sign("前方施工 走木板", "#e0ad34", "#1e1d1a", "管道更换 注意脚下", true), -4.2, 1.1, 2.8);
-        const warnLamp = new T.PointLight(0xff9b26, 1.2, 8);
-        warnLamp.position.set(-3.2, 1.2, 2.6);
-        scene.add(warnLamp);
+        addSign(1.9, 0.9, tex.sign("前方施工 走木板", "#e0ad34", "#1e1d1a", "管道更换 注意脚下", true), -4.2, 1.1, 10.3);
+
+        let doorOpen = false;
+        let fridgeOn = true;
         updaters.push((dt, t) => {
+          const near = player.pos.z > -0.6 && player.pos.z < 4.6 && Math.abs(player.pos.x) < 2.6;
+          if(near && !doorOpen){
+            doorOpen = true;
+            sfx.play("chime");
+          }
+          if(!near && doorOpen){
+            doorOpen = false;
+          }
+          const dx = doorOpen ? 1.95 : 0.7;
+          doorL.position.x += (-dx - doorL.position.x) * Math.min(1, dt * 6);
+          doorR.position.x += (dx - doorR.position.x) * Math.min(1, dt * 6);
+          syncColX(doorL, 0.7);
+          syncColX(doorR, 0.7);
           warnLamp.intensity = Math.sin(t * 5) > 0 ? 1.3 : 0.25;
           if(pAnim.active){
             pAnim.t = Math.min(1, pAnim.t + dt / 0.4);
@@ -3223,7 +3583,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           }
         });
         heightFn = (x, z) => {
-          if(Math.abs(z) <= 2.1){
+          if(Math.abs(x) < 5 && z > -7 && z < 2){
+            return 0.13;
+          }
+          if(z >= 5.5 && z <= 9.7){
             if(x > -2.75 && x < 0.55){
               return 0.16;
             }
@@ -3234,7 +3597,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           }
           return 0;
         };
-        const plankInter = addInteract("rw_plank", V(sx, 0.4, sz), state.roadBridge ? "把备用木板搬回材料堆" : "扛起备用厚木板铺到沟上", "拓宽临时木板桥", () => {
+        surfaceFn = (x, z) => {
+          if(Math.abs(x) < 5 && z > -7 && z < 2){
+            return "stone";
+          }
+          if(z >= 5.5 && z <= 9.7){
+            return heightFn(x, z) > 0 ? "wood" : "dirt";
+          }
+          return "concrete";
+        };
+        addInteract("cv_oden", V(-2.9, 1.2, -1.3), "掀开不锈钢关东煮锅盖", "挑一串白萝卜与魔芋丝", () => {
+          sfx.play("sizzle");
+          showWhisper("热腾腾的柴鱼汤雾气扑在脸上，白萝卜已经煮得透亮。");
+        }, {
+          radius: 2.0
+        });
+        addInteract("cv_book", V(2.5, 1.05, 1.55), "翻看窗台边拴着的牛皮纸册", "《关东煮锅盖旁边的牛皮纸册》（夜归人四段故事）", () => openBook("convenience"));
+        addInteract("cv_fridge", V(0, 1.4, -5.9), "拨动冷柜灯开关", "切换冷柜照明", () => {
+          fridgeOn = !fridgeOn;
+          fridgeLight.intensity = fridgeOn ? 0.85 : 0.08;
+          sfx.play("switch");
+          showWhisper(fridgeOn ? "冰柜亮起一片冷白光，铝罐表面凝着细密水珠。" : "灯暗了，压缩机在墙脚嗡嗡低响。");
+        });
+        const plankInter = addInteract("rw_plank", V(sx, 0.4, sz), state.roadBridge ? "把备用木板搬回材料堆" : "扛起备用厚木板铺到沟上", "拓宽门前马路木板桥", () => {
           if(pAnim.active){
             return;
           }
@@ -3244,34 +3629,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           if(state.roadBridge){
             state.roadBridge = false;
             spareCol.active = true;
-            pAnim.to.set(3.6, 0.2, -3.8);
-            plankInter.pos.set(3.6, 0.4, -3.8);
+            pAnim.to.set(3.6, 0.2, 4.2);
+            plankInter.pos.set(3.6, 0.4, 4.2);
             plankInter.label = "扛起备用厚木板铺到沟上";
-            showWhisper("把多余木板搬回沟边堆放好。");
+            showWhisper("把多余木板搬回便利店门外路边堆放好。");
           }else{
             state.roadBridge = true;
-            pAnim.to.set(1.1, 0.08, 0);
-            plankInter.pos.set(1.1, 0.4, 0);
+            pAnim.to.set(1.1, 0.08, 7.6);
+            plankInter.pos.set(1.1, 0.4, 7.6);
             plankInter.label = "把备用木板搬回材料堆";
             showWhisper("啪一声把厚松木板拍平在沟沿上，木板桥更宽了。");
           }
         });
-        addInteract("rw_sign", V(-4.2, 1.0, 2.8), "查看施工手写牌", "看一眼工程便条", () => {
+        addInteract("rw_sign", V(-4.2, 1.0, 10.3), "查看施工手写牌", "看一眼路边工程便条", () => {
           sfx.play("paper");
           openModal("路口手写牌", "「自来水支管更换，路面开挖两天。\n行人请走中间铺设的木板桥，木板底下垫了方木，慢点踩。」");
         });
-        addCollectible("roadwork", -1.1, 0.3, 0, 0xe8d5a7);
+        addCollectible("convenience", -3.2, 1.15, -2.1, 0xd4b277);
         bounds = {
           minX: -8.5,
           maxX: 8.5,
-          minZ: -9.5,
-          maxZ: 9.5
+          minZ: -6.2,
+          maxZ: 14.2
         };
-        surfaceFn = (x, z) => Math.abs(z) <= 2.1 ? (heightFn(x, z) > 0 ? "wood" : "dirt") : "concrete";
         return {
-          pos: V(-1.1, 1.65, 6.2),
+          pos: V(-1.1, 1.65, 13.0),
           yaw: 0,
-          whisper: "马路中间被挖开了一道沟，上面横架着几块踩得发白的松木板。"
+          whisper: "便利店门外正修路，得踩着搭在土沟上的厚木板才能走进店里。"
         };
       },
 
@@ -3285,6 +3669,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           l.position.set(0, 4.0, pz);
           scene.add(l);
         }
+        const exitGlow = new T.PointLight(0xffe7b8, 1.1, 10);
+        exitGlow.position.set(0, 2.8, -12.5);
+        scene.add(exitGlow);
         addBox(9, 0.4, 32, createMaterial({
           map: tex.tiles("#b8bcbf", "#adb2b5", "#8c9194", 6, "sub_p"),
           roughness: 0.45
@@ -3318,6 +3705,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           }), 2.2, 2.4, pz, true);
         }
         addSign(2.6, 0.9, tex.sign("换乘站 · 1 / 4 / 7 号线", "#1f3c5c", "#f0f2f4", "四线同层穿行"), -2.2, 3.1, -1.65);
+        addBox(3.4, 3.4, 1.4, createMaterial({
+          color: 0xdfd8c8
+        }), 0, 1.7, -14.2, true);
+        addBox(1.9, 2.8, 0.2, createMaterial({
+          color: 0xebdcc2,
+          emissive: 0x6b5839,
+          emissiveIntensity: 0.45
+        }), 0, 1.4, -13.45, false);
+        addSign(2.2, 0.9, tex.sign("B出口 ↑ 小画室", "#f4ebd8", "#3a2e22", "顺台阶上去就是画室窗边"), 0, 3.1, -13.35);
         function makeTrain(color, x, zStart){
           const g = new T.Group();
           const body = mkMesh(new T.BoxGeometry(2.6, 2.8, 16), createMaterial({
@@ -3384,13 +3780,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         });
         addInteract("sub_map", V(-2.2, 2.0, -1.8), "抬头看柱子上的线路图", "核对四条地铁方向", () => {
           sfx.play("paper");
-          openModal("多线同台换乘站", "左股道：红线与绿线（开往西城）\n右股道：蓝线与橙线（开往东站）\n\n两班车错车时，风会从隧道深处一阵一阵卷上站台。");
+          openModal("多线同台换乘站", "左股道：红线与绿线（开往西城）\n右股道：蓝线与橙线（开往东站）\n\n北头台阶B出口连着上面一间小画室，透下来一点暖黄光。");
+        });
+        addInteract("sub_studio", V(0, 1.5, -13.1), "顺着B出口台阶去小画室", "推门上楼到画室", () => {
+          const si = sceneIdxById("studio");
+          if(si !== -1){
+            sfx.play("door");
+            loadScene(si);
+            showWhisper("走出B出口通道，推门进了紧挨着地铁站的小画室。");
+          }
         });
         addCollectible("subway", 2.8, 0.55, 6.2, 0x7ab4e0);
         bounds = {
           minX: -3.5,
           maxX: 3.5,
-          minZ: -14,
+          minZ: -13.2,
           maxZ: 14
         };
         surfaceFn = () => "stone";
@@ -3398,19 +3802,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         return {
           pos: V(0, 1.85, 9),
           yaw: 0,
-          whisper: "四条轨道并排钻进黑隧道，站台上全是不同颜色的地铁进出风声。"
+          whisper: "四条轨道并排钻进黑隧道，站台尽头B出口写着通往小画室。"
         };
       },
 
       // ---------------------------------------------------------------
       studio(){
-        scene.background = new T.Color(0xdad4c8);
-        scene.fog = new T.Fog(0xdad4c8, 12, 35);
+        scene.background = new T.Color(0xcfd4d8);
+        scene.fog = new T.Fog(0xcfd4d8, 18, 52);
         scene.add(new T.HemisphereLight(0xfcfaf2, 0x857869, 1.0));
         const sky = new T.DirectionalLight(0xfffdf5, 0.95);
-        sky.position.set(4, 10, 4);
+        sky.position.set(-4, 10, 4);
         sky.castShadow = true;
         scene.add(sky);
+        const subLight = new T.PointLight(0xdcebf7, 0.95, 24);
+        subLight.position.set(11, 2.5, 0);
+        scene.add(subLight);
         addBox(9, 0.2, 9, createMaterial({
           map: tex.wood("#9c7853", "#705134", "stu_f"),
           roughness: 0.75
@@ -3423,14 +3830,79 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           color: 0xe3dcd0,
           roughness: 0.95
         }), -4.5, 1.9, 0, true);
-        addBox(0.2, 3.8, 9, createMaterial({
-          color: 0xebe5d8,
-          roughness: 0.95
-        }), 4.5, 1.9, 0, true);
         addBox(9, 3.8, 0.2, createMaterial({
           color: 0xe3dcd0,
           roughness: 0.95
         }), 0, 1.9, 4.5, true);
+        addBox(9, 0.2, 9, createMaterial({
+          color: 0xebe5d8
+        }), 0, 3.8, 0, false);
+        addBox(0.2, 0.85, 9, createMaterial({
+          color: 0xe8e2d6
+        }), 4.5, 0.425, 0, true);
+        addBox(0.2, 0.7, 9, createMaterial({
+          color: 0xe8e2d6
+        }), 4.5, 3.45, 0, true);
+        addBox(0.2, 2.4, 1.5, createMaterial({
+          color: 0xe8e2d6
+        }), 4.5, 2.0, -3.75, true);
+        addBox(0.2, 2.4, 2.0, createMaterial({
+          color: 0xe8e2d6
+        }), 4.5, 2.0, 3.5, true);
+        addBox(0.06, 2.4, 5.5, createMaterial({
+          color: 0x9ec3d6,
+          transparent: true,
+          opacity: 0.24
+        }), 4.5, 2.0, -0.25, true);
+        addBox(0.95, 2.6, 0.14, createMaterial({
+          color: 0x739ab0,
+          transparent: true,
+          opacity: 0.42
+        }), 4.42, 1.3, 3.3, false);
+        addSign(1.4, 0.65, tex.sign("下楼 → 地铁站", "#1f3c5c", "#f0f2f4", "1/4/7号线站台"), 4.32, 2.9, 3.3, -Math.PI / 2);
+
+        addBox(15, 0.3, 44, createMaterial({
+          map: tex.tiles("#b8bcbf", "#adb2b5", "#8c9194", 6, "sub_p")
+        }), 12.5, -1.6, 0, false, false, true);
+        addBox(0.2, 0.04, 44, createMaterial({
+          color: 0xd9b334
+        }), 8.2, -1.42, 0, false);
+        addBox(0.2, 0.04, 44, createMaterial({
+          color: 0xd9b334
+        }), 16.8, -1.42, 0, false);
+        addBox(20, 0.4, 44, createMaterial({
+          color: 0x262b30
+        }), 13.5, 3.6, 0, false);
+        for(const pz of [-10, -2, 6]){
+          addBox(0.65, 5.0, 0.65, createMaterial({
+            color: 0xd8ddd8
+          }), 11.2, 1.0, pz, false);
+        }
+        function makeViewTrain(col, tx){
+          const g = new T.Group();
+          const b = mkMesh(new T.BoxGeometry(2.4, 2.6, 15), createMaterial({
+            color: 0xd8dce0
+          }), 0, 1.3, 0);
+          const s = mkMesh(new T.BoxGeometry(2.45, 0.4, 15.02), createMaterial({
+            color: col
+          }), 0, 1.25, 0);
+          const w = mkMesh(new T.BoxGeometry(2.44, 0.7, 13), createMaterial({
+            color: 0x2c3f4f,
+            emissive: 0x7ba4bd,
+            emissiveIntensity: 0.4
+          }), 0, 1.85, 0);
+          g.add(b, s, w);
+          g.position.set(tx, -1.6, 0);
+          scene.add(g);
+          return g;
+        }
+        const vt1 = makeViewTrain(0xc94238, 6.6);
+        const vt2 = makeViewTrain(0x2f78b8, 18.4);
+        updaters.push((dt, t) => {
+          vt1.position.z = ((t * 6.5) % 56) - 28;
+          vt2.position.z = 28 - ((t * 5.8 + 14) % 56);
+        });
+
         addBox(0.12, 1.6, 0.12, createMaterial({
           map: tex.wood("#785233", "#52351e")
         }), 0, 0.8, -1.8, true);
@@ -3503,7 +3975,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           paintTex.needsUpdate = true;
           state.studioImg = paintCanvas.toDataURL();
           sfx.play("paint");
-          showWhisper("刮刀抹上去一笔厚实的" + ["朱红", "群青", "藤黄", "橄榄绿", "煤黑"][colIdx] + "，松节油气味更浓了。");
+          showWhisper("刮刀抹上去一笔厚实的" + ["朱红", "群青", "藤黄", "橄榄绿", "煤黑"][colIdx] + "，窗外刚好一列地铁滑过去。");
         });
         addInteract("stu_paper", V(-2.2, 0.85, -2.18), "翻看桌上自印小论文", "《南方梅雨季廉价丙烯的起皮动力学》（长文六节）", () => openBook("studio"));
         addInteract("stu_table", V(-3.0, 0.9, -2.5), "换一种桌面颜料管颜色", "切换下一管颜料", () => {
@@ -3511,10 +3983,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           sfx.play("switch");
           showWhisper("挑出了一管" + ["朱红", "群青", "藤黄", "橄榄绿", "煤黑"][colIdx] + "颜料。");
         });
+        addInteract("stu_subway", V(4.1, 1.4, 3.3), "推门下楼去地铁站", "回到多线地铁站台", () => {
+          const mi = sceneIdxById("subway");
+          if(mi !== -1){
+            sfx.play("door");
+            loadScene(mi);
+            showWhisper("顺着画室旁边的楼梯走下了地铁站台。");
+          }
+        });
         addCollectible("studio", -2.3, 0.85, -2.4, 0x3f6fa3);
         bounds = {
           minX: -3.8,
-          maxX: 3.8,
+          maxX: 3.9,
           minZ: -3.8,
           maxZ: 3.8
         };
@@ -3522,21 +4002,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         return {
           pos: V(0, 1.65, 2.8),
           yaw: 0,
-          whisper: "北向屋里透进柔和白光，颜料桌上压着一份自印的研究小册子。"
+          whisper: "画室东边一整面玻璃外就是地铁站台，时不时有彩色列车从窗底下穿过。"
         };
       },
 
       // ---------------------------------------------------------------
       cave(){
         scene.background = new T.Color(0x0b0e12);
-        scene.fog = new T.FogExp2(0x0b0e12, 0.048);
-        scene.add(new T.AmbientLight(0x23303d, 0.68));
+        scene.fog = new T.FogExp2(0x0b0e12, 0.045);
+        scene.add(new T.AmbientLight(0x283644, 0.75));
         const lantern = new T.PointLight(0xffb86b, 2.0, 16);
         lantern.position.set(-1.5, 1.4, -1.5);
         scene.add(lantern);
         const poolGlow = new T.PointLight(0x47b5c9, 1.1, 12);
         poolGlow.position.set(2.5, 0.6, -4.5);
         scene.add(poolGlow);
+        const elevLight = new T.PointLight(0xfff0c4, 1.4, 9);
+        elevLight.position.set(0, 2.7, -8.2);
+        scene.add(elevLight);
         const rockMat = createMaterial({
           map: tex.concrete("#3a3d42", 0.26, "cave_r"),
           roughness: 0.95
@@ -3550,8 +4033,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         }), 3, 0.03, -4.5, false, false).rotation.x = -Math.PI / 2;
         for(let i = 0; i < 22; i++){
           const ang = (i / 22) * Math.PI * 2;
-          const r = 9.2 + Math.sin(i * 3) * 1.2;
-          addBox(2.8, 7.5, 2.8, rockMat, Math.cos(ang) * r, 3.5, Math.sin(ang) * r, true);
+          const rx = Math.cos(ang) * (9.2 + Math.sin(i * 3) * 1.2);
+          const rz = Math.sin(ang) * (9.2 + Math.sin(i * 3) * 1.2);
+          if(Math.abs(rx) < 1.9 && rz < -5){
+            continue;
+          }
+          addBox(2.8, 7.5, 2.8, rockMat, rx, 3.5, rz, true);
         }
         for(let i = 0; i < 18; i++){
           const len = 1.0 + Math.random() * 2.2;
@@ -3568,9 +4055,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           emissiveIntensity: 0.4,
           roughness: 0.25
         }), 4.2, 0.55, -6.2);
+
+        const steelMat = createMaterial({
+          color: 0x5c636b,
+          metalness: 0.65,
+          roughness: 0.4
+        });
+        addBox(2.6, 0.12, 2.4, steelMat, 0, 0.06, -8.3, false, true, true);
+        addBox(2.6, 0.16, 2.4, steelMat, 0, 2.95, -8.3, false);
+        addBox(2.6, 3.0, 0.16, steelMat, 0, 1.5, -9.5, true);
+        addBox(0.16, 3.0, 2.4, steelMat, -1.25, 1.5, -8.3, true);
+        addBox(0.16, 3.0, 2.4, steelMat, 1.25, 1.5, -8.3, true);
+        const elevDoor = addBox(2.3, 2.8, 0.12, createMaterial({
+          color: 0x7b858f,
+          metalness: 0.55,
+          roughness: 0.4
+        }), 0, 1.45, -7.1, true);
+        addSign(0.9, 0.45, tex.sign("B4 电梯", "#1a2026", "#f0b94a", "上行 ↑ 地面"), 0, 3.25, -7.02);
+        addBox(0.2, 0.35, 0.1, createMaterial({
+          color: 0x3b4046
+        }), 1.45, 1.25, -7.05, false);
+
         let lanternHigh = true;
+        let elevOpen = false;
+        let elevFloor = 4;
         updaters.push((dt, t) => {
           lantern.intensity = (lanternHigh ? 2.0 : 0.45) + Math.sin(t * 7) * 0.12;
+          elevDoor.position.x += ((elevOpen ? 2.1 : 0) - elevDoor.position.x) * Math.min(1, dt * 3.2);
+          syncColX(elevDoor, 1.15);
         });
         addInteract("cave_lantern", V(-1.5, 0.6, -1.5), "拧动露营煤油灯旋钮", "调亮或压暗洞内火光", () => {
           lanternHigh = !lanternHigh;
@@ -3603,18 +4115,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           }, 16);
           activeIntervals.push(iv);
         });
+        addInteract("cave_elev_btn", V(1.45, 1.25, -6.9), "按洞穴尽头电梯门按钮", "开启/关闭铁栅栏门", () => {
+          elevOpen = !elevOpen;
+          sfx.play("door");
+          showWhisper(elevOpen ? "铁门哐当一声滑开，里头亮着一盏黄灯泡。" : "电梯铁门合上，钢索在石壁缝里轻轻吱嘎响。");
+        });
+        addInteract("cave_elev_in", V(0, 1.2, -8.3), "按下轿厢内上行按钮", "启动洞穴电梯往地面走", () => {
+          elevFloor = elevFloor === 4 ? 1 : 4;
+          sfx.play("chime");
+          showWhisper(elevFloor === 1 ? "钢索闷哼着拉紧，轿厢晃了两下停在1层出口。" : "轿厢缓缓沉回 B4 溶洞尽头。");
+        });
         addCollectible("cave", 4.2, 1.1, -6.0, 0xe6b85c);
         bounds = {
           minX: -7.2,
           maxX: 7.2,
-          minZ: -7.2,
+          minZ: -9.1,
           maxZ: 7.2
         };
         surfaceFn = (x, z) => (x >= -1 && x <= 7 && z >= -8 && z <= -1) ? "water" : "stone";
+        heightFn = (x, z) => (Math.abs(x) < 1.3 && z < -7.0) ? 0.12 : 0;
         return {
           pos: V(0, 1.65, 5.5),
           yaw: 0,
-          whisper: "头顶垂着湿润的灰岩，山洞深处有水滴落进暗池的声音。"
+          whisper: "洞穴尽头居然嵌着一部带黄灯的铁皮电梯，按钮还亮着微光。"
         };
       }
     };
@@ -3644,7 +4167,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       player.pitch = 0;
       camera.fov = state.fov;
       camera.updateProjectionMatrix();
-      document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/17";
+      document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/" + SCENES_META.length;
       document.getElementById("ui-name").textContent = meta.name;
       showWhisper(info.whisper, 4200);
       sfx.setAmbient(meta.id);
@@ -3805,7 +4328,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       const r = joyZone.getBoundingClientRect();
       let dx = cx - (r.left + r.width / 2);
       let dy = cy - (r.top + r.height / 2);
-      const max = 38;
+      const max = 52;
       const d = Math.hypot(dx, dy);
       if(d > max){
         dx = dx / d * max;
@@ -4182,7 +4705,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           sitTimer = null;
           player.height = 1.65;
         }
-        const groundY = heightFn(player.pos.x, player.pos.z, player.pos.y - player.height);
+        const standingY = player.pos.y - player.height;
+        const groundY = heightFn(player.pos.x, player.pos.z, standingY);
         player.vel.y -= 14.5 * dt;
         player.pos.y += player.vel.y * dt;
         if(player.pos.y <= groundY + player.height){
@@ -4198,7 +4722,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
           stepAcc += moved;
           if(stepAcc > 1.45){
             stepAcc = 0;
-            sfx.step(surfaceFn(player.pos.x, player.pos.z));
+            sfx.step(surfaceFn(player.pos.x, player.pos.z, player.pos.y - player.height));
           }
         }
         const bob = moved > 0.005 && player.onGround ? Math.sin(t * 10) * 0.032 : 0;
@@ -4270,7 +4794,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
       const r = joyZone.getBoundingClientRect();
       let dx = cx - (r.left + r.width / 2);
       let dy = cy - (r.top + r.height / 2);
-      const max = 38;
+      const max = 52;
       const d = Math.hypot(dx, dy);
       if(d > max){
         dx = dx / d * max;
@@ -4489,7 +5013,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
 
     window._engine = {
       loadScene(i){
-        state.sceneIdx = (i + 17) % 17;
+        const total = SCENES_META.length;
+        state.sceneIdx = (i + total) % total;
         if(modal.classList.contains("open")){
           closeModal();
         }else{
@@ -4498,7 +5023,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
         closePanels();
         px = 0;
         py = 0;
-        document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/17";
+        document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/" + total;
         document.getElementById("ui-name").textContent = SCENES_META[state.sceneIdx].name;
         updateSceneMenu();
       },
@@ -4557,7 +5082,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e
   }
 
   function updateColUI(){
-    document.getElementById("col-count").textContent = state.collected.size + "/17";
+    document.getElementById("col-count").textContent = state.collected.size + "/" + SCENES_META.length;
     const list = document.getElementById("col-list");
     list.innerHTML = "";
     SCENES_META.forEach((m, i) => {
