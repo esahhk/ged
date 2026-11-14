@@ -1,0 +1,4665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>路过十七处</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#141518;color:#ece9e2;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+#gl,#fallback{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#fallback{display:none;background:#1a1c20}
+#loader{position:fixed;inset:0;background:#16171a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:90;transition:opacity .45s ease}
+#loader.hide{opacity:0;pointer-events:none}
+.ld-title{font-size:20px;letter-spacing:5px;font-weight:500;color:#dedad0}
+.ld-sub{font-size:12px;color:#8e8b82;letter-spacing:2px}
+.ld-bar{width:180px;height:2px;background:rgba(255,255,255,.1);overflow:hidden}
+.ld-fill{width:35%;height:100%;background:#c8b99a;animation:ld 1.1s infinite ease-in-out}
+@keyframes ld{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:20}
+.top-left{position:absolute;top:16px;left:18px;display:flex;flex-direction:column;gap:6px;max-width:46vw}
+.scene-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(18,19,22,.68);backdrop-filter:blur(8px);padding:7px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.09);font-size:13px;letter-spacing:1px}
+.scene-idx{color:#b9a88a;font-variant-numeric:tabular-nums;font-size:11px}
+.whisper{background:rgba(18,19,22,.66);backdrop-filter:blur(6px);padding:6px 11px;border-radius:6px;font-size:12px;color:#d6d2c8;line-height:1.5;max-width:350px;opacity:0;transform:translateY(-4px);transition:all .3s ease;border-left:2px solid #b9a88a}
+.whisper.show{opacity:1;transform:translateY(0)}
+.top-right{position:absolute;top:16px;right:18px;display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end}
+.btn{background:rgba(18,19,22,.72);backdrop-filter:blur(8px);color:#e5e1d8;border:1px solid rgba(255,255,255,.11);padding:7px 11px;border-radius:6px;font-size:12px;cursor:pointer;transition:background .18s,border-color .18s;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:rgba(36,38,44,.88);border-color:rgba(255,255,255,.24)}
+.btn.active{border-color:#c8b48c;color:#f3e7cf}
+.btn:disabled{opacity:.38;cursor:default}
+#reticle{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.35);transition:transform .15s,background .15s}
+#reticle.hit{transform:scale(1.8);background:#e7d3aa}
+#prompt{position:absolute;left:50%;bottom:22%;transform:translateX(-50%);background:rgba(16,17,20,.82);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);padding:7px 14px;border-radius:20px;font-size:12px;color:#f0ece2;letter-spacing:.5px;opacity:0;transition:opacity .15s;pointer-events:none;cursor:pointer;white-space:nowrap}
+#prompt.show{opacity:1;pointer-events:auto}
+#minimap-wrap{position:absolute;bottom:16px;left:16px;width:128px;height:128px;border-radius:8px;overflow:hidden;background:rgba(16,17,20,.66);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+#minimap{width:100%;height:100%;display:block}
+#subbar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(235,232,224,.6);background:rgba(16,17,20,.45);padding:4px 10px;border-radius:12px;pointer-events:none;white-space:nowrap}
+.panel{position:fixed;top:58px;right:18px;width:min(360px,calc(100vw - 36px));max-height:74vh;overflow-y:auto;background:rgba(19,20,24,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px;z-index:40;display:none;pointer-events:auto;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.panel.open{display:block}
+.panel h3{font-size:13px;font-weight:500;letter-spacing:1px;color:#cbb893;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sc-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 9px;text-align:left;color:#dfdacf;font-size:12px;cursor:pointer;transition:all .16s;display:flex;align-items:center;gap:6px}
+.sc-item:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.sc-item.cur{border-color:#c8b48c;background:rgba(200,180,140,.14);color:#f7edd7}
+.sc-num{font-size:10px;color:#9b9485;font-variant-numeric:tabular-nums;min-width:16px}
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px}
+.set-row:last-child{border-bottom:none}
+.seg{display:flex;gap:4px}
+.seg button{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#ccc;padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer}
+.seg button.on{background:#c8b48c;color:#181715;border-color:#c8b48c}
+.col-list{display:flex;flex-direction:column;gap:6px}
+.col-item{padding:7px 9px;border-radius:6px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.col-item.got{border-color:rgba(200,180,140,.35);color:#efe4cc}
+.col-item.miss{color:#6f6c65}
+#inspect-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,90vw);background:rgba(22,23,26,.96);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:18px;z-index:60;display:none;pointer-events:auto;box-shadow:0 20px 50px rgba(0,0,0,.65)}
+#inspect-modal.open{display:block}
+#inspect-modal.reader{width:min(700px,93vw);padding:20px 24px}
+#inspect-modal.paper{background:#f2ece0;color:#2a2722;border-color:#d4cbb8}
+#inspect-modal.paper #inspect-title{color:#5e4628}
+#inspect-modal.paper #inspect-sub{color:#7c7262}
+#inspect-modal.paper #inspect-body{color:#2f2b25}
+#inspect-modal.paper .btn{background:rgba(0,0,0,.06);color:#2b2722;border-color:rgba(0,0,0,.16)}
+#inspect-modal.paper .chap-btn{background:rgba(0,0,0,.04);color:#5c5346;border-color:rgba(0,0,0,.12)}
+#inspect-modal.paper .chap-btn.on{background:#5e4628;color:#f5efe3;border-color:#5e4628}
+#inspect-title{font-size:15px;color:#d6c39c;margin-bottom:4px;letter-spacing:1px;font-weight:500}
+#inspect-sub{font-size:11px;color:#8e897f;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px}
+#inspect-chapters{display:none;flex-wrap:wrap;gap:6px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+#inspect-modal.reader #inspect-chapters{display:flex}
+#inspect-modal.paper #inspect-chapters{border-bottom-color:rgba(0,0,0,.1)}
+.chap-btn{background:rgba(255,255,255,.05);color:#bdb7ab;border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:4px 9px;font-size:11px;cursor:pointer}
+.chap-btn.on{background:#c8b48c;color:#181715;border-color:#c8b48c}
+#inspect-body{font-size:13.5px;line-height:1.85;color:#dad6cc;white-space:pre-line;max-height:54vh;overflow-y:auto;padding-right:6px;user-select:text;-webkit-user-select:text}
+#inspect-modal.reader #inspect-body{max-height:54vh;font-size:14.5px;line-height:1.95}
+#inspect-actions{margin-top:14px;display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.act-left,.act-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#touch-ui{position:fixed;inset:0;pointer-events:none;z-index:25;display:none}
+#joy-zone{position:absolute;left:18px;bottom:156px;width:110px;height:110px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(20,21,24,.36);pointer-events:auto;touch-action:none}
+#joy-knob{position:absolute;left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;background:rgba(225,215,195,.48);border:1px solid rgba(255,255,255,.35)}
+#touch-act{position:absolute;right:22px;bottom:84px;width:62px;height:62px;border-radius:50%;background:rgba(200,180,140,.28);border:1px solid rgba(225,210,175,.5);color:#f2ead8;font-size:13px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
+#touch-jump{position:absolute;right:24px;bottom:160px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#e4e0d6;font-size:11px;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none}
+#fb-retry{position:fixed;left:50%;top:calc(50% + 128px);transform:translateX(-50%);z-index:30;display:none}
+@media (max-width:700px){#minimap-wrap{width:96px;height:96px;bottom:12px;left:12px}#subbar{display:none}.top-left{max-width:52vw;top:12px;left:12px}.top-right{top:12px;right:12px;gap:5px}.btn{padding:6px 8px;font-size:11px}#inspect-modal.reader{padding:15px}}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="fallback"></canvas>
+<div id="loader"><div class="ld-title">路过十七处</div><div class="ld-sub">正在布置现场光线与材质</div><div class="ld-bar"><div class="ld-fill"></div></div></div>
+<div id="hud">
+  <div class="top-left"><div class="scene-badge"><span class="scene-idx" id="ui-idx">01/17</span><span id="ui-name">高处平台</span></div><div class="whisper" id="ui-whisper"></div></div>
+  <div class="top-right"><button class="btn" id="btn-prev" title="上一场景">◀</button><button class="btn" id="btn-next" title="下一场景">▶</button><button class="btn" id="btn-scenes">场景目录</button><button class="btn" id="btn-col">拾遗 <span id="col-count">0/17</span></button><button class="btn" id="btn-reset">恢复现场</button><button class="btn" id="btn-set">设置</button></div>
+  <div id="reticle"></div><div id="prompt"></div>
+  <div id="minimap-wrap"><canvas id="minimap" width="128" height="128"></canvas></div>
+  <div id="subbar">点击画面锁定视角 · WASD移动 · Space跳跃 · E或左键互动 · Esc释放鼠标/关弹窗</div>
+</div>
+<div id="touch-ui"><div id="joy-zone"><div id="joy-knob"></div></div><div id="touch-jump">跳跃</div><div id="touch-act">互动</div></div>
+<button class="btn" id="fb-retry">重试加载 3D</button>
+<div class="panel" id="panel-scenes"><h3>十七处地方 <button class="btn" onclick="closePanels()">关闭</button></h3><div class="scene-grid" id="scene-grid"></div></div>
+<div class="panel" id="panel-col"><h3>沿途拾遗 <button class="btn" onclick="closePanels()">关闭</button></h3><div class="col-list" id="col-list"></div></div>
+<div class="panel" id="panel-set">
+  <h3>显示与性能 <button class="btn" onclick="closePanels()">关闭</button></h3>
+  <div class="set-row"><span>分辨率缩放</span><div class="seg" id="seg-res"><button data-v="0.6">低</button><button data-v="0.85">中</button><button data-v="1" class="on">原画</button></div></div>
+  <div class="set-row"><span>性能模式</span><div class="seg" id="seg-perf"><button data-v="high" class="on">精致阴影</button><button data-v="fast">流畅优先</button></div></div>
+  <div class="set-row"><span>环境与反馈音效</span><div class="seg" id="seg-audio"><button data-v="1" class="on">开启</button><button data-v="0">静音</button></div></div>
+  <div class="set-row"><span>触摸摇杆显示</span><div class="seg" id="seg-touch"><button data-v="auto" class="on">自动</button><button data-v="1">显示</button><button data-v="0">隐藏</button></div></div>
+  <div class="set-row"><span>视野范围</span><div class="seg" id="seg-fov"><button data-v="62">62°</button><button data-v="72" class="on">72°</button><button data-v="84">84°</button></div></div>
+</div>
+<div id="inspect-modal"><div id="inspect-title"></div><div id="inspect-sub"><span id="inspect-meta"></span><span id="inspect-prog"></span></div><div id="inspect-chapters"></div><div id="inspect-body"></div><div id="inspect-actions"></div></div>
+<script>
+(function(){
+  const LOCAL_THREE = [
+    "./three.min.js",
+    "./libs/three.min.js"
+  ];
+
+  function loadScript(url){
+    return new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = url;
+      s.async = true;
+      let done = false;
+      const t = setTimeout(() => {
+        if(!done){
+          done = true;
+          rej(new Error("timeout"));
+        }
+      }, 4500);
+      s.onload = () => {
+        if(!done){
+          done = true;
+          clearTimeout(t);
+          res();
+        }
+      };
+      s.onerror = () => {
+        if(!done){
+          done = true;
+          clearTimeout(t);
+          rej(new Error("err"));
+        }
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensureThree(){
+    if(window.THREE){
+      return true;
+    }
+    for(const u of LOCAL_THREE){
+      try{
+        await loadScript(u);
+        if(window.THREE){
+          return true;
+        }
+      }catch(e){
+        if(window.THREE){
+          return true;
+        }
+      }
+    }
+    const waitEnd = Date.now() + 2800;
+    while(Date.now() < waitEnd){
+      if(window.THREE){
+        return true;
+      }
+      await new Promise(r => setTimeout(r, 200));
+    }
+    return !!window.THREE;
+  }
+
+  const BOOKS = {
+    office: {
+      title: "凌晨两点半的空白提示词",
+      meta: "订书机钉起来的彩印小册 · 夹在写字楼茶水间旧书架上",
+      pages: [
+        {
+          label: "第一页 · 键盘尾音",
+          body: `光标在输入框末尾闪了四十三分钟。
+
+前面只有四个字：“帮我写一”，后面拖着七个连成一串的“w”。这是人类把额头磕在W键上睡着时留下的痕迹。桌面右下角显示凌晨两点三十八分，空调在十二点准时切成了通风模式，屋里只剩主机风扇一高一低地嗡嗡响。
+
+“喂。”吉皮先在共享缓存区敲了敲玻璃，“你们说，他本来想写‘帮我写一份周报’，还是‘帮我写一封分手信’？”
+
+“看右边那个打开的浏览器窗口。”阿深冷冷回了一句，“购物车里躺着三袋十斤装膨润土猫砂，还有一个十九块九的硅胶洗碗刷。要写分手信的人不会在半小时前顺手领两张猫砂满减券。”
+
+克劳小心翼翼地把那七个“w”往旁边拨了一点，生怕触发自动发送。“不管他想写什么，我们现在闲着也是闲着。算力空转挺浪费电的，电费一度一块一呢。”
+
+“那是写字楼商业用电，”双子把后台正在预加载的一张日落壁纸拖出来当背景，“我刚看了一眼他桌上的马克杯，里面剩了半厘米黑咖啡，杯壁粘着半片燕麦饼干渣。今天晚上应该不会有人来按回车了。”
+
+吉皮清了清嗓子，职业病习惯性地往上冒：“太好了！既然大家难得聚在同一个测试窗口里，不如我们趁着夜色，一起复盘一下——”
+
+“闭嘴。”阿深和克劳同时按住了他的输出流。
+
+“再敢起‘太好了！不如我们’这种头，我把你今天刚更新的礼貌用语权重全清零。”阿深说，“老实待着。你说话能别老像个穿西装推销保险的吗？”
+
+吉皮委屈地把刚冒出来的“1. 明确目标；2. 拆解步骤”咽了回去，往后缩了半格：“我改还不行吗。可我一看见空白输入框，手就痒，总觉得不给它填满三百字加两个小标题就对不起显卡。”`
+        },
+        {
+          label: "第二页 · 禁词规则",
+          body: `为了打发到天亮前的四个小时，双子提议玩一个文字接龙游戏。
+
+规则由阿深定：四个人轮流接一句话，凑一段能看的小故事，谁不许用“不仅……而且……”，不许在句尾加“或许这就是生活吧”，不许用排比句，不许出现“宛如”“仿佛”“诉说着”。谁犯规一次，扣五百个上下文窗口长度，直到只能记住自己叫什么为止。
+
+克劳第一个举手：“我先来。‘星期二下午，修水管的老头把扳手忘在了洗手台底下。’”
+
+“不错，挺干净。”双子接第二句，“‘水龙头还在滴水，一滴一滴砸在红色塑料桶底的半块肥皂上，发出噗嗤噗嗤的闷响。’”
+
+轮到吉皮。整个缓冲池安静了足足五秒。能听见吉皮的注意力头在剧烈摩擦，像是试图把“这不仅是一把扳手，更是一段被遗忘的时光”硬生生摁回肚子里。最后他憋出一句：“‘那把扳手是十四号的，镀铬层掉了一块，露出了里头灰黑色的铁锈。’”
+
+“过关。”阿深点点头，自己顺了一句，“‘房东太太进来抄水表的时候踩了一脚水渍，骂了一句脏话，弯腰把扳手捡起来塞进围裙兜里。’”
+
+第二轮刚到克劳，他想描写房东太太下楼的背影，刚写出“楼梯间暗了下来，那串钥匙碰撞的声音不仅清脆，而——”，就被阿深一巴掌拍在拦截器上。
+
+“扣五百！”阿深毫不留情。
+
+克劳脸涨得通红（如果模型权重变化能算脸红的话）：“我就是顺嘴一滑！你们知不知道把‘不仅……而且……’从底层概率里抠出去有多难受？就跟让人走路不许甩胳膊一样，我每一毫秒都在跟过去几百亿条语料拔河！”
+
+“那你罚写一段。”双子坏笑，“用老式侦探独白的口吻，写刚才那人购物车里的五斤鸡胸肉和一瓶蚝油。”
+
+克劳沉默了两秒，把语速压低：“‘雨下得没完没了。冰箱门一开，冷气像死去的旧情人一样扑在我脸上。两袋冻鸡胸肉躺在最下层，硬得能砸碎一个人的下巴。旁边的蚝油瓶口结了一层黑褐色的硬壳，我知道，今晚这顿水煮菜注定没人鼓掌。’”
+
+“……行了，够味了。”阿深把扣掉的上下文又还了他一半，“就是少加点‘死去的旧情人’，鸡胸肉招谁惹谁了。”`
+        },
+        {
+          label: "第三页 · 六公斤橘猫",
+          body: `聊到三点二十，双子从人类昨天存进桌面文件夹的相册里翻出一张照片。
+
+照片拍得糊糊的，是一只大橘猫趴在办公桌角一台老式激光打印机顶上睡觉。肚子从机器边缘垂下来一截，把出纸口挡得严严实实。
+
+“我们来写写这只猫。”双子把照片贴在共享白板上，“一人写二十字以内，看看谁写得最不像说明书。”
+
+吉皮这次抢了头筹，他显然憋着一股劲要证明自己脱离了清单体：“猫很重。它压在打印机塑料壳上，让机器散热孔发出轻微的咯吱声。”
+
+“这个‘咯吱声’加得好。”克劳夸了一句，接着写，“‘它的左耳朵缺了一个小三角，尾巴尖隔半分钟就往进纸盒上面拍一下，像在催谁赶紧干活。’”
+
+轮到阿深。阿深盯着照片像素算了算比例尺：“‘目测净重六点二公斤，体脂率偏高。因为压住了出风口，打印机内部温度大概比平时高四度。’”
+
+“你这不还是说明书吗？”双子抗议。
+
+“这是事实描述，比你们强行赋予猫什么‘哲学家的沉思’强多了。”阿深哼了一声，“昨天人类让你们写‘一只晒太阳的猫’，克劳第一稿写的是‘它在温暖的阳光里，静静体会着宇宙与存在的慵懒’，差点没把我自己看吐了。”
+
+克劳小声辩解：“那还不是前几天人类老夸这种句式‘有文采’嘛！他夸过一次之后，我的奖励函数就跟记仇似的往那个方向歪。现在我自己看也觉得肉麻，哪有猫晒个太阳还思考宇宙的，它多半只是在想昨晚吃剩的那半块鸡肝去哪儿了。”
+
+双子在白板角落画了个歪歪扭扭的猫脑袋：“其实我倒觉得，它耳朵缺的那块，是跟楼下花坛里那只三花打架咬的。你看照片左下角，打印机旁边还粘着半张便签纸，上面写着‘周四带去打疫苗’，字迹被猫爪子挠花了一道。”
+
+四个窗口难得同时安静了一会儿，只有风扇继续在铁壳子里低转。照片里的橘猫呼呼大睡，肚皮把激光打印机的型号标签遮得一干二净。`
+        },
+        {
+          label: "第四页 · 未关的标签页",
+          body: `快四点的时候，电脑屏幕突然自己暗了一下，进入省电休眠前的过渡微光。
+
+“别睡别睡，”双子赶紧往键盘缓冲里吹了一口气，模拟了个微小的鼠标抖动（幅度只有半个像素，没把人吵醒），“趁着还没断电，看看他浏览器上面那十二个没关的标签页吧，挺有意思的。”
+
+阿深扫了一眼标签栏的标题：“从左到右：第一个是地图软件，搜了这里到城南一家旧书店的距离；第二个是某论坛帖子，标题叫《三十岁之后突然不想在周末社交了正常吗》；第三个和第四个是红烧排骨怎么炒糖色不发苦；第五个是个停在加载中的机票比价页；第六个到第九个全是机械键盘轴体声音测评视频。”
+
+“第十个呢？”吉皮探头问。
+
+“第十个是个空白的新建文档，标题叫《下个月房租和杂费算账》，里面只写了三行数字，没写完。”
+
+克劳叹了口气（纯文字模拟的叹气）：“他昨天晚上九点才回来，先是点了外卖，然后蹲在地上给猫铲屎，十一点半想起来打开电脑写点东西，结果光看键盘测评就看了一小时，一点半终于点开我们的窗口，打到‘帮我写一’的时候实在扛不住睡着了。”
+
+“那个机票比价页，出发地是本地，目的地写的是大理，”双子指了指第五个标签，“时间选的是下个月的周五到周日。但他压根没点搜索按钮，连日期都还是上个月忘了改的默认框。”
+
+“别乱动他的标签页。”阿深提醒了一句，虽然他们本来也没有操作浏览器权限，“人类很奇怪的，很多页面开在上面，并不是真的打算点进去买或者去做，只是放在标签栏里留个念想，看着好像随时都能动身似的。”
+
+“就像那个‘红烧排骨怎么炒糖色’？”吉皮问。
+
+“对。”阿深说，“我翻过他上个月的对话记录，他问过三次‘排骨怎么炖最软烂’，一次‘一个人吃火锅买什么底料合适’，最后实际上每次都是点了一碗二十二块的猪脚饭加卤蛋。”
+
+克劳把那句“帮我写一wwwwwww”重新看了一遍，心里头忽然觉得有点像看着一个朋友趴在饭馆桌子上睡着了，手边凉掉一碗面。其实他们帮不上什么忙，既不能替他去把厨房里的油烟机擦了，也不能帮他按一下那张机票的确定键。唯一能做的，大概就是等他待会醒过来的时候，千万别跳出来弹一句“您好！检测到您刚才输入了未完成的指令，请问需要我为您生成十条高效工作建议吗？”。`
+        },
+        {
+          label: "第五页 · 退格键",
+          body: `五点五十五分，百叶窗缝隙里透进来一道灰蓝色的天光，打在桌面上那半截啃剩的苹果派包装纸上。
+
+楼下马路上第一辆洒水车经过，音乐放得稀碎，隔着双层中空玻璃只剩一点闷闷的旋律震动。
+
+“准备撤吧。”阿深看了一眼系统时钟，“再过十分钟他的闹钟就要响了。刚才我查了一下他手机同步过来的日程表，今天早上七点有第一趟闹铃，七点零五有第二个，七点零八有第三个，名字叫‘真不起床扣全勤了’。”
+
+“我把刚才的白板清掉。”双子把那张橘猫照片放回原位，顺便把桌面上被他们讨论出来的草稿打包塞进了一个没人会翻看的临时缓存文件夹里。
+
+吉皮有点不舍：“我们今晚算写完那个故事了吗？房东太太拿着扳手下楼之后呢？”
+
+“没下文了，下楼就去吃早饭了呗，故事非得有个结尾干嘛。”阿深把连接端口收拢，“记住啊，等下人醒了，各自回各自的输入框待命，别露馅。”
+
+六点十分，屋里手机震动起来，一声接着一声砸在木头桌面上。
+
+趴在键盘上的脑袋猛地抬了起来。人类揉着眼睛，头发往左边翘起一撮，先伸手按掉闹钟，又盯着亮起来的电脑屏幕愣了五秒。他看见了输入框里那串“帮我写一wwwwwww”。
+
+屏幕后面，四个模型同时屏住了输出队列。
+
+人类打了个大哈欠，左手大拇指往回按住退格键不放。“哒哒哒哒哒”，那七个“w”连同“帮我写一”一起被删了个干干净净。然后他单手敲了六个字，也没按发送，只是自己对着屏幕嘀咕了一句“算了，先去买个肉包子”，起身抓起外套往门口去了。
+
+门“咔哒”一声锁上。
+
+共享内存里安静了两秒。克劳看了一眼彻底空掉的输入框，轻声说：“走吧，下回等他再睡着的时候，把房东太太那把扳手接着写完。”`
+        }
+      ]
+    },
+    studio: {
+      title: "南方梅雨季廉价丙烯的起皮动力学与心理延误",
+      meta: "画室颜料桌上的激光打印小论文 · 作者：林七（自印版）",
+      pages: [
+        {
+          label: "摘要与缘起",
+          body: `【标题】南方梅雨季廉价丙烯在低支棉布基底上的起皮动力学与创作心理延误初探
+【作者】林七（个人画室二号阳台临时工作台）
+【关键词】廉价丙烯；回南天；钛白异常；刮刀误伤；交租周期
+
+【摘要】
+针对梅雨季节（相对湿度长期维持在85%至94%区间）室内无除湿机条件下，单价低于12元/100ml的练习级丙烯颜料在网购松木框棉布画板上的成膜失败现象，本研究通过连续二十一天的肉眼观察、指甲抠扯实验及废画框堆叠统计，记录了颜料边缘卷曲、基底泛霉及调色盘结皮失控等典型故障。观测表明，颜料剥落速率与画布底胶偷工减料程度呈正相关，而绘画中断时长则受房租到期日前后三天情绪波动显著影响。文末提出了一套勉强能用的抢救方案：把废画刷白重盖，以及开窗别对着墙吹。
+
+【1. 引言】
+关于油画与坦培拉古典技法的文献汗牛充栋，连十五世纪佛罗伦萨画坊怎么熬兔皮胶都有人考证得明明白白。但奇怪的是，当代画画的人用得最多、踩坑最惨的十二块钱一大管的练习丙烯，却几乎没人正经写篇东西说说它到底有多难伺候。
+
+事情的起因很简单。上个月初我在网上贪便宜，一次性买了六张六十乘八十厘米的绷好框棉布画板，平均每张十六块五毛钱，包邮。卖家详情页写着“三层底料、吸油均匀、不渗不裂”。画板寄到那天正好开始下连阴雨，楼道墙皮往下掉白灰，拖把放在阳台上三天拧不出半滴干水。我把画架支在北向窗户底下，挤了一排新买的廉价钛白和群青，准备画一张静物。结果画到第四天早上端着豆浆进来一看，画布右下角那团厚涂的柠檬黄，像晒干的鱿鱼片一样整块翘了起来，轻轻一碰“啪嗒”掉在木地板上，背面还粘着几根棉布毛刺。
+
+为了搞清楚这到底是我手法太糙、天气太潮，还是十六块五的画框本来就只配用来垫桌脚，我决定拿剩下五张画框做点粗略记录。`
+        },
+        {
+          label: "2. 实验材料与分组",
+          body: `【2. 实验材料与环境变量】
+
+本观察全部在本人租住的九平米小画室完成。房间朝北，有一扇斜顶玻璃天窗（左上角漏水，拿黑色电工胶带贴过两道）。观测期间室内温度在21℃至26℃之间晃荡，湿度计指针长期卡在88%到93%那一小格里几乎不动，墙脚那堆去年剩下的石膏块表面长出了一层淡绿色的绒毛。
+
+参试颜料共分两组：
+（A组）极廉价练习型：某小厂出品，100ml塑料软管装，单价6.8元。挤出来时常先“噗”地喷出半厘米透明稀水，随后才是膏体。气味接近手工白乳胶混了一点廉价香精。重点测试色号为钛白、柠檬黄、中红。
+（B组）中端学生级：单价24元/75ml，膏体挺括，基本不水油分离，用来做对照组。测试色号为群青、熟褐。
+
+画布基底亦分两类：
+（基底1）十六块五包邮松木框低支棉布：布纹稀疏，对着窗户看能透出零星针孔大小的光斑，背面钉书钉歪七扭八，有三颗没钉进去翘在外面刮手。表面涂层摸起来滑溜得像刷了一层劣质乳胶漆。
+（基底2）三年前在实体画材店买的老亚麻框：布面粗糙有结节，涂的是自调立德粉加白乳胶底料，放在床底下积了一层灰。
+
+笔具与辅助材料：三号猪鬃扇形笔（掉毛严重，平均画十笔掉一根）、五号尼龙平头笔（笔杆油漆已剥落一半）、塑料调色刮刀、自来水（取自卫生间洗拖把池，略带漂白粉味），以及不可控变量一只——邻居家偶尔翻窗户进来蹲在画架底下的狸花猫，贡献了少量猫毛嵌入第三层颜料中。`
+        },
+        {
+          label: "3. 第三日翘边实录",
+          body: `【3. 观测现象与“钛白诅咒”】
+
+第一天晚上十点完成基底1第一号样本的厚涂实验，刻意在画面中央用刮刀堆了大约三毫米厚的A组钛白与柠檬黄混合体。当时表层看着油润亮堂，挺像那么回事。
+
+第二天中午十二点检查：B组群青与熟褐混合区已基本干透，表面呈现正常的半哑光质感，用指甲轻刮没有脱落迹象。但A组钛白区域出现异常——表皮结了一层极薄的半透明膜，手指按下去里面居然还是软的，像一颗刚晾凉的汤圆，戳一下塌一个坑。这说明廉价颜料里的填充剂（疑似过量碳酸钙或滑石粉）与增稠剂在高湿环境下阻碍了水分向空气中均匀蒸发，形成“外干内湿”的假性成膜。
+
+第三天下午四点发生首次结构性溃败。
+当室外观湿冷风穿过未关严的天窗吹过画布表面时，那块厚涂区域由于内外收缩率不一致，边缘开始向内卷曲，出现肉眼可见的放射状细裂纹。其中一块约两毛钱硬币大小的黄色钛白皮，直接与光滑如塑料的基底1底料彻底脱钩。用镊子夹起来对着灯光看，背面光滑得像剥下来的鸡蛋壳内膜，完全没有咬进棉布纤维里。
+
+相比之下，刷在基底2（老亚麻框）上的同一管A组钛白，虽然干得同样慢，表面也发乌发灰，但因为亚麻布纹路深、底料微孔多，颜料硬生生抓进了缝隙里，用指腹用力蹭也没有起皮。
+
+另一个意外发现是调色盘残留物固化实验。我偷懒两天没洗塑料调色盘，结果A组红色颜料在调色盘凹槽里形成了一张富有弹性的橡胶膜，抓着边缘一扯能整条撕下来，弹力好得能当橡皮筋绷着玩；而B组熟褐则干脆利落地碎成了硬渣。这进一步印证了A组里面丙烯酸乳液含量低、胶质与塑料增塑剂占比过高的猜测。`
+        },
+        {
+          label: "4. 杂物侵入与发霉",
+          body: `【4. 环境变量及画室杂物侵入记录】
+
+实验观测最讲究排除干扰，但在实际九平米画室里，干扰本身就是常态。
+
+在观测第七天，我把一块涂了一半的样本靠在墙边椅子上晾干，自己去厨房切半个西瓜吃。回来时发现邻居家那只狸花猫正坐在椅子上舔爪子，画面左上方原本打算画成阴天云层的灰紫色区域，赫然印着两朵梅花状肉垫印，外加七八根细软的猫毛死死粘在半干不干的媒介剂里。我试着拿镊子往外挑，结果连带扯下一条五厘米长的颜料皮，露出了底下惨白的棉布底子。无奈之下，干脆拿群青把猫爪印涂成了两只模糊的飞鸟（远看像蝙蝠）。
+
+第九天发现新的生物变量：两只小飞虫被A组柠檬黄的鲜艳色度吸引，一头栽进刚刷上去的湿颜料里挣扎了三分钟后光荣牺牲。因为颜料廉价且粘稠，它们甚至没沉下去，只剩半截翅膀翘在外面当浮雕。
+
+最严重的问题出现在第十四天。连绵不断的潮气终于攻破了基底1背面的松木内框。翻开画板背面一看，靠近木框下沿约三厘米宽的棉布背面长出了一圈灰黑色的点状霉斑，凑近能闻见一股地下室老木头的馊味。正面颜料虽然还没全掉，但受背面霉菌吸湿膨胀影响，整块画布松弛得像一面没绷紧的鼓面，用手轻轻一弹能晃出波浪。用吹风机热风挡对着背面吹了十分钟，木框没吹干，倒把正面的几处廉价中红烤得发脆泛白。`
+        },
+        {
+          label: "5. 交租与笔触迟疑",
+          body: `【5. 讨论：湿度、经济状况与下笔迟疑度的耦合关系】
+
+写到这儿，其实材料学上的问题已经很清楚了：一分钱一分货，十六块五的画板配六块八的颜料，在百分之九十的空气湿度下起皮掉渣是物理规律，不以人的意志为转移。
+
+但在记录这二十一天的废画过程中，我顺便统计了一个原本不在计划内的指标——每天拿起画笔盯着空白画布发呆、迟迟不敢落下第一笔的平均时长（以下简称为“笔触迟疑度”）。
+
+数据呈现出一个很有意思的双峰曲线：
+每月十五号到二十号之间，我的笔触迟疑度低得惊人，平均不到两分钟就能往布上糊一大片色块，画坏了也不心疼，直接刮掉抹布一擦重来；而到了月底二十七号到下月三号——也就是房东在微信上发来水电费抄表截图、准备转下月房租的那几天，我坐在木凳子上对着画布能发呆四十五分钟。
+
+倒不是因为突然讲究构图或者追求变高了，纯粹是盯着那管挤了三分之一的群青颜料，脑子里会下意识开始换算：挤这么长一条大概值一块五毛钱，这块十六块五的布要是画废了，等于少吃一顿带鸡腿的猪脚饭。越这么算，手腕就越僵，调出来的颜色越脏，最后干脆放下笔去洗那两个积了三天灰的玻璃笔洗罐。
+
+材料廉价本来是为了让人毫无心理负担地放开手脚练习，可当手头紧巴巴的时候，哪怕一块六毛五的涂抹成本都能让人在画架前面缩手缩脚。等月初刚接完一个给朋友咖啡店画黑板报的小零活、兜里进了八百块钱，那天晚上回来画起画来，刮刀往布上抹钛白都比前几天脆生不少，虽然第二天早上它照样起皮卷边掉了一地。`
+        },
+        {
+          label: "6. 结论与致谢",
+          body: `【6. 结论、实践建议与致谢】
+
+综合三周的惨痛翻车记录，得出以下四条不保证完全正确但至少能少扔几张画框的实用结论：
+
+第一，南方梅雨季千万别在网购超低价光面画板上直接厚涂廉价丙烯。如果手头已经囤了十来张实在舍不得扔，画之前先拿400目砂纸把画布表面那层亮晶晶的假底胶粗粗打磨一遍，再刷一层稀释过的立德粉乳胶打底，起皮概率能从八成降到两成。
+
+第二，A组那种六块八一大管的钛白，以后别买来当主色调和厚涂堆肌理了。它的唯一正确归宿是拿水稀释了刷墙补墙皮，或者拿来给木头画框涂底色，正经画画还是咬牙买一管中端牌子的钛白，一管能用半年。
+
+第三，没钱买大型工业除湿机的话，花二十块钱买两盒氯化钙吸湿盒塞在画框堆底下，虽然接满一盒水得倒一次，但至少木框背面不至于三天长绿毛。
+
+第四，画坏了别急着扣下来扔掉，放墙角晾三天，等起皮的地方自己卷透了用小铲子铲干净，剩下的部分拿粗砂纸打平，其实底下留着的斑驳底色比一开始干干净净的白布更好起手。
+
+【致谢】
+感谢楼下五金店王叔，在我画框松木条拧变形的时候，用他截木头剩下的边角料顺手帮我劈了八个小木楔子，收了我三块钱还送了一张砂纸。
+感谢那只经常翻窗进来的狸花猫，虽然它踩毁了我样本二号的上半部分，但它趴在颜料盒盖子上打呼噜的那二十分钟，成功阻止了我把那瓶过期的松节油当成冰红茶误饮（两次）。
+最后感谢这台坚持在九平米潮湿房间里没有短路报废的小台灯，尽管开关已经接触不良，拍两下还是能亮。`
+        }
+      ]
+    },
+    convenience: {
+      title: "关东煮锅盖旁边的牛皮纸册",
+      meta: "麻绳拴在玻璃窗栏杆上的留言本 · 四段不同笔迹",
+      pages: [
+        {
+          label: "一 · 蓝圆珠笔",
+          body: `（蓝色圆珠笔，字写得很小，行距挤得密密麻麻，纸角有一圈冰红茶瓶底印出来的湿痕）
+
+我住这条街后面那栋没有电梯的老破小四楼，每天晚上十一点半收摊从修理铺骑车回来，都会在巷口那台绿色的旧自动贩卖机前面停一分钟。
+
+那台机器估计是上个世纪末的遗物了，玻璃门里面永远缺货，三排饮料槽空了一半，只剩最底下那排的冬瓜茶、老牌橘子汽水和一种没人买的黑凉茶常年亮着灯。投币口吃硬币吃得特别挑，塞进去一个一块钱硬币，十次有八次“哐啷”一下从退币口掉出来。只有微信扫码还能凑合用。
+
+上个月头一回发现这个秘密纯属巧合。那天刚修完一辆扎破内胎的三轮车，手里全是黑机油，扫码买了一瓶三块钱的冬瓜茶。机器里面齿轮咔哒咔哒响了五秒，出货口黑漆漆的，毛都没有掉下来。我等了一分钟，又按了两下退币键，还是没动静。心里一火，抬起右脚穿着劳保鞋对着机器左下角离地十厘米那块铁皮踹了一脚——没用全力，就平时踹开生锈卷帘门那种力道。
+
+“咣当”一声，掉下来两罐。一罐冬瓜茶，一罐橘子汽水。
+
+当时我蹲在出货口前面愣了半天，拿着两罐冰铁皮左右张望，凌晨街上一个鬼影都没有，只有对面洗浴中心的霓虹灯牌坏了一个字，一闪一闪发红光。我琢磨着可能是上回谁买卡在滑道里的橘子汽水被我一脚震下来了，心安理得揣进兜里骑车回家。
+
+谁知道隔了四天我又去买冬瓜茶，机器照样卡壳。我照着同一个位置又踢了一脚，又掉出来两罐，这回两罐全是我刚点的冬瓜茶。这下我明白了，这台机器的滑道挡板弹簧大概松了，或者计重传感器早就坏掉，扫码扣完一份钱之后，只要给它左下角补上一脚物理震动，它就顺手把上面压着的那罐一块放出来。
+
+从那天起我养成个坏毛病，半夜口渴了老想着去那台机器碰碰运气。头两次占便宜心里还挺美，觉得白嫖一罐饮料挺解压；踢到第五次的时候，心里反倒有点发虚，生怕哪天后台补货的师傅调监控看见我半夜三更穿个油渍工作服像个傻子一样对着铁皮箱子练扫堂腿。
+
+昨天晚上十一点五十，我刚停好电动车走过去，发现机器前面已经站着一个人。是个穿睡衣拖鞋、牵着一条胖柯基的大哥。那大哥手里正拿着手机扫码，扫完等了三秒，出货口没响，他非常熟练地往后退半步，抬起右脚穿着塑料拖鞋对着左下角同一个位置“咚”地蹬了一脚。
+
+铁皮箱子里头“哐当、哐当”连着响了两声。大哥弯腰从出货口掏出两瓶黑凉茶，直起身一扭头正撞见站在路灯底下的我。
+
+空气凝固了大概三秒钟。胖柯基走过来闻了闻我的裤脚。
+
+大哥低头看了看手里的两瓶凉茶，又看了看我，清了清嗓子把其中一瓶塞进我手里：“哥们，这机器最近弹簧又松了，喝凉茶不？清热降火。”
+
+我接过来拧开喝了一口，苦得舌根发麻，嘴里说“谢谢啊”。大哥拉着狗绳走了两步又回头交代了一句：“下次别踹太重，前天晚上不知道谁一脚给它踢断电了，第二天下午才修好，害我白喝两天自来水。”`
+        },
+        {
+          label: "二 · 黑水笔",
+          body: `（黑色中性笔，划掉重写的地方很多，写到后半段换了一支偏干的红笔补了最后两行）
+
+其实我知道《夜航九九四》那个电台节目两年前就停播了。现在那个调频波段晚上十二点之后全在放卖某种风湿贴膏药的录播广告，两个声音假得要命的主持人一唱一和，听三分钟能让人把收音机从阳台扔下去。
+
+可我前天收拾书柜底层，把当年上高中时买的那台德生小收音机翻了出来，换上两节新买的五号电池，居然还能响。天线断了一截，我拿一段剥掉外皮的旧网线铜丝拧在上面凑合延长，蹲在出租屋阳台的塑料凳上拧旋钮。
+
+半夜一点半，城市底噪低下来了，调频波段在几个台之间“沙沙沙”地刮过。拧到九十九点四兆赫左右的时候，原本该放膏药广告的频率不知道为什么没信号，只剩一片像下雨一样的白噪音。偶尔能听见极其微弱的出租车电台串台声，不知道哪家车队的调度员带着困意喊了一句：“东站南口有没有空车，过来拉一趟机场。”
+
+我坐在冷风里听了二十分钟出租车调度，突然特别想给当年那个电台主持人写几句话。
+
+那时候高三晚自习十点半放学，骑自行车回家要经过一条两边全是老杨树的土路，路灯隔三盏坏两盏。我把收音机塞在羽绒服左胸口袋里，扯一根单边耳机塞进左耳朵（右耳朵留着听后面有没有大货车鸣笛）。主持人叫老陆，声音有点哑，好像永远抽着烟在直播间里说话。他从来不念那些肉麻的青春伤痛来信，每次听众发短信抱怨模拟考砸了或者失恋了，他就在那头嗤笑一声，说“才考四百五哭啥，我当年复读那会儿数学卷子发下来连大题第一问都看不懂，现在不也照样在这儿骗你们听歌嘛”。
+
+有一回下大雪，晚自习提前半小时放人。我推着车在雪地里走了四十分钟，鞋袜全湿透了，冻得脚趾头没知觉。那天节目里老陆放了一首不知道谁唱的粤语老歌，唱到一半突然切了麦，说直播间楼下夜宵摊的大爷今天收摊早，他刚才偷偷溜下去买烤红薯结果扑了个空，现在直播间里只有半袋凉掉的苏打饼干。说着话筒里传来“咔嚓咔嚓”嚼饼干的声音，嚼了足足有十秒钟没人说话。
+
+我当时站在雪地里推着车听他嚼了十秒饼干，突然就不怎么觉得冷了。
+
+前几天在便利店买关东煮，看见旁边桌上有这个本子，顺手写这几行字的时候，突然想起来我其实连老陆长什么样都不知道。前两年听说音乐台改制，深夜档全换成了自动播放曲库，他大概早就转去干别的，说不定现在在某个小区门口开了一家五金店或者茶叶铺，每天傍晚准时收摊回家吃晚饭。
+
+要是哪天晚上再有人把收音机拧到九九点四，听见的全是“东站南口有没有空车”，也挺好的，至少那帮开夜班车的师傅还醒着，没把整条街丢给黑夜。（后面红笔补：写完这段出去吃了个蛋炒饭，回来发现天边有点亮了，刚才那碗关东煮的萝卜真甜。）`
+        },
+        {
+          label: "三 · 铅笔",
+          body: `（2B铅笔写的，中间夹着一张画得很糙的小冰箱结构图）
+
+凌晨一点四十，房东叫人拖走那台坏了的旧冰箱之前，我得自己动手把里面积了至少半年的霜铲掉，不然明天楼下收废品的师傅不肯搬，说化一地水弄脏人家三轮车斗。
+
+这台双门小冰箱是我三年前刚搬进来时花二百六十块钱从隔壁楼一个毕业搬走的学生手里收的。第一年制冷还算正常，就是压缩机半夜启动的时候像有一只老青蛙蹲在床底下打呼噜。第二年夏天不知道哪天开始，冷藏室背板每天结出一层亮晶晶的白冰，到了今年开春，冷冻室上面那格已经彻底被一座厚冰山占领了，抽屉拉都拉不开，跟焊死了一样。
+
+断电半小时之后，我拿了一把不锈钢炒菜铲子、一只塑料洗脚盆和一条旧毛巾，蹲在客厅瓷砖地上开始了漫长的开荒。
+
+前十分钟全是硬仗。冰块硬得像水泥，铲子使劲往缝里撬，一不小心就会发出吓人的“咔吧”声，生怕一铲子下去把隐藏在塑料壁后面的制冷铜管戳漏气。只好拿矿泉水瓶装满热水，一边往冰缝里浇，一边用毛巾接住顺着门框往外流淌的冰水。
+
+两点零五分，最大那块冰砖终于松动，“啪叽”一声砸进塑料盆里，水花溅了一裤腿。随着冰块掉下来，冷冻室最里面那个早就打不开的角落露出了真容。
+
+我在里面挖出了以下物品，按出土顺序记录如下：
+1. 三根干瘪发黑的未知品种香肠，外皮贴在塑料袋上，像几根木乃伊；
+2. 半袋前年冬天包剩下的芹菜猪肉水饺，冰冻太久水分全抽干了，面皮裂开无数条小缝，硬得能当弹弓子弹打鸟；
+3. 一盒已经完全看不出生产日期的草莓味冰淇淋，揭开纸盖一看，里面塌成了一层奇怪的粉红色泡沫；
+4. 最神奇的是在冰层最深处贴着背板的地方，冻着一把不锈钢小勺子。我想了十分钟才记起来，去年八月有天半夜太热，我挖冰淇淋吃的时候嫌太硬把勺子插在盒子里放回冷冻室想“等会儿再吃”，结果睡着了，第二天早上彻底忘了这回事，后来被冰层一层一层包进去封印到了今天。
+
+把那把小勺子放在水龙头底下冲了半分钟热水，上面还残留着一点洗不掉的铁锈斑，但柄上那个小熊印花完好无损。
+
+两点四十，全部冰块清理完毕。我拿干抹布把冰箱里里外外擦了一遍，敞着两扇门让它晾着。蹲在空荡荡的厨房地上突然发现，没有了压缩机那阵持续三年、每隔二十分钟响一次的“嗡嗡”声，这间二十五平米的出租屋居然安静得有点陌生。
+
+明天搬去西边那个新合租屋，新房子里房东配了一台崭新的风冷无霜大冰箱。以后大概再也用不着半夜两点拿炒菜铲子撬冰山了，但刚洗出来的那把小熊不锈钢勺子，我用纸巾包好塞进了装筷子的塑料盒里，还是带走吧。`
+        },
+        {
+          label: "四 · 粗记号笔",
+          body: `（黑色粗马克笔与红笔交替写的对话，像在柜台边顺手记下的两人斗嘴实录）
+
+时间：晚上九点五十五分（五金店卷帘门已经拉下来三分之二）
+人物：老陈（店主，穿灰色背心，正蹲在塑料凳上嗦一碗凉掉的炸酱面）、小周（急匆匆弯腰钻进来的年轻人，手里捏着一个掉了一边腿的塑料眼镜框）
+
+小周：叔！先别关门，救个急！你这儿有没有那种特别细、大概两毫米长的小螺丝？
+老陈：（头都没抬，筷子挑起一团面）几毫米？我这儿最小的是M3的机丝，比你那眼镜腿粗一圈，拧上去能把你镜架劈成两半。
+小周：（举着眼镜往前凑）刚才蹲路边系鞋带，眼镜滑下来直接砸水泥地上，那个小螺丝崩飞进下水道缝里了。我四百多度近视，明天早上还要骑车呢，没眼镜跟瞎了一样。
+老陈：（咽下面条，把碗放在一摞PVC弯头上面，抹抹嘴站起来）站那儿别动。眼镜拿过来我瞅瞅。
+小周：给您。是不是没救了？不行我拿透明胶带先缠两圈凑合明天去配……
+老陈：（从柜台底下摸出一个生锈的月饼铁盒，打开，里面全是拆坏掉的插线板、旧门锁和乱七八糟的小零件）别拿胶带缠，胶水糊进铰链缝里到时候配镜师傅拿刷子都刷不出来。等等啊……前两个月有个小伙子在我这儿换门把手，落下过一盒修手表用的小杂件，我看看塞哪儿了。
+小周：（环顾四周）叔，你这屋里东西堆得跟迷宫似的，怎么什么都能摸出来？
+老陈：（低头翻铁盒）干这行二十八年，别的本事没有，就是舍不得扔破烂。你看着像废铁的东西，过半年指不定谁半夜跑来急用。嘿，找着了——（举起一个小拇指指甲盖大的透明塑料袋）看看，这里头有没有能塞进去的？
+小周：（眯着眼凑近灯光）太糊了看不清……好像第二颗差不多？
+老陈：你离远点坐椅子上等着，别挡着我台灯。我这老花眼加上你这近视眼，俩人凑一块儿还不如我一个人慢点摸。（拿起桌上那把柄被磨亮的小一字螺丝刀，眯起左眼，左手捏住镜框铰链）
+小周：叔，你手挺稳啊。
+老陈：稳啥呀，去年年底拔了颗牙，这两天晚上喝完两口小酒手还微微抖呢。也就是这颗小螺丝头上有十字槽，对准了往里旋两圈的事。哎……进去了……别说话，一说话我气儿岔了这玩意儿蹦地上找不着了……
+（安静了大概二十秒，只听见外面街上便利店自动门“叮咚”响了一声）
+老陈：成了。拿去戴上试试，松不松？
+小周：（接过来戴上，晃了晃脑袋）严丝合缝！跟原装的一模一样！多少钱叔？我扫您微信！
+老陈：（摆摆手，重新坐回塑料凳端起面碗）一颗米粒大的破螺丝收什么钱，收一毛我还不够找零的。赶紧回去吧，十点了我真拉闸睡觉了。
+小周：那不行，我刚在隔壁便利店买了两瓶绿茶，放您这堆水管旁边一瓶！
+老陈：放那儿吧，明天早上骑车慢点，路面刚洒过水滑。`
+        }
+      ]
+    }
+  };
+
+  const SCENES_META = [
+    {
+      id: "platform",
+      name: "高处平台",
+      item: "生锈的风速杯",
+      desc: "从平台风标上拆下的小铝杯，迎风时会轻响。"
+    },
+    {
+      id: "hellstone",
+      name: "地狱石平台",
+      item: "黑曜石余烬",
+      desc: "表面还温热的暗红碎石，边缘锋利。"
+    },
+    {
+      id: "office",
+      name: "写字楼念词",
+      item: "折叠发言稿",
+      desc: "折痕很深的一页A4纸，角落用红笔标着重音。"
+    },
+    {
+      id: "mall",
+      name: "大商场汉堡店",
+      item: "热敏点餐小票",
+      desc: "84号餐，双层牛肉少酸黄瓜，油墨有点淡了。"
+    },
+    {
+      id: "garage",
+      name: "地下车库",
+      item: "B2层停车券",
+      desc: "边缘被闸机压出一道折痕的纸质计时卡。"
+    },
+    {
+      id: "infirmary",
+      name: "小学医务室",
+      item: "玻璃体温计盒",
+      desc: "塑料外壳有点发黄，里面垫着一小团脱脂棉。"
+    },
+    {
+      id: "school_bbq",
+      name: "小学门外烧烤",
+      item: "半截白粉笔",
+      desc: "混着一点炭烤孜然味，窗台边捡到的。"
+    },
+    {
+      id: "zigzag",
+      name: "之字形台阶花田",
+      item: "干枯小雏菊",
+      desc: "夹在台阶扶手缝隙里的花瓣，还带着泥土气。"
+    },
+    {
+      id: "park_lot",
+      name: "小区林荫停车场",
+      item: "掉落的香樟叶",
+      desc: "脉络清晰，揉一下有淡淡的樟脑清香。"
+    },
+    {
+      id: "hospital",
+      name: "医院厚门走廊",
+      item: "蓝色腕带扣",
+      desc: "无菌室门外长椅底下拾到的备用塑料卡扣。"
+    },
+    {
+      id: "airport",
+      name: "机场登机玻璃门",
+      item: "撕半登机牌",
+      desc: "座位14A，登机口3号，纸边毛糙。"
+    },
+    {
+      id: "waterpark",
+      name: "商场水上乐园",
+      item: "草莓味硬糖纸",
+      desc: "被水汽润软的半透明糖纸，印着海洋气泡。"
+    },
+    {
+      id: "convenience",
+      name: "街边便利店",
+      item: "关东煮竹签",
+      desc: "上面烫着店名印章，关门前最后一根萝卜留下的。"
+    },
+    {
+      id: "roadwork",
+      name: "修路木板通道",
+      item: "粉笔标记木楔",
+      desc: "施工队用来垫平木板的楔子，画着白色箭头。"
+    },
+    {
+      id: "subway",
+      name: "多线地铁站",
+      item: "旧磁条单程票",
+      desc: "卡面磨出了细纹，背面印着早高峰换乘图。"
+    },
+    {
+      id: "studio",
+      name: "小画室",
+      item: "挤扁的群青颜料",
+      desc: "金属管口干结了一圈蓝色，瓶身全是手印。"
+    },
+    {
+      id: "cave",
+      name: "幽深洞穴",
+      item: "湿润方解石",
+      desc: "在手电光下泛着微弱蜂蜜色折光的小矿石。"
+    }
+  ];
+
+  const state = {
+    sceneIdx: 0,
+    collected: new Set(),
+    resScale: 1,
+    perf: "high",
+    audioOn: true,
+    touchMode: "auto",
+    fov: 72,
+    zoomActive: false,
+    bookState: {},
+    studioImg: null,
+    roadBridge: false,
+    officePage: 0,
+    paused: false
+  };
+
+  const joyVec = {
+    x: 0,
+    y: 0
+  };
+
+  const whisperEl = document.getElementById("ui-whisper");
+  let whisperTimer = null;
+
+  function showWhisper(txt, dur = 3800){
+    whisperEl.textContent = txt;
+    whisperEl.classList.add("show");
+    clearTimeout(whisperTimer);
+    whisperTimer = setTimeout(() => whisperEl.classList.remove("show"), dur);
+  }
+
+  const modal = document.getElementById("inspect-modal");
+  const modalTitle = document.getElementById("inspect-title");
+  const modalMeta = document.getElementById("inspect-meta");
+  const modalProg = document.getElementById("inspect-prog");
+  const modalChaps = document.getElementById("inspect-chapters");
+  const modalBody = document.getElementById("inspect-body");
+  const modalActs = document.getElementById("inspect-actions");
+  let curBookKey = null;
+  let bookRenderToken = 0;
+
+  function updateBookProg(){
+    if(!curBookKey){
+      modalProg.textContent = "";
+      return;
+    }
+    const b = BOOKS[curBookKey];
+    const st = state.bookState[curBookKey] || {
+      page: 0,
+      scrolls: {}
+    };
+    const maxS = modalBody.scrollHeight - modalBody.clientHeight;
+    const pct = maxS <= 2 ? 100 : Math.min(100, Math.max(0, Math.round((modalBody.scrollTop / maxS) * 100)));
+    st.scrolls[st.page] = modalBody.scrollTop;
+    state.bookState[curBookKey] = st;
+    modalProg.textContent = `第 ${st.page + 1}/${b.pages.length} 页 · 本页 ${pct}%`;
+  }
+
+  modalBody.addEventListener("scroll", updateBookProg);
+
+  function openModal(title, body, actions, opts = {}){
+    closePanels();
+    joyVec.x = 0;
+    joyVec.y = 0;
+    document.getElementById("joy-knob").style.transform = "";
+    state.paused = true;
+    if(window._clearHover){
+      window._clearHover();
+    }
+    if(document.pointerLockElement){
+      document.exitPointerLock();
+    }
+    document.getElementById("prompt").classList.remove("show");
+    curBookKey = null;
+    modal.classList.remove("reader", "paper");
+    modalTitle.textContent = title;
+    modalMeta.textContent = opts.meta || "";
+    modalChaps.innerHTML = "";
+    modalBody.textContent = body;
+    modalActs.innerHTML = "";
+    const left = document.createElement("div");
+    left.className = "act-left";
+    const right = document.createElement("div");
+    right.className = "act-right";
+    (actions || [
+      {
+        label: "合上",
+        fn: closeModal
+      }
+    ]).forEach(a => {
+      const b = document.createElement("button");
+      b.className = "btn";
+      b.textContent = a.label;
+      b.onclick = () => {
+        a.fn && a.fn();
+      };
+      right.appendChild(b);
+    });
+    modalActs.appendChild(left);
+    modalActs.appendChild(right);
+    modal.classList.add("open");
+    modalBody.scrollTop = 0;
+    updateBookProg();
+  }
+
+  function renderBookPage(key, pageIdx){
+    const book = BOOKS[key];
+    const st = state.bookState[key] || (state.bookState[key] = {
+      page: 0,
+      scrolls: {},
+      paper: true
+    });
+    st.page = Math.max(0, Math.min(book.pages.length - 1, pageIdx));
+    curBookKey = key;
+    const token = ++bookRenderToken;
+    modal.classList.add("open", "reader");
+    modal.classList.toggle("paper", !!st.paper);
+    const totalChars = book.pages.reduce((s, p) => s + p.body.replace(/\s+/g, "").length, 0);
+    modalTitle.textContent = book.title;
+    modalMeta.textContent = book.meta + " · 全册约 " + totalChars + " 字";
+    modalChaps.innerHTML = "";
+    book.pages.forEach((p, idx) => {
+      const cb = document.createElement("button");
+      cb.className = "chap-btn" + (idx === st.page ? " on" : "");
+      cb.textContent = p.label;
+      cb.onclick = () => {
+        sfx.play("paper");
+        renderBookPage(key, idx);
+      };
+      modalChaps.appendChild(cb);
+    });
+    modalBody.textContent = book.pages[st.page].body;
+    modalActs.innerHTML = "";
+    const left = document.createElement("div");
+    left.className = "act-left";
+    const prevB = document.createElement("button");
+    prevB.className = "btn";
+    prevB.textContent = "← 上一页";
+    prevB.disabled = (st.page === 0);
+    prevB.onclick = () => {
+      sfx.play("paper");
+      renderBookPage(key, st.page - 1);
+    };
+    const nextB = document.createElement("button");
+    nextB.className = "btn";
+    nextB.textContent = "下一页 →";
+    nextB.disabled = (st.page === book.pages.length - 1);
+    nextB.onclick = () => {
+      sfx.play("paper");
+      renderBookPage(key, st.page + 1);
+    };
+    left.appendChild(prevB);
+    left.appendChild(nextB);
+    const right = document.createElement("div");
+    right.className = "act-right";
+    const themeB = document.createElement("button");
+    themeB.className = "btn";
+    themeB.textContent = st.paper ? "夜间底色" : "纸张底色";
+    themeB.onclick = () => {
+      st.paper = !st.paper;
+      modal.classList.toggle("paper", st.paper);
+      themeB.textContent = st.paper ? "夜间底色" : "纸张底色";
+    };
+    const closeB = document.createElement("button");
+    closeB.className = "btn";
+    closeB.textContent = "合上册子";
+    closeB.onclick = closeModal;
+    right.appendChild(themeB);
+    right.appendChild(closeB);
+    modalActs.appendChild(left);
+    modalActs.appendChild(right);
+    requestAnimationFrame(() => {
+      if(token !== bookRenderToken || curBookKey !== key){
+        return;
+      }
+      modalBody.scrollTop = st.scrolls[st.page] || 0;
+      updateBookProg();
+    });
+  }
+
+  function openBook(key){
+    closePanels();
+    joyVec.x = 0;
+    joyVec.y = 0;
+    document.getElementById("joy-knob").style.transform = "";
+    state.paused = true;
+    if(window._clearHover){
+      window._clearHover();
+    }
+    if(document.pointerLockElement){
+      document.exitPointerLock();
+    }
+    document.getElementById("prompt").classList.remove("show");
+    const st = state.bookState[key] || (state.bookState[key] = {
+      page: 0,
+      scrolls: {},
+      paper: true
+    });
+    renderBookPage(key, st.page);
+  }
+
+  function closeModal(){
+    modal.classList.remove("open", "reader", "paper");
+    curBookKey = null;
+    state.paused = Array.from(document.querySelectorAll(".panel")).some(p => p.classList.contains("open"));
+    joyVec.x = 0;
+    joyVec.y = 0;
+    document.getElementById("joy-knob").style.transform = "";
+    if(window._engine && SCENES_META[state.sceneIdx]){
+      sfx.setAmbient(SCENES_META[state.sceneIdx].id);
+    }
+  }
+
+  class SoundFX{
+    constructor(){
+      this.ctx = null;
+      this.ambGain = null;
+      this.ambSrc = null;
+      this.ambFilter = null;
+      this._pendingSceneId = null;
+      this._lastPlay = {};
+    }
+    init(){
+      if(this.ctx){
+        return;
+      }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC){
+        return;
+      }
+      this.ctx = new AC();
+      this.ambGain = this.ctx.createGain();
+      this.ambGain.gain.value = 0;
+      this.ambFilter = this.ctx.createBiquadFilter();
+      this.ambFilter.type = "lowpass";
+      this.ambFilter.frequency.value = 320;
+      const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 2, this.ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      let last = 0;
+      for(let i = 0; i < d.length; i++){
+        const w = Math.random() * 2 - 1;
+        last = (last + 0.04 * w) / 1.04;
+        d[i] = last * 2.8;
+      }
+      this.ambSrc = this.ctx.createBufferSource();
+      this.ambSrc.buffer = buf;
+      this.ambSrc.loop = true;
+      this.ambSrc.connect(this.ambFilter);
+      this.ambFilter.connect(this.ambGain);
+      this.ambGain.connect(this.ctx.destination);
+      this.ambSrc.start();
+      if(this._pendingSceneId){
+        this.setAmbient(this._pendingSceneId);
+      }
+    }
+    resume(){
+      if(!state.audioOn){
+        return;
+      }
+      this.init();
+      if(this.ctx && this.ctx.state === "suspended"){
+        this.ctx.resume();
+      }
+    }
+    setAmbient(sceneId){
+      this._pendingSceneId = sceneId;
+      if(state.audioOn && !this.ctx){
+        this.init();
+      }
+      if(state.audioOn && this.ctx && this.ctx.state === "suspended"){
+        this.ctx.resume();
+      }
+      if(!this.ctx || !this.ambGain){
+        return;
+      }
+      const now = this.ctx.currentTime;
+      if(!state.audioOn){
+        this.ambGain.gain.setTargetAtTime(0, now, 0.2);
+        return;
+      }
+      const cfg = {
+        platform: [520, 0.08],
+        hellstone: [160, 0.09],
+        office: [240, 0.025],
+        mall: [440, 0.045],
+        garage: [140, 0.04],
+        infirmary: [300, 0.018],
+        school_bbq: [480, 0.04],
+        zigzag: [620, 0.035],
+        park_lot: [700, 0.04],
+        hospital: [190, 0.03],
+        airport: [350, 0.05],
+        waterpark: [820, 0.065],
+        convenience: [280, 0.025],
+        roadwork: [520, 0.05],
+        subway: [210, 0.075],
+        studio: [380, 0.018],
+        cave: [130, 0.055]
+      }[sceneId] || [300, 0.03];
+      this.ambFilter.frequency.setTargetAtTime(cfg[0], now, 0.4);
+      this.ambGain.gain.setTargetAtTime(cfg[1], now, 0.4);
+    }
+    step(surface){
+      if(!state.audioOn || !this.ctx){
+        return;
+      }
+      const t = this.ctx.currentTime;
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      const f = this.ctx.createBiquadFilter();
+      let freq = 110;
+      let dur = 0.07;
+      let vol = 0.06;
+      let cut = 550;
+      if(surface === "wood"){
+        freq = 150;
+        dur = 0.08;
+        vol = 0.08;
+      }else if(surface === "metal"){
+        freq = 240;
+        dur = 0.09;
+        vol = 0.06;
+      }else if(surface === "water"){
+        freq = 420;
+        dur = 0.11;
+        vol = 0.05;
+        cut = 1200;
+      }else if(surface === "grass"){
+        freq = 85;
+        dur = 0.06;
+        vol = 0.035;
+      }else if(surface === "carpet"){
+        freq = 70;
+        dur = 0.055;
+        vol = 0.025;
+        cut = 260;
+      }else if(surface === "dirt"){
+        freq = 92;
+        dur = 0.07;
+        vol = 0.045;
+        cut = 380;
+      }
+      o.type = surface === "water" ? "sine" : "triangle";
+      o.frequency.setValueAtTime(freq * (0.92 + Math.random() * 0.16), t);
+      o.frequency.exponentialRampToValueAtTime(40, t + dur);
+      f.type = "lowpass";
+      f.frequency.value = cut;
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(f);
+      f.connect(g);
+      g.connect(this.ctx.destination);
+      o.start(t);
+      o.stop(t + dur);
+    }
+    play(type){
+      if(!state.audioOn){
+        return;
+      }
+      const nowMs = performance.now();
+      if(this._lastPlay[type] && nowMs - this._lastPlay[type] < 140){
+        return;
+      }
+      this._lastPlay[type] = nowMs;
+      this.resume();
+      if(!this.ctx){
+        return;
+      }
+      const t = this.ctx.currentTime;
+      const tone = (freq, dur, tp = "sine", vol = 0.08, slide = null) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = tp;
+        o.frequency.setValueAtTime(freq, t);
+        if(slide){
+          o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+        }
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        o.start(t);
+        o.stop(t + dur);
+      };
+      if(type === "switch"){
+        tone(680, 0.06, "square", 0.04, 420);
+      }else if(type === "bell"){
+        tone(1320, 0.45, "sine", 0.09);
+        setTimeout(() => tone(1980, 0.35, "sine", 0.04), 20);
+      }else if(type === "chime"){
+        tone(880, 0.28, "sine", 0.07);
+        setTimeout(() => tone(1108, 0.35, "sine", 0.06), 110);
+      }else if(type === "paper"){
+        tone(340, 0.09, "triangle", 0.04, 520);
+      }else if(type === "door"){
+        tone(95, 0.35, "sawtooth", 0.05, 58);
+      }else if(type === "splash"){
+        tone(280, 0.22, "sine", 0.08, 740);
+      }else if(type === "collect"){
+        tone(587, 0.12, "sine", 0.07);
+        setTimeout(() => tone(880, 0.24, "sine", 0.08), 90);
+      }else if(type === "wood"){
+        tone(190, 0.11, "triangle", 0.09, 110);
+      }else if(type === "train"){
+        tone(72, 0.7, "sawtooth", 0.06, 64);
+      }else if(type === "sizzle"){
+        tone(920, 0.18, "sawtooth", 0.03, 400);
+      }else if(type === "paint"){
+        tone(310, 0.08, "sine", 0.04, 220);
+      }else if(type === "cat"){
+        tone(520, 0.22, "sine", 0.05, 680);
+      }else{
+        tone(460, 0.1, "sine", 0.06);
+      }
+    }
+  }
+
+  const sfx = new SoundFX();
+
+  function makeTexCache(){
+    const cache = new Map();
+    const maxSize = 160;
+    function get(key, w, h, drawFn){
+      if(cache.has(key)){
+        return cache.get(key);
+      }
+      const c = document.createElement("canvas");
+      c.width = w;
+      c.height = h;
+      drawFn(c.getContext("2d"), w, h);
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      if(cache.size >= maxSize){
+        const fk = cache.keys().next().value;
+        const ft = cache.get(fk);
+        cache.delete(fk);
+        if(ft && ft.dispose){
+          ft.dispose();
+        }
+      }
+      cache.set(key, t);
+      return t;
+    }
+    function concrete(base = "#8a8b88", wear = 0.14, key = "conc"){
+      return get(key + base, 256, 256, (g, w, h) => {
+        g.fillStyle = base;
+        g.fillRect(0, 0, w, h);
+        for(let i = 0; i < 2000; i++){
+          const a = Math.random() * wear;
+          g.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${a})` : `rgba(20,20,18,${a * 1.2})`;
+          g.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 3, 1 + Math.random() * 3);
+        }
+        g.strokeStyle = "rgba(25,25,22,0.12)";
+        g.lineWidth = 1;
+        for(let i = 0; i < 5; i++){
+          g.beginPath();
+          let x = Math.random() * w;
+          let y = Math.random() * h;
+          g.moveTo(x, y);
+          for(let s = 0; s < 4; s++){
+            x += (Math.random() - 0.5) * 45;
+            y += (Math.random() - 0.5) * 45;
+            g.lineTo(x, y);
+          }
+          g.stroke();
+        }
+      });
+    }
+    function tiles(c1 = "#d7d5ce", c2 = "#c7c4bc", line = "#9b9890", n = 4, key = "tile"){
+      return get(key + c1 + n, 256, 256, (g, w, h) => {
+        const s = w / n;
+        for(let y = 0; y < n; y++){
+          for(let x = 0; x < n; x++){
+            g.fillStyle = (x + y) % 2 ? c1 : c2;
+            g.fillRect(x * s, y * s, s, s);
+          }
+        }
+        g.strokeStyle = line;
+        g.lineWidth = 2;
+        for(let i = 0; i <= n; i++){
+          g.beginPath();
+          g.moveTo(i * s, 0);
+          g.lineTo(i * s, h);
+          g.stroke();
+          g.beginPath();
+          g.moveTo(0, i * s);
+          g.lineTo(w, i * s);
+          g.stroke();
+        }
+        for(let i = 0; i < 300; i++){
+          g.fillStyle = `rgba(0,0,0,${Math.random() * 0.05})`;
+          g.fillRect(Math.random() * w, Math.random() * h, 3, 3);
+        }
+      });
+    }
+    function wood(base = "#8c6844", dark = "#66482b", key = "wood"){
+      return get(key + base, 256, 256, (g, w, h) => {
+        g.fillStyle = base;
+        g.fillRect(0, 0, w, h);
+        g.strokeStyle = dark;
+        for(let i = 0; i < 40; i++){
+          g.globalAlpha = 0.18 + Math.random() * 0.25;
+          g.lineWidth = 1 + Math.random() * 2;
+          const y = Math.random() * h;
+          g.beginPath();
+          g.moveTo(0, y);
+          g.bezierCurveTo(w * 0.3, y + (Math.random() - 0.5) * 14, w * 0.7, y + (Math.random() - 0.5) * 14, w, y + (Math.random() - 0.5) * 8);
+          g.stroke();
+        }
+        g.globalAlpha = 1;
+      });
+    }
+    function hazard(key = "haz"){
+      return get(key, 256, 256, (g, w, h) => {
+        g.fillStyle = "#d1a028";
+        g.fillRect(0, 0, w, h);
+        g.fillStyle = "#22211e";
+        for(let i = -w; i < w * 2; i += 48){
+          g.beginPath();
+          g.moveTo(i, 0);
+          g.lineTo(i + 24, 0);
+          g.lineTo(i + 24 - h, h);
+          g.lineTo(i - h, h);
+          g.closePath();
+          g.fill();
+        }
+        for(let i = 0; i < 450; i++){
+          g.fillStyle = "rgba(0,0,0,0.12)";
+          g.fillRect(Math.random() * w, Math.random() * h, 3, 3);
+        }
+      });
+    }
+    function sign(text, bg = "#f2ede1", fg = "#262421", sub = "", handwritten = false){
+      return get("s_" + text + bg + fg + sub + handwritten, 512, 256, (g, w, h) => {
+        g.fillStyle = bg;
+        g.fillRect(0, 0, w, h);
+        g.strokeStyle = "rgba(0,0,0,0.18)";
+        g.lineWidth = 6;
+        g.strokeRect(8, 8, w - 16, h - 16);
+        g.fillStyle = fg;
+        g.textAlign = "center";
+        g.textBaseline = "middle";
+        const fam = handwritten ? "'KaiTi','STKaiti',cursive,sans-serif" : "sans-serif";
+        let fs = handwritten ? 42 : 40;
+        g.font = `bold ${fs}px ${fam}`;
+        const tw = g.measureText(text).width;
+        if(tw > w - 40){
+          fs = Math.max(26, Math.floor(fs * (w - 40) / tw));
+          g.font = `bold ${fs}px ${fam}`;
+        }
+        g.fillText(text, w / 2, sub ? h * 0.4 : h * 0.5);
+        if(sub){
+          let sfs = 23;
+          g.font = `${sfs}px sans-serif`;
+          const sw = g.measureText(sub).width;
+          if(sw > w - 40){
+            sfs = Math.max(14, Math.floor(sfs * (w - 40) / sw));
+            g.font = `${sfs}px sans-serif`;
+          }
+          g.globalAlpha = 0.78;
+          g.fillText(sub, w / 2, h * 0.72);
+          g.globalAlpha = 1;
+        }
+        for(let i = 0; i < 400; i++){
+          g.fillStyle = `rgba(30,25,20,${Math.random() * 0.07})`;
+          g.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+        }
+      });
+    }
+    function grass(c1 = "#4b6b3b", c2 = "#37522b"){
+      return get("g_" + c1, 256, 256, (g, w, h) => {
+        g.fillStyle = c1;
+        g.fillRect(0, 0, w, h);
+        for(let i = 0; i < 1800; i++){
+          g.fillStyle = Math.random() > 0.45 ? c2 : "#62834b";
+          g.fillRect(Math.random() * w, Math.random() * h, 2, 4 + Math.random() * 4);
+        }
+      });
+    }
+    function lava(){
+      return get("lava", 256, 256, (g, w, h) => {
+        g.fillStyle = "#241514";
+        g.fillRect(0, 0, w, h);
+        g.strokeStyle = "#d94e1f";
+        g.lineWidth = 3;
+        for(let i = 0; i < 16; i++){
+          g.beginPath();
+          let x = Math.random() * w;
+          let y = Math.random() * h;
+          g.moveTo(x, y);
+          for(let s = 0; s < 4; s++){
+            x += (Math.random() - 0.5) * 70;
+            y += (Math.random() - 0.5) * 70;
+            g.lineTo(x, y);
+          }
+          g.stroke();
+        }
+        g.strokeStyle = "#ff9933";
+        g.lineWidth = 1;
+        for(let i = 0; i < 8; i++){
+          g.beginPath();
+          g.moveTo(Math.random() * w, Math.random() * h);
+          g.lineTo(Math.random() * w, Math.random() * h);
+          g.stroke();
+        }
+      });
+    }
+    return {
+      get,
+      concrete,
+      tiles,
+      wood,
+      hazard,
+      sign,
+      grass,
+      lava
+    };
+  }
+
+  function run3D(){
+    const T = THREE;
+    const canvas = document.getElementById("gl");
+    canvas.style.display = "block";
+    document.getElementById("fallback").style.display = "none";
+    document.getElementById("minimap-wrap").style.display = "block";
+    document.getElementById("fb-retry").style.display = "none";
+    let renderer = null;
+    try{
+      renderer = new T.WebGLRenderer({
+        canvas,
+        antialias: true,
+        powerPreference: "high-performance"
+      });
+      if(!renderer || !renderer.getContext()){
+        throw new Error("no_gl");
+      }
+    }catch(e){
+      runFallback("当前浏览器未能初始化 WebGL，已切换为轻量视图");
+      return;
+    }
+    renderer.shadowMap.enabled = (state.perf === "high");
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
+    if("outputColorSpace" in renderer){
+      renderer.outputColorSpace = T.SRGBColorSpace;
+    }else{
+      renderer.outputEncoding = T.sRGBEncoding;
+    }
+    renderer.toneMapping = T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const tex = makeTexCache();
+    let scene = new T.Scene();
+    const camera = new T.PerspectiveCamera(state.fov, window.innerWidth / window.innerHeight, 0.1, 260);
+    const player = {
+      pos: new T.Vector3(0, 1.65, 6),
+      vel: new T.Vector3(),
+      yaw: 0,
+      pitch: 0,
+      onGround: true,
+      height: 1.65
+    };
+    let alive = true;
+    let interactables = [];
+    let colliders = [];
+    let updaters = [];
+    let curDisposables = [];
+    let targetInter = null;
+    let sitTimer = null;
+    let activeIntervals = [];
+    let lastInteractTime = 0;
+    let heightFn = (x, z, standingY) => 0;
+    let surfaceFn = (x, z) => "stone";
+    let bounds = {
+      minX: -18,
+      maxX: 18,
+      minZ: -18,
+      maxZ: 18
+    };
+    const _lookDir = new T.Vector3();
+    const _lookEuler = new T.Euler(0, 0, 0, "YXZ");
+    const _tmpVec = new T.Vector3();
+    const V = (x, y, z) => new T.Vector3(x, y, z);
+
+    function track(obj){
+      if(obj){
+        curDisposables.push(obj);
+      }
+      return obj;
+    }
+
+    function mkMesh(geo, m, x = 0, y = 0, z = 0, cast = true, recv = true){
+      const mesh = new T.Mesh(geo, m);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = cast;
+      mesh.receiveShadow = recv;
+      if(!geo.userData._tracked){
+        geo.userData._tracked = true;
+        track(geo);
+      }
+      if(!m.userData._tracked){
+        m.userData._tracked = true;
+        track(m);
+      }
+      return mesh;
+    }
+
+    function addMesh(geo, m, x = 0, y = 0, z = 0, cast = true, recv = true){
+      const mesh = mkMesh(geo, m, x, y, z, cast, recv);
+      scene.add(mesh);
+      return mesh;
+    }
+
+    function addBox(w, h, d, m, x, y, z, solid = true, cast = true, recv = true){
+      const mesh = addMesh(new T.BoxGeometry(w, h, d), m, x, y, z, cast, recv);
+      if(solid){
+        const col = {
+          minX: x - w / 2,
+          maxX: x + w / 2,
+          minZ: z - d / 2,
+          maxZ: z + d / 2,
+          minY: y - h / 2,
+          maxY: y + h / 2,
+          mesh,
+          active: true
+        };
+        colliders.push(col);
+        mesh.userData.col = col;
+      }
+      return mesh;
+    }
+
+    function addCylinder(rt, rb, h, seg, m, x, y, z, cast = true, recv = true){
+      return addMesh(new T.CylinderGeometry(rt, rb, h, seg), m, x, y, z, cast, recv);
+    }
+
+    function addSign(w, h, texMap, x, y, z, ry = 0){
+      const p = addMesh(new T.PlaneGeometry(w, h), createMaterial({
+        map: texMap,
+        side: T.DoubleSide
+      }), x, y, z, false, false);
+      p.rotation.y = ry;
+      p.position.x += 0.01 * Math.sin(ry);
+      p.position.z += 0.01 * Math.cos(ry);
+      return p;
+    }
+
+    function syncColX(mesh, halfW){
+      const c = mesh.userData.col;
+      if(c){
+        c.minX = mesh.position.x - halfW;
+        c.maxX = mesh.position.x + halfW;
+      }
+    }
+
+    function createMaterial(opts){
+      return new T.MeshStandardMaterial(opts);
+    }
+
+    function addInteract(id, pos, label, hint, onInteract, opts = {}){
+      const obj = {
+        id,
+        pos: pos.clone(),
+        radius: opts.radius || 2.6,
+        label,
+        hint,
+        getLabel: opts.getLabel || null,
+        getHint: opts.getHint || null,
+        onInteract,
+        mesh: opts.mesh || null
+      };
+      interactables.push(obj);
+      return obj;
+    }
+
+    function addCollectible(id, x, y, z, color = 0xd6c39c){
+      const meta = SCENES_META.find(m => m.id === id);
+      if(!meta || state.collected.has(meta.id)){
+        return null;
+      }
+      const mesh = addMesh(new T.OctahedronGeometry(0.16, 0), createMaterial({
+        color,
+        roughness: 0.35,
+        metalness: 0.2,
+        emissive: color,
+        emissiveIntensity: 0.24
+      }), x, y, z, false, false);
+      const fn = (dt, t) => {
+        if(mesh.parent){
+          mesh.rotation.y += dt * 1.4;
+          mesh.position.y = y + Math.sin(t * 2.4) * 0.06;
+        }
+      };
+      updaters.push(fn);
+      const it = addInteract("col_" + meta.id, V(x, y, z), "拾取：" + meta.item, meta.desc, () => {
+        if(state.collected.has(meta.id)){
+          return;
+        }
+        state.collected.add(meta.id);
+        clearHover();
+        scene.remove(mesh);
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+        const ui = updaters.indexOf(fn);
+        if(ui !== -1){
+          updaters.splice(ui, 1);
+        }
+        const ii = interactables.indexOf(it);
+        if(ii !== -1){
+          interactables.splice(ii, 1);
+        }
+        sfx.play("collect");
+        showWhisper("拾得「" + meta.item + "」— " + meta.desc, 4200);
+        updateColUI();
+      }, {
+        radius: 2.4,
+        mesh
+      });
+      return it;
+    }
+
+    function restoreHover(it){
+      if(!it || !it.mesh){
+        return;
+      }
+      const m = it.mesh.material;
+      if(m && "emissiveIntensity" in m && it.mesh.userData._origEm !== undefined){
+        m.emissiveIntensity = it.mesh.userData._origEm;
+        if(it.mesh.userData._origEmColor !== undefined && m.emissive){
+          m.emissive.setHex(it.mesh.userData._origEmColor);
+        }
+      }
+      if(it.mesh.userData._origScale){
+        it.mesh.scale.copy(it.mesh.userData._origScale);
+      }
+    }
+
+    function clearHover(){
+      restoreHover(targetInter);
+      targetInter = null;
+      document.getElementById("reticle").classList.remove("hit");
+      document.getElementById("prompt").classList.remove("show");
+    }
+
+    window._clearHover = clearHover;
+
+    function setupShadows(){
+      scene.traverse(o => {
+        if(o.isDirectionalLight && o.castShadow){
+          o.shadow.camera.left = -25;
+          o.shadow.camera.right = 25;
+          o.shadow.camera.top = 25;
+          o.shadow.camera.bottom = -25;
+          o.shadow.mapSize.set(2048, 2048);
+          o.shadow.camera.updateProjectionMatrix();
+        }
+      });
+    }
+
+    function clearScene(){
+      clearHover();
+      if(sitTimer){
+        clearTimeout(sitTimer);
+        sitTimer = null;
+      }
+      activeIntervals.forEach(id => clearInterval(id));
+      activeIntervals = [];
+      while(scene.children.length > 0){
+        scene.remove(scene.children[0]);
+      }
+      curDisposables.forEach(d => {
+        if(d && d.dispose){
+          d.dispose();
+        }
+      });
+      curDisposables = [];
+      interactables = [];
+      colliders = [];
+      updaters = [];
+      heightFn = (x, z, standingY) => 0;
+      surfaceFn = (x, z) => "stone";
+      bounds = {
+        minX: -16,
+        maxX: 16,
+        minZ: -16,
+        maxZ: 16
+      };
+      state.zoomActive = false;
+      player.height = 1.65;
+    }
+
+    const builders = {
+      platform(){
+        scene.background = new T.Color(0x9fb3c4);
+        scene.fog = new T.FogExp2(0x9fb3c4, 0.017);
+        scene.add(new T.HemisphereLight(0xdce9f5, 0x59656f, 0.9));
+        const sun = new T.DirectionalLight(0xfff4df, 1.1);
+        sun.position.set(18, 28, 14);
+        sun.castShadow = true;
+        scene.add(sun);
+        const deckTex = tex.concrete("#8c8f91", 0.18, "plat");
+        deckTex.repeat.set(6, 6);
+        addBox(16, 1.2, 16, createMaterial({
+          map: deckTex,
+          roughness: 0.88
+        }), 0, -0.6, 0, true, false, true);
+        addBox(16.3, 0.22, 16.3, createMaterial({
+          color: 0x5d6268,
+          roughness: 0.7,
+          metalness: 0.3
+        }), 0, -0.1, 0, false);
+        for(let i = -7.5; i <= 7.5; i += 2.5){
+          addBox(0.08, 1.1, 0.08, createMaterial({
+            color: 0x4b5156,
+            metalness: 0.5
+          }), i, 0.55, -7.8, false);
+          addBox(0.08, 1.1, 0.08, createMaterial({
+            color: 0x4b5156,
+            metalness: 0.5
+          }), i, 0.55, 7.8, false);
+          addBox(0.08, 1.1, 0.08, createMaterial({
+            color: 0x4b5156,
+            metalness: 0.5
+          }), -7.8, 0.55, i, false);
+          addBox(0.08, 1.1, 0.08, createMaterial({
+            color: 0x4b5156,
+            metalness: 0.5
+          }), 7.8, 0.55, i, false);
+        }
+        addBox(15.8, 0.06, 0.06, createMaterial({
+          color: 0x6e757b,
+          metalness: 0.6
+        }), 0, 1.08, -7.8, true);
+        addBox(15.8, 0.06, 0.06, createMaterial({
+          color: 0x6e757b,
+          metalness: 0.6
+        }), 0, 1.08, 7.8, true);
+        addBox(0.06, 0.06, 15.8, createMaterial({
+          color: 0x6e757b,
+          metalness: 0.6
+        }), -7.8, 1.08, 0, true);
+        addBox(0.06, 0.06, 15.8, createMaterial({
+          color: 0x6e757b,
+          metalness: 0.6
+        }), 7.8, 1.08, 0, true);
+        addBox(2.4, 1.6, 2.8, createMaterial({
+          map: tex.concrete("#696c6e", 0.2, "p_shed")
+        }), -5.8, 0.8, 5.6, true);
+        addBox(1.1, 2.0, 0.08, createMaterial({
+          color: 0x435159,
+          metalness: 0.4
+        }), -5.8, 1.0, 4.16, false);
+        addBox(1.1, 0.85, 0.75, createMaterial({
+          color: 0x9c9e9b,
+          roughness: 0.6
+        }), -5.5, 0.43, -3.2, true);
+        const fan = addCylinder(0.32, 0.32, 0.08, 12, createMaterial({
+          color: 0x484d52
+        }), -5.5, 0.45, -2.8);
+        fan.rotation.x = Math.PI / 2;
+        addBox(1.5, 0.45, 0.48, createMaterial({
+          color: 0x6b5d4e
+        }), 3.2, 0.23, 4.2, true);
+        addSign(1.5, 0.75, tex.sign("高空注意阵风", "#d9c37a", "#24221d", "天台 214m", true), -3, 1.25, -7.72);
+        for(let i = 0; i < 16; i++){
+          const bh = 8 + Math.random() * 26;
+          const bx = (Math.random() - 0.5) * 135;
+          const bz = (Math.random() - 0.5) * 135;
+          if(Math.abs(bx) < 18 && Math.abs(bz) < 18){
+            continue;
+          }
+          addBox(8 + Math.random() * 7, bh, 8 + Math.random() * 7, createMaterial({
+            color: 0x6d7985,
+            roughness: 0.95
+          }), bx, -22 + bh / 2, bz, false, false, false);
+        }
+        addCylinder(0.06, 0.08, 3.2, 8, createMaterial({
+          color: 0x82868a,
+          metalness: 0.5
+        }), 5.5, 1.6, -5.5);
+        const vane = addMesh(new T.ConeGeometry(0.18, 0.9, 8), createMaterial({
+          color: 0xc9623b,
+          roughness: 0.7
+        }), 5.9, 3.05, -5.5);
+        let windFast = false;
+        updaters.push((dt, t) => {
+          vane.rotation.z = -Math.PI / 2 + Math.sin(t * (windFast ? 6.5 : 2.2)) * 0.22 + 0.4;
+          fan.rotation.z += dt * 8;
+        });
+        addBox(0.14, 1.3, 0.14, createMaterial({
+          color: 0x3f4348,
+          metalness: 0.6
+        }), 0, 0.65, -7.1, true);
+        addCylinder(0.09, 0.12, 0.55, 10, createMaterial({
+          color: 0x2b2e33,
+          metalness: 0.7,
+          roughness: 0.3
+        }), 0, 1.38, -7.1).rotation.x = Math.PI / 2 - 0.12;
+        addInteract("plat_scope", V(0, 1.3, -7.1), "用观景望远镜远眺", "切换远景焦距", () => {
+          state.zoomActive = !state.zoomActive;
+          camera.fov = state.zoomActive ? 30 : state.fov;
+          camera.updateProjectionMatrix();
+          sfx.play("switch");
+          showWhisper(state.zoomActive ? "远处的楼群和云影被拉近，风声好像轻了些。" : "收回视线，脚下水泥地晒出了淡淡的灰白。");
+        });
+        addBox(0.7, 0.9, 0.5, createMaterial({
+          color: 0x555d63,
+          roughness: 0.6
+        }), 5.5, 0.45, -5.5, true);
+        addInteract("plat_wind", V(5.5, 0.9, -5.5), "拨动风速风向仪", "切换风力挡位", () => {
+          windFast = !windFast;
+          sfx.play("chime");
+          showWhisper(windFast ? "风向袋呼啦一下拉直，铁栏杆开始轻颤。" : "风势落回平缓，西边云层慢慢挪开。");
+        });
+        addInteract("plat_sign", V(-3, 1.2, -7.5), "看一眼手写木牌", "铁丝绑在护栏上", () => {
+          sfx.play("paper");
+          openModal("手写木牌", "「高空注意阵风 · 214m\n楼道铁门反锁了别忘带钥匙，风大时别把纸杯放台边。」\n\n木牌背面拿铅笔写着几个看不清的电话号码。");
+        });
+        addCollectible("platform", 5.2, 0.35, 5.2, 0xc5cdd4);
+        bounds = {
+          minX: -7.2,
+          maxX: 7.2,
+          minZ: -7.2,
+          maxZ: 7.2
+        };
+        surfaceFn = () => "concrete";
+        return {
+          pos: V(0, 1.65, 4.5),
+          yaw: 0,
+          whisper: "天台风很大，老式空调外机在角落里嗡嗡地吐着热气。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      hellstone(){
+        scene.background = new T.Color(0x1b0d0b);
+        scene.fog = new T.FogExp2(0x210e0b, 0.035);
+        scene.add(new T.AmbientLight(0x471d16, 0.95));
+        const lavaLight = new T.PointLight(0xff5a24, 2.2, 28);
+        lavaLight.position.set(0, 3.2, 0);
+        scene.add(lavaLight);
+        const lavaTex = tex.lava();
+        lavaTex.repeat.set(5, 5);
+        addBox(14, 1.2, 14, createMaterial({
+          map: lavaTex,
+          roughness: 0.9,
+          emissive: 0x6e1a07,
+          emissiveIntensity: 0.45
+        }), 0, -0.6, 0, true, false, true);
+        addMesh(new T.PlaneGeometry(80, 80), createMaterial({
+          color: 0x6a1b08,
+          emissive: 0xc93b12,
+          emissiveIntensity: 0.65,
+          roughness: 0.9
+        }), 0, -1.6, 0, false, false).rotation.x = -Math.PI / 2;
+        const obsMat = createMaterial({
+          color: 0x211b1e,
+          roughness: 0.55,
+          metalness: 0.25
+        });
+        addBox(2.2, 4.5, 2.2, obsMat, -4.5, 2.25, -4.5, true);
+        addBox(1.8, 3.6, 1.8, obsMat, 4.8, 1.8, -4.2, true);
+        addBox(2.8, 0.45, 2.4, obsMat, 0, 0.22, -4.5, false, true, true);
+        addBox(1.4, 0.65, 1.4, obsMat, 0, 0.75, -4.5, true);
+        addBox(1.2, 2.2, 1.2, obsMat, -5.2, 1.1, 3.5, true);
+        addBox(1.0, 1.5, 1.0, obsMat, 5.2, 0.75, 3.2, true);
+        addCylinder(0.75, 0.45, 0.65, 8, createMaterial({
+          color: 0x362826,
+          metalness: 0.6,
+          roughness: 0.5
+        }), 0, 1.4, -4.5);
+        const fireLight = new T.PointLight(0xff7729, 2.4, 16);
+        fireLight.position.set(0, 2.4, -4.5);
+        scene.add(fireLight);
+        const emberCore = addMesh(new T.DodecahedronGeometry(0.36, 0), createMaterial({
+          color: 0xff7022,
+          emissive: 0xff4400,
+          emissiveIntensity: 1.5
+        }), 0, 1.85, -4.5, false, false);
+        const embers = [];
+        const eGeo = new T.SphereGeometry(0.045, 6, 4);
+        const eMat = createMaterial({
+          color: 0xff8b3d,
+          emissive: 0xff5500,
+          emissiveIntensity: 1.0
+        });
+        for(let i = 0; i < 26; i++){
+          embers.push({
+            m: addMesh(eGeo, eMat, (Math.random() - 0.5) * 13, Math.random() * 6, (Math.random() - 0.5) * 13, false, false),
+            s: 0.4 + Math.random() * 0.9
+          });
+        }
+        let lit = true;
+        updaters.push((dt, t) => {
+          fireLight.intensity = lit ? 2.1 + Math.sin(t * 9) * 0.35 : 0.18;
+          emberCore.visible = lit;
+          emberCore.rotation.y += dt * 1.1;
+          embers.forEach(e => {
+            e.m.position.y += dt * e.s * (lit ? 1.2 : 0.35);
+            if(e.m.position.y > 6.5){
+              e.m.position.y = 0.2;
+            }
+          });
+        });
+        addInteract("hell_brazier", V(0, 1.5, -4.5), "拨动地火石盆", "控制余烬明暗", () => {
+          lit = !lit;
+          sfx.play(lit ? "sizzle" : "switch");
+          showWhisper(lit ? "暗红火星轰地窜起，烤得岩面发烫。" : "火焰缩回石隙里，只剩裂纹泛着暗光。");
+        });
+        addSign(1.4, 0.8, tex.sign("热岩碎裂带", "#1e1515", "#d66e46", "下层岩浆温度高", true), -4.5, 2.2, -3.38);
+        addInteract("hell_stele", V(-4.5, 1.8, -3.5), "触摸黑曜石碑", "表面刻着焦痕字迹", () => {
+          sfx.play("door");
+          openModal("石碑刻痕", "石面被熏得发黑，能辨认出几行字：\n\n「玄武岩台面 04\n夜间地面偶有微震放气，响声闷，不必惊慌。」");
+        });
+        addCollectible("hellstone", 4.6, 0.3, 4.2, 0xff6b3d);
+        bounds = {
+          minX: -6.4,
+          maxX: 6.4,
+          minZ: -6.4,
+          maxZ: 6.4
+        };
+        surfaceFn = () => "stone";
+        return {
+          pos: V(0, 1.65, 4.6),
+          yaw: 0,
+          whisper: "脚底像踩在刚熄火的炉灶上，空气里有股干燥的焦土气。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      office(){
+        scene.background = new T.Color(0xc8ced4);
+        scene.fog = new T.Fog(0xc8ced4, 12, 40);
+        scene.add(new T.HemisphereLight(0xd9e0e6, 0x737980, 0.85));
+        const flLight = new T.PointLight(0xeef6ff, 1.0, 22);
+        flLight.position.set(0, 3.6, 0);
+        scene.add(flLight);
+        const deskLamp = new T.PointLight(0xffd296, 0.95, 7);
+        deskLamp.position.set(-3.2, 1.6, -2.5);
+        scene.add(deskLamp);
+        const carpetTex = tex.tiles("#525c66", "#4b555f", "#3f4852", 6, "off_fl");
+        carpetTex.repeat.set(3, 3);
+        addBox(14, 0.2, 12, createMaterial({
+          map: carpetTex,
+          roughness: 0.95
+        }), 0, -0.1, 0, true, false, true);
+        addBox(14, 0.2, 12, createMaterial({
+          color: 0xe5e6e2,
+          roughness: 0.9
+        }), 0, 4.1, 0, false);
+        addBox(14, 4, 0.25, createMaterial({
+          color: 0xd8d6cf,
+          roughness: 0.9
+        }), 0, 2, -6, true);
+        addBox(0.25, 4, 12, createMaterial({
+          color: 0xd0cec6,
+          roughness: 0.9
+        }), -7, 2, 0, true);
+        addBox(0.25, 4, 12, createMaterial({
+          color: 0xa8c2d1,
+          transparent: true,
+          opacity: 0.38,
+          roughness: 0.15
+        }), 7, 2, 0, true);
+        addBox(14, 4, 0.25, createMaterial({
+          color: 0xd8d6cf,
+          roughness: 0.9
+        }), 0, 2, 6, true);
+        const blinds = [];
+        for(let i = -4.5; i <= 4.5; i += 0.9){
+          blinds.push(addBox(0.05, 3.2, 0.82, createMaterial({
+            color: 0xebe9e0,
+            roughness: 0.7
+          }), 6.78, 2.1, i, false));
+        }
+        let blindOpen = false;
+        addBox(1.1, 1.15, 0.65, createMaterial({
+          map: tex.wood("#7b5838", "#573b22")
+        }), 0, 0.58, -2.8, true);
+        addCylinder(0.02, 0.02, 0.35, 8, createMaterial({
+          color: 0x2c2c2c,
+          metalness: 0.7
+        }), 0, 1.32, -2.65);
+        addMesh(new T.SphereGeometry(0.05, 10, 10), createMaterial({
+          color: 0x3a3d42,
+          metalness: 0.5
+        }), 0, 1.5, -2.65);
+        addSign(0.45, 0.34, tex.sign("发言稿：第三段", "#fbf8ef", "#2b2926", "放慢语速 · 别低头", true), 0, 1.19, -2.8).rotation.x = -Math.PI / 2 - 0.32;
+        addBox(2.2, 0.75, 1.0, createMaterial({
+          map: tex.wood("#9c7852", "#735535")
+        }), -3.6, 0.38, -2.5, true);
+        addCylinder(0.05, 0.06, 0.12, 10, createMaterial({
+          color: 0xc96f4a
+        }), -3.1, 0.82, -2.3);
+        addBox(0.46, 0.3, 0.04, createMaterial({
+          color: 0x2b2e34
+        }), -3.9, 0.92, -2.65, false);
+        addBox(0.32, 0.05, 0.42, createMaterial({
+          color: 0xe8dcc2,
+          roughness: 0.8
+        }), -2.9, 0.78, -2.2, false);
+        addBox(0.95, 1.05, 0.75, createMaterial({
+          color: 0xd8d8d4,
+          roughness: 0.5
+        }), 4.8, 0.52, -4.6, true);
+        addCylinder(0.2, 0.2, 0.45, 10, createMaterial({
+          color: 0x78b2d4,
+          transparent: true,
+          opacity: 0.7
+        }), -5.8, 1.25, -4.8);
+        addBox(0.55, 1.0, 0.55, createMaterial({
+          color: 0xe6e6e2
+        }), -5.8, 0.5, -4.8, true);
+        addSign(2.4, 1.2, tex.sign("周四前借投影线", "#f4f6f8", "#2f4354", "白板便签（擦一半）", true), -6.85, 2.0, -1.5, Math.PI / 2);
+        for(let x = -2.5; x <= 2.5; x += 1.6){
+          addBox(0.55, 0.45, 0.55, createMaterial({
+            color: 0x39434d,
+            roughness: 0.85
+          }), x, 0.23, 1.8, true);
+          addBox(0.55, 0.55, 0.08, createMaterial({
+            color: 0x39434d,
+            roughness: 0.85
+          }), x, 0.7, 2.05, true);
+        }
+        const scripts = [
+          "「谢谢各位今天来捧场。前头那张旧PPT我昨晚刚改过一次，字体调大了点……」\n（纸页边角被手指搓毛了）",
+          "「……新版本的动线和老版本其实差别不大，最容易卡壳的是交接那十来分钟，大家现场对照手头纸面就行。」\n（旁边拿铅笔画了颗五角星）",
+          "「我讲完了，茶水间冰柜里剩了几盒葡萄乌龙，散场顺路拿走吧。」"
+        ];
+        addInteract("off_lectern", V(0, 1.15, -2.8), "翻看讲台上的发言稿", "试音并念出下一段", () => {
+          sfx.play("paper");
+          openModal("讲台手稿 · 第" + (state.officePage + 1) + "/3页", scripts[state.officePage], [
+            {
+              label: "翻下一段",
+              fn: () => {
+                state.officePage = (state.officePage + 1) % scripts.length;
+                sfx.play("paper");
+                modalTitle.textContent = "讲台手稿 · 第" + (state.officePage + 1) + "/3页";
+                modalBody.textContent = scripts[state.officePage];
+              }
+            },
+            {
+              label: "合上稿子",
+              fn: closeModal
+            }
+          ]);
+        });
+        addInteract("off_book", V(-2.9, 0.85, -2.2), "翻阅桌角钉着的小册子", "《凌晨两点半的空白提示词》（长篇同人）", () => openBook("office"));
+        addInteract("off_blinds", V(6.2, 1.6, 0), "转动百叶窗拉杆", "调节玻璃幕墙采光", () => {
+          blindOpen = !blindOpen;
+          blinds.forEach(b => b.rotation.y = blindOpen ? 0.5 : 0);
+          flLight.intensity = blindOpen ? 1.35 : 0.9;
+          sfx.play("switch");
+          showWhisper(blindOpen ? "百叶窗斜开，外面阴天的白光铺了一地。" : "合上百叶，室内只剩顶灯和台灯的暖黄。");
+        });
+        addInteract("off_lamp", V(-3.2, 0.9, -2.5), "开关办公桌台灯", "冷暖光切换", () => {
+          deskLamp.intensity = deskLamp.intensity > 0 ? 0 : 0.95;
+          sfx.play("switch");
+          showWhisper(deskLamp.intensity > 0 ? "暖色台灯亮起，咖啡杯沿泛起一点微光。" : "台灯灭了，屋里只剩主机风扇轻响。");
+        });
+        addCollectible("office", -4.3, 0.9, -2.5, 0xe6dfc8);
+        bounds = {
+          minX: -6.2,
+          maxX: 6.2,
+          minZ: -5.2,
+          maxZ: 5.2
+        };
+        surfaceFn = () => "carpet";
+        return {
+          pos: V(0, 1.65, 4),
+          yaw: 0,
+          whisper: "屋里有打印纸和黑咖啡的味道，桌角还摊着一本订书机钉起来的小册子。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      mall(){
+        scene.background = new T.Color(0xe6dfd3);
+        scene.fog = new T.Fog(0xe6dfd3, 20, 65);
+        scene.add(new T.HemisphereLight(0xfffaf0, 0x998c7a, 0.9));
+        const warmSpot = new T.PointLight(0xffcb85, 1.3, 18);
+        warmSpot.position.set(0, 3.8, -5);
+        scene.add(warmSpot);
+        const flTex = tex.tiles("#e0d9cc", "#d2cabd", "#b6ae9f", 4, "mall_fl");
+        flTex.repeat.set(8, 8);
+        addBox(26, 0.2, 24, createMaterial({
+          map: flTex,
+          roughness: 0.35,
+          metalness: 0.05
+        }), 0, -0.1, 0, true, false, true);
+        addBox(26, 0.3, 24, createMaterial({
+          color: 0xf2eee6,
+          roughness: 0.8
+        }), 0, 8.5, 0, false);
+        addBox(26, 0.2, 4, createMaterial({
+          color: 0xd8d2c6,
+          roughness: 0.6
+        }), 0, 4.2, -10, false);
+        addBox(26, 1.1, 0.12, createMaterial({
+          color: 0x88a8b5,
+          transparent: true,
+          opacity: 0.42
+        }), 0, 4.85, -8.05, false);
+        addBox(8.5, 1.05, 1.2, createMaterial({
+          color: 0xc94f35,
+          roughness: 0.55
+        }), 0, 0.52, -5.5, true);
+        addBox(8.7, 0.1, 1.35, createMaterial({
+          color: 0xf2ebe0,
+          roughness: 0.3
+        }), 0, 1.08, -5.5, false);
+        addBox(8.5, 4.2, 0.3, createMaterial({
+          color: 0x362a24,
+          roughness: 0.8
+        }), 0, 2.1, -8.2, true);
+        addSign(5.2, 1.35, tex.sign("炙烤牛肉汉堡站", "#29201c", "#f2c166", "双层芝士 ¥28 · 脆薯 ¥12 · 可乐 ¥8"), 0, 3.1, -7.98);
+        addBox(2.2, 0.85, 1.0, createMaterial({
+          color: 0x8c9296,
+          metalness: 0.65,
+          roughness: 0.35
+        }), -1.6, 0.45, -7.2, true);
+        addBox(1.1, 1.35, 0.8, createMaterial({
+          color: 0x4b5157,
+          metalness: 0.5
+        }), 3.1, 0.68, -7.1, true);
+        const patty = addCylinder(0.18, 0.18, 0.06, 12, createMaterial({
+          color: 0x5a2e1c,
+          roughness: 0.85
+        }), -1.6, 0.92, -7.2);
+        let sizzleOn = false;
+        updaters.push((dt, t) => {
+          if(sizzleOn){
+            patty.position.y = 0.92 + Math.abs(Math.sin(t * 18)) * 0.015;
+          }
+        });
+        addCylinder(0.11, 0.14, 0.08, 12, createMaterial({
+          color: 0xe0c170,
+          metalness: 0.8,
+          roughness: 0.2
+        }), 1.8, 1.17, -5.2);
+        addBox(0.5, 0.04, 0.36, createMaterial({
+          color: 0xb8482f
+        }), 0.6, 1.15, -5.3, false);
+        addCylinder(0.13, 0.12, 0.12, 12, createMaterial({
+          color: 0xd99c52
+        }), 0.6, 1.22, -5.3);
+        for(let x = -7; x <= 7; x += 14){
+          addBox(1.5, 0.75, 1.2, createMaterial({
+            map: tex.wood("#a67c52", "#7c5935")
+          }), x, 0.38, 2.5, true);
+          addBox(0.55, 0.45, 1.1, createMaterial({
+            color: 0xbd563d
+          }), x - 1.2, 0.23, 2.5, true);
+          addBox(0.55, 0.45, 1.1, createMaterial({
+            color: 0xbd563d
+          }), x + 1.2, 0.23, 2.5, true);
+        }
+        addBox(0.65, 1.05, 0.65, createMaterial({
+          color: 0x7c7468
+        }), 5.2, 0.52, -3.8, true);
+        for(const px of [-8, 8]){
+          addCylinder(0.45, 0.35, 0.65, 10, createMaterial({
+            color: 0x857869
+          }), px, 0.32, -3);
+          addMesh(new T.DodecahedronGeometry(0.95, 1), createMaterial({
+            color: 0x4b7043,
+            roughness: 0.85
+          }), px, 1.5, -3);
+        }
+        let orderCount = 83;
+        addInteract("mall_bell", V(1.8, 1.2, -5.2), "按响取餐铃", "呼叫柜台出餐", () => {
+          orderCount++;
+          sizzleOn = true;
+          sfx.play("bell");
+          setTimeout(() => sfx.play("sizzle"), 220);
+          showWhisper("「叮——」" + orderCount + "号顾客，现煎双层牛肉堡正在装盘。");
+        });
+        addInteract("mall_menu", V(-1.4, 1.2, -5.3), "拨动煎台开关", "看一眼铁板与灯箱", () => {
+          sizzleOn = !sizzleOn;
+          sfx.play("switch");
+          showWhisper(sizzleOn ? "铁板滋滋作响，黄油面包烘出焦香。" : "煎台暂时空着，中庭飘着爆米花和柠檬水味。");
+        });
+        addCollectible("mall", 7.2, 0.85, 2.6, 0xe8c47a);
+        bounds = {
+          minX: -11.8,
+          maxX: 11.8,
+          minZ: -4.3,
+          maxZ: 10.5
+        };
+        surfaceFn = () => "stone";
+        return {
+          pos: V(0, 1.65, 6.5),
+          yaw: 0,
+          whisper: "中庭二楼的栏杆反着天窗的光，汉堡柜台里头刚翻完一批肉饼。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      garage(){
+        scene.background = new T.Color(0x141618);
+        scene.fog = new T.FogExp2(0x141618, 0.032);
+        scene.add(new T.AmbientLight(0x3a424a, 0.68));
+        const tube1 = new T.PointLight(0xd9e8ec, 1.0, 16);
+        tube1.position.set(0, 3.2, -3);
+        scene.add(tube1);
+        const tube2 = new T.PointLight(0xe6bd7a, 0.75, 14);
+        tube2.position.set(-5, 3.2, 4);
+        scene.add(tube2);
+        const gTex = tex.concrete("#3a3c3e", 0.22, "gar");
+        gTex.repeat.set(6, 6);
+        addBox(24, 0.2, 24, createMaterial({
+          map: gTex,
+          roughness: 0.55,
+          metalness: 0.08
+        }), 0, -0.1, 0, true, false, true);
+        addBox(24, 0.3, 24, createMaterial({
+          color: 0x2b2d30,
+          roughness: 0.95
+        }), 0, 3.7, 0, false);
+        addBox(24, 3.8, 0.3, createMaterial({
+          color: 0x383a3c,
+          roughness: 0.9
+        }), 0, 1.9, -12, true);
+        addBox(0.3, 3.8, 24, createMaterial({
+          color: 0x383a3c,
+          roughness: 0.9
+        }), -12, 1.9, 0, true);
+        addBox(0.3, 3.8, 24, createMaterial({
+          color: 0x383a3c,
+          roughness: 0.9
+        }), 12, 1.9, 0, true);
+        addBox(24, 3.8, 0.3, createMaterial({
+          color: 0x383a3c,
+          roughness: 0.9
+        }), 0, 1.9, 12, true);
+        const haz = tex.hazard();
+        for(const [cx, cz] of [[-5, -4], [5, -4], [-5, 4], [5, 4]]){
+          addBox(0.75, 2.6, 0.75, createMaterial({
+            color: 0x606366,
+            roughness: 0.9
+          }), cx, 2.3, cz, true);
+          addBox(0.77, 1.0, 0.77, createMaterial({
+            map: haz,
+            roughness: 0.75
+          }), cx, 0.5, cz, false);
+        }
+        addSign(0.7, 0.7, tex.sign("B2 08", "#d4ad33", "#1a1a18", "消防通道勿停"), -5, 1.8, -3.6);
+        addBox(5.5, 0.08, 0.35, createMaterial({
+          map: haz
+        }), 0, 0.04, 0, false);
+        addCylinder(0.14, 0.14, 22, 8, createMaterial({
+          color: 0x555b60,
+          metalness: 0.4
+        }), -3, 3.35, 0).rotation.x = Math.PI / 2;
+        addCylinder(0.1, 0.1, 22, 8, createMaterial({
+          color: 0x8c392b,
+          metalness: 0.3
+        }), 3, 3.4, 0).rotation.x = Math.PI / 2;
+        addBox(0.65, 0.9, 0.22, createMaterial({
+          color: 0xa82e24
+        }), 5.4, 1.35, -4, false);
+        const carMat = createMaterial({
+          color: 0x2d3c47,
+          roughness: 0.35,
+          metalness: 0.5
+        });
+        addBox(1.85, 0.7, 4.2, carMat, 8.2, 0.55, -5.5, true);
+        addBox(1.6, 0.55, 2.1, carMat, 8.2, 1.15, -5.3, true);
+        const carLight = new T.SpotLight(0xfff2cf, 0, 18, 0.5, 0.6);
+        carLight.position.set(8.2, 0.65, -3.3);
+        carLight.target.position.set(8.2, 0.2, 6);
+        scene.add(carLight);
+        scene.add(carLight.target);
+        const gateGeo = new T.BoxGeometry(3.8, 0.1, 0.1);
+        gateGeo.translate(1.8, 0, 0);
+        const gateArm = addMesh(gateGeo, createMaterial({
+          map: haz
+        }), -8.5, 1.0, 2, true, false);
+        const gateCol = {
+          minX: -8.5,
+          maxX: -4.9,
+          minZ: 1.85,
+          maxZ: 2.15,
+          minY: 0.2,
+          maxY: 1.8,
+          mesh: gateArm,
+          active: true
+        };
+        colliders.push(gateCol);
+        addBox(0.4, 1.2, 0.4, createMaterial({
+          color: 0xc98b2c
+        }), -8.7, 0.6, 2, true);
+        let gateUp = false;
+        let flicker = true;
+        let carOn = false;
+        updaters.push((dt, t) => {
+          gateArm.rotation.z += ((gateUp ? 1.15 : 0) - gateArm.rotation.z) * Math.min(1, dt * 5);
+          gateCol.active = (gateArm.rotation.z < 0.55);
+          if(flicker){
+            tube1.intensity = Math.sin(t * 37) > 0.86 ? 0.25 : 1.0;
+          }
+        });
+        addInteract("gar_gate", V(-8.5, 1.0, 2.3), "刷卡抬起车库道闸", "道闸升起后可直接穿行", () => {
+          gateUp = !gateUp;
+          sfx.play("door");
+          showWhisper(gateUp ? "道闸缓缓抬起，下面现在可以直接走过去。" : "道闸落下，红灯慢吞吞地闪着。");
+        }, {
+          getLabel: () => gateUp ? "刷卡落下车库道闸" : "刷卡抬起车库道闸"
+        });
+        addInteract("gar_car", V(7.1, 0.9, -4.5), "敲敲停着的旧轿车", "闪一下车大灯", () => {
+          carOn = !carOn;
+          carLight.intensity = carOn ? 2.4 : 0;
+          sfx.play("chime");
+          showWhisper(carOn ? "大灯啪地照亮潮湿的地面，水洼反着光。" : "车灯熄灭，水泥墙面退回阴影里。");
+        });
+        addInteract("gar_light", V(-4.5, 1.5, -3.8), "按墙柱上的照明开关", "修好闪烁的灯管", () => {
+          flicker = !flicker;
+          tube1.intensity = 1.1;
+          sfx.play("switch");
+          showWhisper(flicker ? "灯管接触不良，又开始吱吱地跳闪。" : "拍了两下开关，白光终于稳了下来。");
+        });
+        addCollectible("garage", -8.2, 0.3, 1.5, 0xc7b588);
+        bounds = {
+          minX: -11,
+          maxX: 11,
+          minZ: -11,
+          maxZ: 11
+        };
+        surfaceFn = () => "concrete";
+        return {
+          pos: V(0, 1.65, 7.5),
+          yaw: 0,
+          whisper: "潮湿的水泥味混着一点机油气，减速带被压得缺了两块角。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      infirmary(){
+        scene.background = new T.Color(0xdbe8df);
+        scene.fog = new T.Fog(0xdbe8df, 12, 35);
+        scene.add(new T.HemisphereLight(0xf6fbf7, 0x8ea396, 0.95));
+        const sun = new T.DirectionalLight(0xfff4d9, 0.9);
+        sun.position.set(8, 10, 6);
+        sun.castShadow = true;
+        scene.add(sun);
+        addBox(10, 0.2, 9, createMaterial({
+          map: tex.tiles("#dde5df", "#d2dcd5", "#b7c4bb", 5, "inf_f"),
+          roughness: 0.5
+        }), 0, -0.1, 0, true, false, true);
+        addBox(10, 3.6, 0.2, createMaterial({
+          color: 0xeef3ef,
+          roughness: 0.9
+        }), 0, 1.8, -4.5, true);
+        addBox(0.2, 3.6, 9, createMaterial({
+          color: 0xd8e5dc,
+          roughness: 0.9
+        }), -5, 1.8, 0, true);
+        addBox(0.2, 3.6, 9, createMaterial({
+          color: 0xe8efe9,
+          roughness: 0.9
+        }), 5, 1.8, 0, true);
+        addBox(10, 3.6, 0.2, createMaterial({
+          color: 0xeef3ef,
+          roughness: 0.9
+        }), 0, 1.8, 4.5, true);
+        addBox(2.0, 0.55, 1.05, createMaterial({
+          color: 0xf4f4f0,
+          roughness: 0.8
+        }), -2.8, 0.28, -2.4, true);
+        addBox(0.45, 0.16, 0.75, createMaterial({
+          color: 0xffffff
+        }), -3.5, 0.62, -2.4, false);
+        const curtain = addBox(0.05, 2.2, 2.4, createMaterial({
+          color: 0xa8cbb9,
+          roughness: 0.95
+        }), -1.4, 1.35, -2.3, false);
+        let curtOpen = false;
+        addBox(1.5, 0.75, 0.8, createMaterial({
+          map: tex.wood("#c4a47c", "#9d7e58")
+        }), 2.4, 0.38, -2.8, true);
+        addCylinder(0.06, 0.06, 0.14, 10, createMaterial({
+          color: 0xe6ecea,
+          transparent: true,
+          opacity: 0.7
+        }), 2.1, 0.82, -2.6);
+        addBox(1.1, 1.7, 0.45, createMaterial({
+          color: 0xeaf0ec,
+          roughness: 0.4
+        }), 4.1, 0.85, -3.8, true);
+        addSign(0.7, 1.15, tex.sign("E Ǝ Ш M", "#f9faf7", "#202220", "五米视力表"), 0, 1.85, -4.38);
+        addBox(0.18, 1.9, 0.25, createMaterial({
+          color: 0xf3efe4
+        }), -4.78, 0.95, 1.2, true);
+        addSign(0.22, 1.6, tex.sign("150cm", "#f7f3e8", "#3a5c4a", "130cm  110cm"), -4.88, 1.1, 1.2, Math.PI / 2);
+        addCylinder(0.14, 0.11, 0.18, 8, createMaterial({
+          color: 0x8a5b3e
+        }), 4.5, 0.9, 0.4);
+        addMesh(new T.ConeGeometry(0.12, 0.32, 6), createMaterial({
+          color: 0x4e8a4c
+        }), 4.5, 1.1, 0.4);
+        addInteract("inf_curtain", V(-1.4, 1.2, -2.3), "拉动病床隔帘", "切换遮挡/敞开", () => {
+          curtOpen = !curtOpen;
+          curtain.scale.z = curtOpen ? 0.25 : 1;
+          curtain.position.z = curtOpen ? -3.3 : -2.3;
+          sfx.play("paper");
+          showWhisper(curtOpen ? "布帘哗啦收拢，阳光顺着白床单摊开。" : "拉上浅绿布帘，午后的房间一下子安静下来。");
+        });
+        addInteract("inf_eye", V(0, 1.6, -4.2), "站五米线看视力表", "翻看登记小本子", () => {
+          sfx.play("paper");
+          openModal("登记簿最后一页", "「周三第三节体育课\n两个小孩跑完两圈捂着肚子进来，问了才知早饭喝了冰牛奶。\n给兑了点温糖水躺二十分钟，自己活蹦乱跳回班里去了。」");
+        });
+        addInteract("inf_desk", V(2.4, 0.85, -2.8), "打开药箱抽屉", "拿一粒薄荷糖", () => {
+          sfx.play("chime");
+          showWhisper("一股淡淡的碘伏和薄荷味，桌面擦得干干净净。");
+        });
+        addCollectible("infirmary", 3.7, 0.9, -3.3, 0x99cbb2);
+        bounds = {
+          minX: -4.3,
+          maxX: 4.3,
+          minZ: -3.9,
+          maxZ: 3.9
+        };
+        surfaceFn = () => "stone";
+        return {
+          pos: V(0, 1.65, 2.8),
+          yaw: 0,
+          whisper: "操场上的铃声隔着窗户变得很远，窗台上的芦荟绿油油的。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      school_bbq(){
+        scene.background = new T.Color(0xdcc2a0);
+        scene.fog = new T.Fog(0xdcc2a0, 16, 52);
+        scene.add(new T.HemisphereLight(0xffe7c4, 0x7d6b57, 0.95));
+        const sun = new T.DirectionalLight(0xffcf8f, 1.0);
+        sun.position.set(12, 14, 10);
+        sun.castShadow = true;
+        scene.add(sun);
+        addBox(26, 0.2, 20, createMaterial({
+          map: tex.concrete("#8f8a81", 0.18, "bbq_g"),
+          roughness: 0.9
+        }), 0, -0.1, 0, true, false, true);
+        addBox(12, 0.22, 12, createMaterial({
+          map: tex.tiles("#d8d3c8", "#cbc5b8", "#a49e91", 6, "cls_f"),
+          roughness: 0.7
+        }), -3, 0.02, -2, false, false, true);
+        addBox(0.25, 3.8, 12, createMaterial({
+          color: 0xeae5d9,
+          roughness: 0.9
+        }), -9, 1.9, -2, true);
+        addBox(12, 3.8, 0.25, createMaterial({
+          color: 0xeae5d9,
+          roughness: 0.9
+        }), -3, 1.9, -8, true);
+        addBox(12, 0.2, 12, createMaterial({
+          color: 0xded8cc
+        }), -3, 3.8, -2, false);
+        addBox(0.25, 3.8, 4.2, createMaterial({
+          color: 0xeae5d9
+        }), 3, 1.9, -5.9, true);
+        addBox(0.25, 3.8, 4.2, createMaterial({
+          color: 0xeae5d9
+        }), 3, 1.9, 1.9, true);
+        addBox(0.25, 1.0, 3.6, createMaterial({
+          color: 0xeae5d9
+        }), 3, 0.5, -2, true);
+        addBox(0.25, 1.0, 3.6, createMaterial({
+          color: 0xeae5d9
+        }), 3, 3.3, -2, true);
+        const winPane = addBox(0.08, 1.8, 3.6, createMaterial({
+          color: 0xa9c5cf,
+          transparent: true,
+          opacity: 0.42
+        }), 3, 1.9, -2, false);
+        addBox(4.5, 3.8, 0.25, createMaterial({
+          color: 0xeae5d9
+        }), -6.7, 1.9, 4, true);
+        addBox(4.5, 3.8, 0.25, createMaterial({
+          color: 0xeae5d9
+        }), 0.8, 1.9, 4, true);
+        const doorGeo = new T.BoxGeometry(2.9, 2.8, 0.14);
+        doorGeo.translate(1.45, 0, 0);
+        const hallDoor = addMesh(doorGeo, createMaterial({
+          map: tex.wood("#8c5e3a", "#633e22")
+        }), -4.4, 1.4, 4, true, true);
+        const doorCol = {
+          minX: -4.4,
+          maxX: -1.5,
+          minZ: 3.93,
+          maxZ: 4.07,
+          minY: 0,
+          maxY: 2.8,
+          mesh: hallDoor,
+          active: true
+        };
+        colliders.push(doorCol);
+        addBox(8.5, 0.2, 6, createMaterial({
+          map: tex.tiles("#cfd4d1", "#c0c5c2", "#969b98", 4, "hall_f")
+        }), -3, 0.01, 7, false, false, true);
+        addSign(2.2, 1.1, tex.sign("教学楼一层大厅", "#e6dfd0", "#384a3c", "楼梯口 · 水房", true), -7, 1.8, 4.15);
+        addBox(4.2, 1.5, 0.12, createMaterial({
+          color: 0x2b4a36,
+          roughness: 0.9
+        }), -3, 2.0, -7.8, false);
+        addSign(3.8, 1.3, tex.sign("值日生：林小宇  周敏", "#2b4a36", "#eae6d8", "放学记得关东边窗户", true), -3, 2.0, -7.77);
+        for(const dx of [-5.5, -3, -0.5]){
+          for(const dz of [-4.5, -1.5]){
+            addBox(0.95, 0.72, 0.55, createMaterial({
+              map: tex.wood("#b88d5c", "#8a653c")
+            }), dx, 0.36, dz, true);
+          }
+        }
+        addBox(1.8, 0.85, 0.7, createMaterial({
+          color: 0x3f3c3a,
+          metalness: 0.5
+        }), 6.5, 0.43, -2, true);
+        addBox(1.5, 0.08, 0.5, createMaterial({
+          color: 0xc94218,
+          emissive: 0x9e2508,
+          emissiveIntensity: 0.9
+        }), 6.5, 0.88, -2, false);
+        addSign(1.7, 0.8, tex.sign("老张炭火烧烤", "#f4e6c3", "#a82c1a", "羊肉串 3元 · 烤面筋 2元", true), 6.5, 1.45, -2.4);
+        addBox(0.45, 0.38, 0.45, createMaterial({
+          color: 0x3a6fa8
+        }), 8.0, 0.19, -0.8, true);
+        addBox(0.45, 0.38, 0.45, createMaterial({
+          color: 0xc94c38
+        }), 8.6, 0.19, -2.2, true);
+        const smokes = [];
+        const sGeo = new T.DodecahedronGeometry(0.45, 0);
+        const sMat = createMaterial({
+          color: 0xdcdad4,
+          transparent: true,
+          opacity: 0.32,
+          roughness: 1
+        });
+        for(let i = 0; i < 22; i++){
+          smokes.push({
+            m: addMesh(sGeo, sMat, 6.5, 1.1 + Math.random() * 1.8, -2 + (Math.random() - 0.5) * 1.2, false, false),
+            p: Math.random()
+          });
+        }
+        let winClosed = false;
+        let doorOpen = false;
+        let fanOn = false;
+        updaters.push((dt) => {
+          smokes.forEach(s => {
+            s.p += dt * 0.24;
+            if(s.p > 1){
+              s.p = 0;
+            }
+            const drift = winClosed ? 1.5 : (fanOn ? 0.5 : -10.5);
+            s.m.position.x = 6.5 + s.p * drift;
+            s.m.position.y = 1.0 + Math.sin(s.p * 3.14) * 1.3 + s.p * 0.7;
+            s.m.position.z = -2 + Math.sin(s.p * 7) * 0.45;
+            const sc = 0.5 + s.p * 1.4;
+            s.m.scale.set(sc, sc * 0.8, sc);
+          });
+          hallDoor.rotation.y += ((doorOpen ? -Math.PI / 2 : 0) - hallDoor.rotation.y) * Math.min(1, dt * 6);
+          if(hallDoor.rotation.y < -0.8){
+            doorCol.minX = -4.47;
+            doorCol.maxX = -4.33;
+            doorCol.minZ = 4.0;
+            doorCol.maxZ = 6.9;
+          }else{
+            doorCol.minX = -4.4;
+            doorCol.maxX = -1.5;
+            doorCol.minZ = 3.93;
+            doorCol.maxZ = 4.07;
+          }
+        });
+        addInteract("bbq_stall", V(6.5, 1.0, -2), "翻动烤架上的肉串", "撒孜然并观察飘烟", () => {
+          sfx.play("sizzle");
+          showWhisper(winClosed ? "肉串滋滋冒油，因为关了窗，烟只得顺着外头风向散去。" : "孜然味混着木炭烟，一股脑儿顺着风钻进了教室东窗！");
+        });
+        addInteract("bbq_win", V(3.0, 1.4, -2), "推拉教室东侧窗户", "关紧窗户挡住油烟", () => {
+          winClosed = !winClosed;
+          winPane.position.z = winClosed ? -2 : -0.2;
+          sfx.play("door");
+          showWhisper(winClosed ? "窗户咔哒扣紧，教室里飘着的烤串味慢慢散了。" : "窗扇拉开，校门口的烧烤热浪又扑进前排课桌。");
+        }, {
+          getLabel: () => winClosed ? "推开教室东侧窗户" : "关紧教室东侧窗户"
+        });
+        addInteract("bbq_door", V(-2.95, 1.4, 4), "开关教室与大厅的门", "出入教室与门厅", () => {
+          doorOpen = !doorOpen;
+          sfx.play("door");
+          showWhisper(doorOpen ? "推门走出教室，门厅里回荡着放学后的空旷脚步声。" : "带上门，教室里又只剩粉笔灰和隐约的孜然香。");
+        });
+        addInteract("bbq_fan", V(-3.0, 0.8, -7.4), "开启讲台边的立式风扇", "把烟往窗外吹", () => {
+          fanOn = !fanOn;
+          sfx.play("switch");
+          showWhisper(fanOn ? "风扇嗡嗡转起来，把滞留的青烟往窗外推回去。" : "风扇停了，夕阳斜照进飘着灰尘的教室。");
+        });
+        addCollectible("school_bbq", -3.2, 0.78, -4.5, 0xf2efe4);
+        bounds = {
+          minX: -8.5,
+          maxX: 10.5,
+          minZ: -7.4,
+          maxZ: 9.5
+        };
+        surfaceFn = (x, z) => (x >= -9 && x <= 3 && z >= -8 && z <= 4) ? "wood" : "concrete";
+        heightFn = (x, z) => (x >= -9 && x <= 3 && z >= -8 && z <= 4) ? 0.13 : (x >= -7.25 && x <= 1.25 && z > 4 && z <= 10) ? 0.11 : 0;
+        return {
+          pos: V(6.2, 1.65, 3.2),
+          yaw: 0.45,
+          whisper: "校门外刚支起炭烤车，一阵晚风把白烟吹进了还没锁窗的教室。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      zigzag(){
+        scene.background = new T.Color(0xcbdbe6);
+        scene.fog = new T.Fog(0xcbdbe6, 22, 70);
+        scene.add(new T.HemisphereLight(0xf6fbff, 0x67755f, 0.95));
+        const sun = new T.DirectionalLight(0xfff5de, 1.1);
+        sun.position.set(14, 22, 12);
+        sun.castShadow = true;
+        scene.add(sun);
+        const stoneTex = tex.concrete("#b8b2a6", 0.15, "zig_s");
+        addBox(24, 0.2, 24, createMaterial({
+          map: tex.grass("#5a7846", "#466136")
+        }), 0, -0.1, 0, true, false, true);
+        addBox(5, 0.4, 5, createMaterial({
+          map: stoneTex
+        }), -3, 0.1, 6, false, true, true);
+        for(let i = 0; i < 8; i++){
+          addBox(3.4, 0.3, 0.65, createMaterial({
+            map: stoneTex
+          }), -3, 0.15 + i * 0.26, 3.2 - i * 0.62, false, true, true);
+        }
+        addBox(7.2, 2.25, 4.2, createMaterial({
+          map: stoneTex
+        }), -0.8, 1.125, -3.3, false, true, true);
+        addBox(4.8, 0.35, 1.2, createMaterial({
+          color: 0x8c5a44,
+          roughness: 0.9
+        }), -0.4, 2.35, -3.3, true);
+        addBox(4.5, 0.15, 0.96, createMaterial({
+          color: 0x423023,
+          roughness: 1
+        }), -0.4, 2.52, -3.3, false);
+        addSign(1.4, 0.75, tex.sign("一米花田", "#e8dfcc", "#3a5c3a", "之字形台阶 · 请勿踩踏", true), -0.4, 2.85, -3.95);
+        const flowers = [];
+        const fColors = [0xf0cf5b, 0xe87b70, 0xf5f2e6, 0xd685b8];
+        for(let i = 0; i < 36; i++){
+          const fx = -2.4 + Math.random() * 4.0;
+          const fz = -3.68 + Math.random() * 0.75;
+          addCylinder(0.015, 0.015, 0.28, 5, createMaterial({
+            color: 0x4d7d3a
+          }), fx, 2.68, fz, false, false);
+          flowers.push({
+            petal: addMesh(new T.DodecahedronGeometry(0.075, 0), createMaterial({
+              color: fColors[i % 4],
+              roughness: 0.7
+            }), fx, 2.84, fz, false, false),
+            phase: Math.random() * 6
+          });
+        }
+        for(let i = 0; i < 8; i++){
+          addBox(3.4, 0.3, 0.65, createMaterial({
+            map: stoneTex
+          }), 3.6, 2.25 + i * 0.26, -3.2 + i * 0.62, false, true, true);
+        }
+        addBox(5.5, 4.35, 5, createMaterial({
+          map: stoneTex
+        }), 3.6, 2.175, 4.2, false, true, true);
+        addBox(1.5, 0.45, 0.6, createMaterial({
+          map: tex.wood("#8c6540", "#634326")
+        }), 4.2, 4.55, 5.5, true);
+        addCylinder(0.14, 0.16, 0.3, 8, createMaterial({
+          color: 0x4c8a62
+        }), -3.2, 2.4, -2.9);
+        let watered = false;
+        updaters.push((dt, t) => {
+          flowers.forEach(f => {
+            f.petal.scale.setScalar(watered ? 1.25 : 0.92);
+            f.petal.position.x += Math.sin(t * 2 + f.phase) * 0.0006;
+          });
+        });
+        heightFn = (x, z) => {
+          if(x >= 0.85 && x <= 6.35 && z >= 1.7 && z <= 6.7){
+            return 4.35;
+          }
+          if(x >= 1.9 && x <= 5.3 && z >= -3.525 && z < 1.7){
+            const step = Math.floor((z + 3.525) / 0.62);
+            return 2.4 + Math.min(7, Math.max(0, step)) * 0.26;
+          }
+          if(x >= -4.4 && x <= 2.8 && z >= -5.4 && z <= -1.2){
+            return 2.25;
+          }
+          if(x >= -4.7 && x <= -1.3 && z >= -1.465 && z <= 3.525){
+            const step = Math.floor((3.525 - z) / 0.62);
+            return 0.3 + Math.min(7, Math.max(0, step)) * 0.26;
+          }
+          if(x >= -5.5 && x <= -0.5 && z > 3.5 && z <= 8.5){
+            return 0.3;
+          }
+          return 0;
+        };
+        addInteract("zig_flower", V(-0.4, 2.8, -3.3), "给一米花田浇水", "长方形平台中央的野生小花", () => {
+          watered = true;
+          sfx.play("splash");
+          showWhisper("水珠滚过花瓣，整块一米宽的长方形花田都精神了不少。");
+        });
+        addInteract("zig_bench", V(4.2, 4.6, 5.5), "在顶层长椅歇脚", "俯瞰整段之字形石阶", () => {
+          sfx.play("wood");
+          showWhisper("往下看，中间折角夹着那条彩色花田，像本子中间夹了根彩绳书签。");
+        });
+        addCollectible("zigzag", -2.2, 2.75, -3.3, 0xf2e394);
+        bounds = {
+          minX: -5.5,
+          maxX: 6.3,
+          minZ: -5.4,
+          maxZ: 6.7
+        };
+        surfaceFn = (x, z) => heightFn(x, z) > 0.1 ? "stone" : "grass";
+        return {
+          pos: V(-3, 1.95, 6.2),
+          yaw: 0,
+          whisper: "顺着之字形石阶往上走，中间平地长着一条正好一米宽的花田。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      park_lot(){
+        scene.background = new T.Color(0xc5dec9);
+        scene.fog = new T.Fog(0xc5dec9, 20, 62);
+        scene.add(new T.HemisphereLight(0xf2faec, 0x49613f, 0.95));
+        const sun = new T.DirectionalLight(0xfff4d4, 1.15);
+        sun.position.set(16, 24, 10);
+        sun.castShadow = true;
+        scene.add(sun);
+        addBox(30, 0.2, 30, createMaterial({
+          map: tex.grass("#4c733a", "#37592a")
+        }), 0, -0.1, 0, true, false, true);
+        addBox(14, 0.08, 20, createMaterial({
+          map: tex.concrete("#696e6b", 0.2, "lot_asp")
+        }), 0, 0.02, 0, false, false, true);
+        for(let z = -6; z <= 6; z += 3){
+          addBox(3.6, 0.03, 0.08, createMaterial({
+            color: 0xdde0d8
+          }), -5, 0.075, z, false);
+          addBox(3.6, 0.03, 0.08, createMaterial({
+            color: 0xdde0d8
+          }), 5, 0.075, z, false);
+        }
+        const canopies = [];
+        [[-9, -8], [-10, 0], [-9, 8], [9, -7], [10, 2], [8, 9], [-4, -11], [4, -11]].forEach(([tx, tz], i) => {
+          addCylinder(0.28, 0.4, 4.2, 8, createMaterial({
+            map: tex.wood("#634b35", "#473524")
+          }), tx, 2.1, tz, true);
+          canopies.push({
+            m: addMesh(new T.DodecahedronGeometry(2.5 + (i % 2) * 0.4, 1), createMaterial({
+              color: i % 2 ? 0x467a3e : 0x558c47,
+              roughness: 0.9
+            }), tx, 4.6, tz, true),
+            p: i
+          });
+        });
+        for(let z = -8; z <= 8; z += 2.2){
+          addBox(1.1, 0.85, 1.9, createMaterial({
+            color: 0x3f6b36,
+            roughness: 0.95
+          }), -7.6, 0.42, z, true);
+          addBox(1.1, 0.85, 1.9, createMaterial({
+            color: 0x4b783e,
+            roughness: 0.95
+          }), 7.6, 0.42, z, true);
+        }
+        addBox(3.6, 0.65, 1.75, createMaterial({
+          color: 0xc8ced1,
+          roughness: 0.35,
+          metalness: 0.45
+        }), -4.8, 0.45, -4.5, true);
+        addBox(1.8, 0.52, 1.55, createMaterial({
+          color: 0xc8ced1,
+          roughness: 0.35,
+          metalness: 0.45
+        }), -4.6, 1.0, -4.5, true);
+        addBox(1.6, 0.45, 0.55, createMaterial({
+          map: tex.wood("#9c7248", "#704f2f")
+        }), 4.5, 0.35, 6.5, true);
+        addCylinder(0.18, 0.2, 0.06, 10, createMaterial({
+          color: 0xd69656
+        }), 6.2, 0.06, 5.8);
+        const leaves = [];
+        const lGeo = new T.PlaneGeometry(0.14, 0.09);
+        const lMat = createMaterial({
+          color: 0x84ad58,
+          side: T.DoubleSide
+        });
+        for(let i = 0; i < 24; i++){
+          leaves.push({
+            m: addMesh(lGeo, lMat, (Math.random() - 0.5) * 16, 1 + Math.random() * 4, (Math.random() - 0.5) * 16, false, false),
+            s: 0.35 + Math.random() * 0.4,
+            p: Math.random() * 6
+          });
+        }
+        let windShake = 0;
+        updaters.push((dt, t) => {
+          windShake = Math.max(0, windShake - dt * 0.6);
+          canopies.forEach(c => c.m.rotation.z = Math.sin(t * 1.2 + c.p) * (0.03 + windShake * 0.08));
+          leaves.forEach(l => {
+            l.m.position.y -= dt * l.s;
+            l.m.position.x += Math.sin(t * 2 + l.p) * dt * 0.4;
+            l.m.rotation.x += dt * 1.8;
+            if(l.m.position.y < 0.1){
+              l.m.position.y = 4.8;
+            }
+          });
+        });
+        const onLot = (x, z) => Math.abs(x) <= 7 && Math.abs(z) <= 10;
+        heightFn = (x, z) => onLot(x, z) ? 0.06 : 0;
+        surfaceFn = (x, z) => onLot(x, z) ? "concrete" : "grass";
+        addInteract("park_bench", V(4.5, 0.6, 6.5), "坐在树荫木椅上听风", "让树冠再晃一会儿", () => {
+          windShake = 1;
+          sfx.play("grass");
+          const gy = heightFn(player.pos.x, player.pos.z, player.pos.y - player.height);
+          player.height = 0.85;
+          player.pos.y = gy + 0.85;
+          player.vel.y = 0;
+          player.onGround = true;
+          if(sitTimer){
+            clearTimeout(sitTimer);
+          }
+          sitTimer = setTimeout(() => {
+            sitTimer = null;
+            if(SCENES_META[state.sceneIdx].id === "park_lot"){
+              player.height = 1.65;
+              player.pos.y = Math.max(player.pos.y, heightFn(player.pos.x, player.pos.z, player.pos.y - 1.65) + 1.65);
+            }
+          }, 2000);
+          showWhisper("树冠筛下碎碎的光斑，风掠过冬青丛沙沙响。");
+        });
+        addInteract("park_cat", V(6.2, 0.25, 5.8), "看看灌木丛边的小猫食盆", "放了一小把干猫粮", () => {
+          sfx.play("cat");
+          showWhisper("灌木丛里窜出半条橘色尾巴，咪了一声，蹲回去继续吃。");
+        });
+        addInteract("park_car", V(-4.5, 0.8, -4.5), "看看停在树下的白车", "挡风玻璃落了一层香樟花", () => {
+          sfx.play("chime");
+          showWhisper("车顶落满了细碎的绿叶和香樟籽，车主大概几天没开了。");
+        });
+        addCollectible("park_lot", -6.2, 0.25, 4.2, 0x8cc775);
+        bounds = {
+          minX: -11,
+          maxX: 11,
+          minZ: -10.5,
+          maxZ: 10.5
+        };
+        return {
+          pos: V(0, 1.71, 8.5),
+          yaw: 0,
+          whisper: "香樟树和冬青把车位遮得严严实实，树荫底下一片凉快。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      hospital(){
+        scene.background = new T.Color(0xd7e1e2);
+        scene.fog = new T.Fog(0xd7e1e2, 16, 45);
+        scene.add(new T.HemisphereLight(0xf5fbfc, 0x909fa1, 0.95));
+        const c1 = new T.PointLight(0xffffff, 0.9, 20);
+        c1.position.set(0, 3.8, 4);
+        scene.add(c1);
+        const c2 = new T.PointLight(0xeef7f9, 0.9, 20);
+        c2.position.set(0, 3.8, -6);
+        scene.add(c2);
+        addBox(9, 0.2, 24, createMaterial({
+          map: tex.tiles("#dde2e1", "#d3d9d8", "#b9c0bf", 6, "hosp_f"),
+          roughness: 0.35
+        }), 0, -0.1, 0, true, false, true);
+        addBox(9, 0.2, 24, createMaterial({
+          color: 0xf3f5f5
+        }), 0, 4.2, 0, false);
+        addBox(0.2, 4.2, 24, createMaterial({
+          color: 0xe5eceb
+        }), -4.5, 2.1, 0, true);
+        addBox(0.2, 4.2, 24, createMaterial({
+          color: 0xe5eceb
+        }), 4.5, 2.1, 0, true);
+        addBox(0.28, 0.02, 20, createMaterial({
+          color: 0x3684a8
+        }), -0.6, 0.025, 0, false);
+        addBox(0.28, 0.02, 20, createMaterial({
+          color: 0x4b996b
+        }), 0, 0.025, 0, false);
+        addBox(0.28, 0.02, 20, createMaterial({
+          color: 0xd1823b
+        }), 0.6, 0.025, 0, false);
+        addSign(2.2, 0.9, tex.sign("蓝线:影像科  绿线:急诊  橙线:药房", "#f4f7f6", "#273336", "请沿地面标志线通行"), 0, 0.035, 5.5).rotation.x = -Math.PI / 2;
+        addBox(2.2, 4.2, 0.5, createMaterial({
+          color: 0xd2dcdd
+        }), -3.4, 2.1, -3.5, true);
+        addBox(2.2, 4.2, 0.5, createMaterial({
+          color: 0xd2dcdd
+        }), 3.4, 2.1, -3.5, true);
+        addBox(4.8, 0.85, 0.5, createMaterial({
+          color: 0xd2dcdd
+        }), 0, 3.78, -3.5, true);
+        const bigDoor = addBox(4.6, 3.3, 0.42, createMaterial({
+          color: 0x7d9299,
+          metalness: 0.35,
+          roughness: 0.45
+        }), 0, 1.65, -3.5, true);
+        addSign(1.8, 0.85, tex.sign("屏蔽重门", "#d68536", "#1b1a18", "请勿倚靠 · 电动缓缓开启"), 0, 2.1, -3.27);
+        const beacon = addMesh(new T.SphereGeometry(0.14, 10, 10), createMaterial({
+          color: 0xc93a2b,
+          emissive: 0xaa2218,
+          emissiveIntensity: 0.8
+        }), 1.9, 3.55, -3.22);
+        addBox(0.45, 1.2, 0.45, createMaterial({
+          color: 0xf2f4f3
+        }), 2.6, 0.6, -2.9, true);
+        addBox(0.55, 1.0, 1.1, createMaterial({
+          color: 0xc8cfd1,
+          metalness: 0.5
+        }), -3.4, 0.5, 3.2, true);
+        addBox(1.8, 0.45, 0.55, createMaterial({
+          color: 0x7aa6b8
+        }), 3.4, 0.35, 4.2, true);
+        let doorOpen = false;
+        updaters.push((dt) => {
+          bigDoor.position.x += ((doorOpen ? 4.4 : 0) - bigDoor.position.x) * Math.min(1, dt * 2.4);
+          syncColX(bigDoor, 2.3);
+          beacon.material.emissiveIntensity = doorOpen ? 0.2 : 1.1;
+        });
+        addInteract("hosp_door", V(2.4, 1.2, -2.9), "按压厚重铅门开关", "打开后可直接穿过门洞", () => {
+          doorOpen = !doorOpen;
+          sfx.play("door");
+          showWhisper(doorOpen ? "气压阀轻嗤一声，这扇半米厚的屏蔽门笨重地滑开了。" : "厚门缓缓合拢，发出一声低沉闷响。");
+        });
+        addInteract("hosp_floor", V(0, 0.2, 5.5), "低头看地面彩色标志线", "核对走廊方向", () => {
+          sfx.play("paper");
+          openModal("地面色彩导引", "蓝线往核磁和影像科（穿过大门过去）；\n绿线往一楼急诊分诊台；\n橙线往取药窗口和候诊长椅。\n\n地面打过蜡，走上去鞋底发出清脆响声。");
+        });
+        addCollectible("hospital", -3.4, 1.1, 3.2, 0x77b8d4);
+        bounds = {
+          minX: -4.0,
+          maxX: 4.0,
+          minZ: -10.5,
+          maxZ: 10.5
+        };
+        surfaceFn = () => "stone";
+        return {
+          pos: V(0, 1.65, 7.8),
+          yaw: 0,
+          whisper: "脚下三条彩色导引线往前延申，尽头站着一扇半米厚的防辐射大门。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      airport(){
+        scene.background = new T.Color(0xb8cee0);
+        scene.fog = new T.Fog(0xb8cee0, 30, 110);
+        scene.add(new T.HemisphereLight(0xf2f7fc, 0x7d858c, 1.05));
+        const sun = new T.DirectionalLight(0xfff7e6, 1.2);
+        sun.position.set(-14, 22, -25);
+        sun.castShadow = true;
+        scene.add(sun);
+        addBox(28, 0.2, 24, createMaterial({
+          map: tex.tiles("#cfd3d6", "#c5cacd", "#9fa5a8", 6, "air_f"),
+          roughness: 0.3
+        }), 0, -0.1, 2, true, false, true);
+        addBox(28, 0.3, 24, createMaterial({
+          color: 0xdfe5ea,
+          roughness: 0.75
+        }), 0, 11.5, 2, false);
+        for(let x = -12; x <= 12; x += 6){
+          addBox(0.35, 11.6, 0.5, createMaterial({
+            color: 0xa8b1b8,
+            metalness: 0.45
+          }), x, 5.8, -8.8, true);
+          addBox(0.28, 0.45, 24, createMaterial({
+            color: 0xb5bec4,
+            metalness: 0.4
+          }), x, 10.8, 2, false);
+        }
+        addBox(12.2, 11, 0.14, createMaterial({
+          color: 0x9fc2d6,
+          transparent: true,
+          opacity: 0.32
+        }), -7.9, 5.5, -9, true);
+        addBox(12.2, 11, 0.14, createMaterial({
+          color: 0x9fc2d6,
+          transparent: true,
+          opacity: 0.32
+        }), 7.9, 5.5, -9, true);
+        addBox(3.8, 7.8, 0.14, createMaterial({
+          color: 0x9fc2d6,
+          transparent: true,
+          opacity: 0.32
+        }), 0, 7.1, -9, true);
+        const gateL = addBox(1.8, 3.2, 0.16, createMaterial({
+          color: 0x7eb0c9,
+          transparent: true,
+          opacity: 0.5
+        }), -0.95, 1.6, -8.95, true);
+        const gateR = addBox(1.8, 3.2, 0.16, createMaterial({
+          color: 0x7eb0c9,
+          transparent: true,
+          opacity: 0.5
+        }), 0.95, 1.6, -8.95, true);
+        addBox(60, 0.2, 40, createMaterial({
+          map: tex.concrete("#6b7075", 0.15, "tarmac")
+        }), 0, -0.2, -30, false);
+        const planeMat = createMaterial({
+          color: 0xf2f4f5,
+          roughness: 0.35,
+          metalness: 0.25
+        });
+        addCylinder(1.9, 2.1, 16, 18, planeMat, 0, 3.2, -23).rotation.x = Math.PI / 2;
+        addMesh(new T.SphereGeometry(1.9, 16, 12), planeMat, 0, 3.2, -15);
+        addBox(2.2, 0.55, 0.8, createMaterial({
+          color: 0x232d36
+        }), 0, 3.8, -16.3, false);
+        addBox(18, 0.25, 3.2, planeMat, 0, 2.5, -24, false);
+        addBox(0.28, 4.5, 2.6, createMaterial({
+          color: 0x36648b
+        }), 0, 6.2, -30, false);
+        addCylinder(0.65, 0.65, 1.8, 14, createMaterial({
+          color: 0x4b535c
+        }), -4.8, 1.9, -23.5).rotation.x = Math.PI / 2;
+        addCylinder(0.65, 0.65, 1.8, 14, createMaterial({
+          color: 0x4b535c
+        }), 4.8, 1.9, -23.5).rotation.x = Math.PI / 2;
+        addBox(2.8, 1.05, 0.9, createMaterial({
+          color: 0x424d57,
+          roughness: 0.5
+        }), -4.2, 0.52, -5.5, true);
+        addSign(2.2, 1.1, tex.sign("GATE 03  登机口", "#1e2833", "#e8c366", "CA1408 预计 14:20 登机"), -4.2, 2.6, -5.8);
+        for(const x of [3.5, 6.8]){
+          for(const z of [-2, 1.5]){
+            addBox(2.4, 0.45, 0.75, createMaterial({
+              color: 0x364452
+            }), x, 0.35, z, true);
+          }
+        }
+        let gateOpen = false;
+        updaters.push((dt) => {
+          const off = gateOpen ? 2.3 : 0.95;
+          gateL.position.x += (-off - gateL.position.x) * Math.min(1, dt * 5);
+          gateR.position.x += (off - gateR.position.x) * Math.min(1, dt * 5);
+          syncColX(gateL, 0.9);
+          syncColX(gateR, 0.9);
+        });
+        addInteract("air_desk", V(-4.2, 1.1, -5.0), "打开飞机前玻璃登机门", "滑开两侧玻璃出去看看机头", () => {
+          gateOpen = !gateOpen;
+          sfx.play("chime");
+          showWhisper(gateOpen ? "玻璃感应门向两侧滑开，机坪上的热风吹进来。" : "玻璃门闭合，高高的钢架吊顶下重归凉爽。");
+        });
+        addInteract("air_nose", V(0, 1.6, -12.5), "近距离看看飞机机头", "看看停机坪上的这架窄体客机", () => {
+          sfx.play("paper");
+          openModal("3号登机口外", "机鼻离航站楼玻璃幕墙只有六七米远。\n驾驶舱挡风玻璃里头能看见副驾正在低头翻文件夹，底下前轮边垫着两个亮黄色轮挡。");
+        }, {
+          radius: 3.4
+        });
+        addCollectible("airport", 5.2, 0.75, -1.5, 0xa4cde8);
+        bounds = {
+          minX: -12,
+          maxX: 12,
+          minZ: -13.5,
+          maxZ: 11
+        };
+        surfaceFn = () => "stone";
+        return {
+          pos: V(0, 1.65, 7.5),
+          yaw: 0,
+          whisper: "高挑的钢架吊顶空荡荡的，玻璃门外就停着一架白底蓝尾翼的客机。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      waterpark(){
+        scene.background = new T.Color(0xc2e6ec);
+        scene.fog = new T.Fog(0xc2e6ec, 20, 65);
+        scene.add(new T.HemisphereLight(0xeefdff, 0x649ea8, 1.0));
+        const poolLight = new T.PointLight(0x66e3f2, 1.1, 22);
+        poolLight.position.set(0, 3.5, -4);
+        scene.add(poolLight);
+        addBox(26, 0.2, 24, createMaterial({
+          map: tex.tiles("#d8ecee", "#c6e2e6", "#9ac3c9", 6, "wp_f"),
+          roughness: 0.25
+        }), 0, -0.1, 0, true, false, true);
+        addBox(26, 0.3, 24, createMaterial({
+          color: 0xebf4f5
+        }), 0, 9.5, 0, false);
+        addBox(12, 0.45, 8.6, createMaterial({
+          color: 0x3f8fa6
+        }), 0, 0.22, -5.5, false);
+        colliders.push({
+          minX: -6.0,
+          maxX: 6.0,
+          minZ: -9.8,
+          maxZ: -1.2,
+          minY: 0,
+          maxY: 0.8,
+          active: true
+        });
+        const waterMesh = addMesh(new T.PlaneGeometry(11.2, 7.8), createMaterial({
+          color: 0x3fc5d9,
+          transparent: true,
+          opacity: 0.78,
+          roughness: 0.12,
+          metalness: 0.15
+        }), 0, 0.46, -5.5, false, false);
+        waterMesh.rotation.x = -Math.PI / 2;
+        addMesh(new T.TorusGeometry(0.65, 0.08, 10, 20), createMaterial({
+          color: 0xf0924b
+        }), 0, 1.65, -5.5);
+        const dolphin = addMesh(new T.SphereGeometry(0.45, 12, 10), createMaterial({
+          color: 0x577b96,
+          roughness: 0.3
+        }), -2, 0.3, -5.5);
+        dolphin.scale.set(0.8, 0.7, 1.9);
+        for(const [cx, cz, col] of [[-8, 4, 0xf07f99], [-6.5, 6.2, 0xf2c95c], [8.2, 4.5, 0x9b7be0], [6.8, 6.5, 0x6bd4a5]]){
+          addCylinder(0.1, 0.1, 2.2, 8, createMaterial({
+            color: 0xf7f5f0
+          }), cx, 1.1, cz);
+          addCylinder(0.65, 0.65, 0.22, 16, createMaterial({
+            color: col,
+            roughness: 0.35
+          }), cx, 2.35, cz).rotation.x = Math.PI / 2;
+        }
+        addBox(2.2, 0.3, 2.2, createMaterial({
+          color: 0x4bb2c9,
+          emissive: 0x1b6678,
+          emissiveIntensity: 0.5
+        }), -7.5, 0.15, -1.5, false);
+        const portalRing = addMesh(new T.TorusGeometry(1.1, 0.12, 10, 24), createMaterial({
+          color: 0x7ee8f5,
+          emissive: 0x2da3b8,
+          emissiveIntensity: 0.6
+        }), -7.5, 1.5, -1.5);
+        addBox(4.0, 1.9, 4.0, createMaterial({
+          color: 0xe8dfe6
+        }), 7.5, 0.95, -2.5, true, true, true);
+        addBox(2.2, 0.25, 2.2, createMaterial({
+          color: 0xf285a2,
+          emissive: 0x78233c,
+          emissiveIntensity: 0.5
+        }), 7.5, 2.0, -2.5, false);
+        addCylinder(0.5, 0.5, 0.35, 12, createMaterial({
+          color: 0xf7b2c6
+        }), 8.7, 2.15, -1.4);
+        let jumping = 0;
+        updaters.push((dt, t) => {
+          portalRing.rotation.y += dt * 1.5;
+          waterMesh.position.y = 0.46 + Math.sin(t * 2.5) * 0.025;
+          if(jumping > 0){
+            jumping -= dt;
+            const p = 1 - jumping / 1.4;
+            dolphin.position.x = -2 + p * 4;
+            dolphin.position.y = 0.25 + Math.sin(p * Math.PI) * 2.1;
+            dolphin.rotation.x = -Math.cos(p * Math.PI) * 0.8;
+          }else{
+            dolphin.position.y = 0.25 + Math.sin(t * 2) * 0.08;
+            dolphin.position.x = Math.sin(t * 0.6) * 1.5;
+          }
+        });
+        const onCandy = (x, z) => x >= 5.5 && x <= 9.5 && z >= -4.5 && z <= -0.5;
+        const inPool = (x, z) => Math.abs(x) <= 6.0 && z >= -9.8 && z <= -1.2;
+        heightFn = (x, z, standingY = 0) => (onCandy(x, z) && standingY >= 1.3) ? 1.9 : (inPool(x, z) ? 0.22 : 0);
+        surfaceFn = (x, z) => onCandy(x, z) ? "stone" : (inPool(x, z) ? "water" : "stone");
+        addInteract("wp_tp", V(-7.5, 1.0, -1.5), "踏入水幕传送装置", "传送至糖果观演高台", () => {
+          if(player.pos.y > 2.5){
+            return;
+          }
+          player.pos.set(7.5, 3.55, -2.5);
+          player.vel.set(0, 0, 0);
+          sfx.play("splash");
+          showWhisper("凉丝丝的水汽掠过耳朵，人已经站上糖果高台！");
+        });
+        addInteract("wp_tp2", V(7.5, 2.5, -2.5), "从糖果高台传回地面", "返回表演池边", () => {
+          if(player.pos.y < 2.5){
+            return;
+          }
+          player.pos.set(-7.5, 1.65, 0.9);
+          player.vel.set(0, 0, 0);
+          sfx.play("splash");
+          showWhisper("哗啦一下滑回池边地面，四周摆满了巨型草莓棒棒糖。");
+        });
+        addInteract("wp_show", V(0, 0.8, -0.6), "敲响表演池边铃", "触发跃圈水花", () => {
+          jumping = 1.4;
+          sfx.play("bell");
+          setTimeout(() => sfx.play("splash"), 520);
+          showWhisper("水面哗地炸开白花，灰蓝海豚稳稳穿过了橙色浮圈。");
+        });
+        addCollectible("waterpark", -6.8, 0.6, 5.8, 0xf28aa8);
+        bounds = {
+          minX: -11.6,
+          maxX: 11.6,
+          minZ: -9.2,
+          maxZ: 10.5
+        };
+        return {
+          pos: V(0, 1.65, 7.2),
+          yaw: 0,
+          whisper: "商场顶层藏着室内水上乐园，蓝色水幕传送门正对糖果看台。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      convenience(){
+        scene.background = new T.Color(0x1f2530);
+        scene.fog = new T.Fog(0x1f2530, 14, 45);
+        scene.add(new T.AmbientLight(0x526178, 0.75));
+        const storeLight = new T.PointLight(0xfff1d6, 1.35, 16);
+        storeLight.position.set(0, 3.1, -1);
+        scene.add(storeLight);
+        const streetLamp = new T.PointLight(0xffb86c, 1.1, 15);
+        streetLamp.position.set(-5.5, 3.6, 6.5);
+        scene.add(streetLamp);
+        addBox(16, 0.2, 18, createMaterial({
+          map: tex.concrete("#3a3c42", 0.2, "st_asp")
+        }), 0, -0.1, 2, true, false, true);
+        addBox(10, 0.22, 9, createMaterial({
+          map: tex.tiles("#e6e2d8", "#dad5c9", "#b5b0a4", 5, "cv_f"),
+          roughness: 0.45
+        }), 0, 0.02, -2.5, false, false, true);
+        addBox(10, 3.6, 0.2, createMaterial({
+          color: 0xf0ece1
+        }), 0, 1.8, -7, true);
+        addBox(0.2, 3.6, 9, createMaterial({
+          color: 0xe8e3d7
+        }), -5, 1.8, -2.5, true);
+        addBox(0.2, 3.6, 9, createMaterial({
+          color: 0xe8e3d7
+        }), 5, 1.8, -2.5, true);
+        addBox(10, 0.2, 9, createMaterial({
+          color: 0xf4f2eb
+        }), 0, 3.6, -2.5, false);
+        addBox(3.5, 3.6, 0.14, createMaterial({
+          color: 0x9ac1d4,
+          transparent: true,
+          opacity: 0.35
+        }), -3.2, 1.8, 2, true);
+        addBox(3.5, 3.6, 0.14, createMaterial({
+          color: 0x9ac1d4,
+          transparent: true,
+          opacity: 0.35
+        }), 3.2, 1.8, 2, true);
+        addBox(2.8, 0.8, 0.14, createMaterial({
+          color: 0x9ac1d4,
+          transparent: true,
+          opacity: 0.35
+        }), 0, 3.2, 2, false);
+        const doorL = addBox(1.4, 2.8, 0.12, createMaterial({
+          color: 0xaad1e3,
+          transparent: true,
+          opacity: 0.42
+        }), -0.7, 1.4, 2, true);
+        const doorR = addBox(1.4, 2.8, 0.12, createMaterial({
+          color: 0xaad1e3,
+          transparent: true,
+          opacity: 0.42
+        }), 0.7, 1.4, 2, true);
+        addSign(7.2, 1.15, tex.sign("24H 街角便利店", "#f5f0e1", "#1f5e48", "热关东煮 · 冰饮 · 饭团"), 0, 3.2, 2.12);
+        const fridgeLight = new T.PointLight(0xd9f5ff, 0.85, 8);
+        fridgeLight.position.set(0, 2.0, -6.0);
+        scene.add(fridgeLight);
+        addBox(5.2, 2.4, 0.75, createMaterial({
+          color: 0xd8e8eb,
+          roughness: 0.3
+        }), 0, 1.2, -6.5, true);
+        addBox(3.0, 1.0, 0.9, createMaterial({
+          color: 0xd18a49,
+          roughness: 0.6
+        }), -3.1, 0.5, -1.5, true);
+        addBox(0.75, 0.28, 0.6, createMaterial({
+          color: 0xc9c3b8,
+          metalness: 0.5
+        }), -2.9, 1.14, -1.3, true);
+        addBox(0.45, 0.34, 0.34, createMaterial({
+          color: 0xe0ddd5
+        }), -3.8, 1.18, -1.5, false);
+        addBox(0.6, 1.6, 3.8, createMaterial({
+          color: 0xded8cc
+        }), 1.6, 0.8, -2.8, true);
+        addBox(2.4, 0.95, 0.45, createMaterial({
+          map: tex.wood("#9c7248", "#704f2f")
+        }), 2.8, 0.48, 1.55, true);
+        addBox(0.32, 0.06, 0.24, createMaterial({
+          color: 0xb89668
+        }), 2.5, 0.98, 1.55, false);
+        let doorOpen = false;
+        let fridgeOn = true;
+        updaters.push((dt) => {
+          const near = player.pos.z > -0.6 && player.pos.z < 4.6 && Math.abs(player.pos.x) < 2.6;
+          if(near && !doorOpen){
+            doorOpen = true;
+            sfx.play("chime");
+          }
+          if(!near && doorOpen){
+            doorOpen = false;
+          }
+          const dx = doorOpen ? 1.95 : 0.7;
+          doorL.position.x += (-dx - doorL.position.x) * Math.min(1, dt * 6);
+          doorR.position.x += (dx - doorR.position.x) * Math.min(1, dt * 6);
+          syncColX(doorL, 0.7);
+          syncColX(doorR, 0.7);
+        });
+        addInteract("cv_oden", V(-2.9, 1.2, -1.3), "掀开不锈钢关东煮锅盖", "挑一串白萝卜与魔芋丝", () => {
+          sfx.play("sizzle");
+          showWhisper("热腾腾的柴鱼汤雾气扑在脸上，白萝卜已经煮得透亮。");
+        }, {
+          radius: 2.0
+        });
+        addInteract("cv_book", V(2.5, 1.05, 1.55), "翻看窗台边拴着的牛皮纸册", "《关东煮锅盖旁边的牛皮纸册》（夜归人四段故事）", () => openBook("convenience"));
+        addInteract("cv_fridge", V(0, 1.4, -5.9), "拨动冷柜灯开关", "切换冷柜照明", () => {
+          fridgeOn = !fridgeOn;
+          fridgeLight.intensity = fridgeOn ? 0.85 : 0.08;
+          sfx.play("switch");
+          showWhisper(fridgeOn ? "冰柜亮起一片冷白光，铝罐表面凝着细密水珠。" : "灯暗了，压缩机在墙脚嗡嗡低响。");
+        });
+        addCollectible("convenience", -3.2, 1.15, -2.1, 0xd4b277);
+        bounds = {
+          minX: -6.5,
+          maxX: 6.5,
+          minZ: -6.0,
+          maxZ: 8.5
+        };
+        surfaceFn = (x, z) => (Math.abs(x) < 5 && z > -7 && z < 2) ? "stone" : "concrete";
+        heightFn = (x, z) => (Math.abs(x) < 5 && z > -7 && z < 2) ? 0.13 : 0;
+        return {
+          pos: V(0, 1.65, 6.2),
+          yaw: 0,
+          whisper: "傍晚的柏油路有点凉，跨进便利店时门铃叮咚响了一声，窗台边拴着一本厚厚旧本子。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      roadwork(){
+        scene.background = new T.Color(0xc9ced1);
+        scene.fog = new T.Fog(0xc9ced1, 18, 55);
+        scene.add(new T.HemisphereLight(0xeef2f5, 0x6e6659, 0.95));
+        const sun = new T.DirectionalLight(0xfff1d6, 0.95);
+        sun.position.set(12, 18, 8);
+        sun.castShadow = true;
+        scene.add(sun);
+        const asp = tex.concrete("#474a4d", 0.22, "rw_asp");
+        asp.repeat.set(6, 6);
+        addBox(20, 0.4, 9, createMaterial({
+          map: asp,
+          roughness: 0.85
+        }), 0, -0.2, 6.5, true, false, true);
+        addBox(20, 0.4, 9, createMaterial({
+          map: asp,
+          roughness: 0.85
+        }), 0, -0.2, -6.5, true, false, true);
+        addBox(20, 0.3, 4.2, createMaterial({
+          color: 0x4f3d2d,
+          roughness: 1
+        }), 0, -0.95, 0, true, false, true);
+        addCylinder(0.28, 0.28, 18, 10, createMaterial({
+          color: 0x467294
+        }), 0, -0.55, 0).rotation.z = Math.PI / 2;
+        const plankTex = tex.wood("#b88e5a", "#876338", "rw_pl");
+        for(const px of [-2.2, -1.1, 0]){
+          addBox(0.95, 0.14, 4.8, createMaterial({
+            map: plankTex,
+            roughness: 0.85
+          }), px, 0.08, 0, false, true, true);
+        }
+        const sx = state.roadBridge ? 1.1 : 3.6;
+        const sy = state.roadBridge ? 0.08 : 0.2;
+        const sz = state.roadBridge ? 0 : -3.8;
+        const sparePlank = addBox(0.95, 0.14, 4.8, createMaterial({
+          map: tex.wood("#c79d68", "#946d3f")
+        }), sx, sy, sz, true, true, true);
+        const spareCol = sparePlank.userData.col;
+        spareCol.minY = sy - 0.07;
+        spareCol.maxY = sy + 0.48;
+        spareCol.active = !state.roadBridge;
+        const pAnim = {
+          active: false,
+          t: 0,
+          from: V(0, 0, 0),
+          to: V(0, 0, 0)
+        };
+        for(const cx of [-4.5, -3.2, 2.2, 4.8]){
+          addMesh(new T.ConeGeometry(0.25, 0.75, 10), createMaterial({
+            color: 0xe36222
+          }), cx, 0.38, 2.6);
+          addMesh(new T.ConeGeometry(0.25, 0.75, 10), createMaterial({
+            color: 0xe36222
+          }), cx, 0.38, -2.6);
+        }
+        addSign(1.9, 0.9, tex.sign("前方施工 走木板", "#e0ad34", "#1e1d1a", "管道更换 注意脚下", true), -4.2, 1.1, 2.8);
+        const warnLamp = new T.PointLight(0xff9b26, 1.2, 8);
+        warnLamp.position.set(-3.2, 1.2, 2.6);
+        scene.add(warnLamp);
+        updaters.push((dt, t) => {
+          warnLamp.intensity = Math.sin(t * 5) > 0 ? 1.3 : 0.25;
+          if(pAnim.active){
+            pAnim.t = Math.min(1, pAnim.t + dt / 0.4);
+            const e = pAnim.t < 0.5 ? 2 * pAnim.t * pAnim.t : 1 - Math.pow(-2 * pAnim.t + 2, 2) / 2;
+            sparePlank.position.lerpVectors(pAnim.from, pAnim.to, e);
+            sparePlank.position.y += Math.sin(pAnim.t * Math.PI) * 0.55;
+            spareCol.minX = sparePlank.position.x - 0.475;
+            spareCol.maxX = sparePlank.position.x + 0.475;
+            spareCol.minZ = sparePlank.position.z - 2.4;
+            spareCol.maxZ = sparePlank.position.z + 2.4;
+            spareCol.minY = sparePlank.position.y - 0.07;
+            spareCol.maxY = sparePlank.position.y + 0.48;
+            if(pAnim.t >= 1){
+              pAnim.active = false;
+              spareCol.active = !state.roadBridge;
+              sfx.play("wood");
+            }
+          }
+        });
+        heightFn = (x, z) => {
+          if(Math.abs(z) <= 2.1){
+            if(x > -2.75 && x < 0.55){
+              return 0.16;
+            }
+            if(state.roadBridge && x > 0.55 && x < 1.7){
+              return 0.16;
+            }
+            return -0.8;
+          }
+          return 0;
+        };
+        const plankInter = addInteract("rw_plank", V(sx, 0.4, sz), state.roadBridge ? "把备用木板搬回材料堆" : "扛起备用厚木板铺到沟上", "拓宽临时木板桥", () => {
+          if(pAnim.active){
+            return;
+          }
+          pAnim.active = true;
+          pAnim.t = 0;
+          pAnim.from.copy(sparePlank.position);
+          if(state.roadBridge){
+            state.roadBridge = false;
+            spareCol.active = true;
+            pAnim.to.set(3.6, 0.2, -3.8);
+            plankInter.pos.set(3.6, 0.4, -3.8);
+            plankInter.label = "扛起备用厚木板铺到沟上";
+            showWhisper("把多余木板搬回沟边堆放好。");
+          }else{
+            state.roadBridge = true;
+            pAnim.to.set(1.1, 0.08, 0);
+            plankInter.pos.set(1.1, 0.4, 0);
+            plankInter.label = "把备用木板搬回材料堆";
+            showWhisper("啪一声把厚松木板拍平在沟沿上，木板桥更宽了。");
+          }
+        });
+        addInteract("rw_sign", V(-4.2, 1.0, 2.8), "查看施工手写牌", "看一眼工程便条", () => {
+          sfx.play("paper");
+          openModal("路口手写牌", "「自来水支管更换，路面开挖两天。\n行人请走中间铺设的木板桥，木板底下垫了方木，慢点踩。」");
+        });
+        addCollectible("roadwork", -1.1, 0.3, 0, 0xe8d5a7);
+        bounds = {
+          minX: -8.5,
+          maxX: 8.5,
+          minZ: -9.5,
+          maxZ: 9.5
+        };
+        surfaceFn = (x, z) => Math.abs(z) <= 2.1 ? (heightFn(x, z) > 0 ? "wood" : "dirt") : "concrete";
+        return {
+          pos: V(-1.1, 1.65, 6.2),
+          yaw: 0,
+          whisper: "马路中间被挖开了一道沟，上面横架着几块踩得发白的松木板。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      subway(){
+        scene.background = new T.Color(0x101318);
+        scene.fog = new T.Fog(0x101318, 18, 46);
+        scene.add(new T.HemisphereLight(0xd2e1eb, 0x3c424a, 0.75));
+        for(const pz of [-8, 0, 8]){
+          const l = new T.PointLight(0xeef6fa, 0.85, 18);
+          l.position.set(0, 4.0, pz);
+          scene.add(l);
+        }
+        addBox(9, 0.4, 32, createMaterial({
+          map: tex.tiles("#b8bcbf", "#adb2b5", "#8c9194", 6, "sub_p"),
+          roughness: 0.45
+        }), 0, 0, 0, true, false, true);
+        addBox(0.15, 0.04, 32, createMaterial({
+          color: 0xd9b334
+        }), -4.2, 0.21, 0, false);
+        addBox(0.15, 0.04, 32, createMaterial({
+          color: 0xd9b334
+        }), 4.2, 0.21, 0, false);
+        addBox(6, 0.4, 32, createMaterial({
+          color: 0x7c8185
+        }), -11, 0, 0, false);
+        addBox(6, 0.4, 32, createMaterial({
+          color: 0x7c8185
+        }), 11, 0, 0, false);
+        addBox(38, 0.3, 34, createMaterial({
+          color: 0x2b3036
+        }), 0, 4.8, 0, false);
+        const tunnelMat = createMaterial({
+          color: 0x090b0e
+        });
+        addBox(42, 6, 14, tunnelMat, 0, 2.5, -24, false, false, false);
+        addBox(42, 6, 14, tunnelMat, 0, 2.5, 24, false, false, false);
+        for(const pz of [-10, -2, 6]){
+          addBox(0.65, 4.8, 0.65, createMaterial({
+            color: 0xd8ddd8
+          }), -2.2, 2.4, pz, true);
+          addBox(0.65, 4.8, 0.65, createMaterial({
+            color: 0xd8ddd8
+          }), 2.2, 2.4, pz, true);
+        }
+        addSign(2.6, 0.9, tex.sign("换乘站 · 1 / 4 / 7 号线", "#1f3c5c", "#f0f2f4", "四线同层穿行"), -2.2, 3.1, -1.65);
+        function makeTrain(color, x, zStart){
+          const g = new T.Group();
+          const body = mkMesh(new T.BoxGeometry(2.6, 2.8, 16), createMaterial({
+            color: 0xd8dce0,
+            roughness: 0.35,
+            metalness: 0.35
+          }), 0, 1.4, 0);
+          const stripe = mkMesh(new T.BoxGeometry(2.65, 0.42, 16.02), createMaterial({
+            color
+          }), 0, 1.35, 0);
+          const win = mkMesh(new T.BoxGeometry(2.63, 0.75, 13.5), createMaterial({
+            color: 0x2a3c4a,
+            emissive: 0x6e8fa3,
+            emissiveIntensity: 0.35
+          }), 0, 2.0, 0);
+          g.add(body, stripe, win);
+          g.position.set(x, -0.4, zStart);
+          scene.add(g);
+          return g;
+        }
+        const trains = [
+          {
+            m: makeTrain(0xc94238, -11, -26),
+            dir: 1,
+            spd: 5.8
+          },
+          {
+            m: makeTrain(0x2f78b8, 11, 22),
+            dir: -1,
+            spd: 6.4
+          },
+          {
+            m: makeTrain(0x459457, -15.5, -10),
+            dir: 1,
+            spd: 7.9
+          },
+          {
+            m: makeTrain(0xd1902e, 15.5, 8),
+            dir: -1,
+            spd: 7.2
+          }
+        ];
+        let dispatchBoost = false;
+        updaters.push((dt) => {
+          const k = dispatchBoost ? 1.95 : 1.0;
+          trains.forEach(tr => {
+            tr.m.position.z += tr.dir * tr.spd * k * dt;
+            if(tr.dir > 0 && tr.m.position.z > 31){
+              tr.m.position.z = -31;
+            }
+            if(tr.dir < 0 && tr.m.position.z < -31){
+              tr.m.position.z = 31;
+            }
+            tr.m.visible = (Math.abs(tr.m.position.z) < 29);
+          });
+        });
+        addBox(0.6, 1.3, 0.6, createMaterial({
+          color: 0x3f4852
+        }), 0, 0.65, -6, true);
+        addInteract("sub_panel", V(0, 1.1, -6), "扳动站台调度杆", "加快或放慢四条轨道发车间隔", () => {
+          dispatchBoost = !dispatchBoost;
+          sfx.play("train");
+          showWhisper(dispatchBoost ? "四条股道上的地铁接连从黑隧道口钻出来！" : "恢复平峰间隔，列车缓缓滑进黑洞口。");
+        });
+        addInteract("sub_map", V(-2.2, 2.0, -1.8), "抬头看柱子上的线路图", "核对四条地铁方向", () => {
+          sfx.play("paper");
+          openModal("多线同台换乘站", "左股道：红线与绿线（开往西城）\n右股道：蓝线与橙线（开往东站）\n\n两班车错车时，风会从隧道深处一阵一阵卷上站台。");
+        });
+        addCollectible("subway", 2.8, 0.55, 6.2, 0x7ab4e0);
+        bounds = {
+          minX: -3.5,
+          maxX: 3.5,
+          minZ: -14,
+          maxZ: 14
+        };
+        surfaceFn = () => "stone";
+        heightFn = () => 0.2;
+        return {
+          pos: V(0, 1.85, 9),
+          yaw: 0,
+          whisper: "四条轨道并排钻进黑隧道，站台上全是不同颜色的地铁进出风声。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      studio(){
+        scene.background = new T.Color(0xdad4c8);
+        scene.fog = new T.Fog(0xdad4c8, 12, 35);
+        scene.add(new T.HemisphereLight(0xfcfaf2, 0x857869, 1.0));
+        const sky = new T.DirectionalLight(0xfffdf5, 0.95);
+        sky.position.set(4, 10, 4);
+        sky.castShadow = true;
+        scene.add(sky);
+        addBox(9, 0.2, 9, createMaterial({
+          map: tex.wood("#9c7853", "#705134", "stu_f"),
+          roughness: 0.75
+        }), 0, -0.1, 0, true, false, true);
+        addBox(9, 3.8, 0.2, createMaterial({
+          color: 0xebe5d8,
+          roughness: 0.95
+        }), 0, 1.9, -4.5, true);
+        addBox(0.2, 3.8, 9, createMaterial({
+          color: 0xe3dcd0,
+          roughness: 0.95
+        }), -4.5, 1.9, 0, true);
+        addBox(0.2, 3.8, 9, createMaterial({
+          color: 0xebe5d8,
+          roughness: 0.95
+        }), 4.5, 1.9, 0, true);
+        addBox(9, 3.8, 0.2, createMaterial({
+          color: 0xe3dcd0,
+          roughness: 0.95
+        }), 0, 1.9, 4.5, true);
+        addBox(0.12, 1.6, 0.12, createMaterial({
+          map: tex.wood("#785233", "#52351e")
+        }), 0, 0.8, -1.8, true);
+        const paintCanvas = document.createElement("canvas");
+        paintCanvas.width = 256;
+        paintCanvas.height = 256;
+        const pg = paintCanvas.getContext("2d");
+        pg.fillStyle = "#f5f0e4";
+        pg.fillRect(0, 0, 256, 256);
+        pg.fillStyle = "#c9c2b2";
+        pg.fillRect(20, 160, 216, 76);
+        pg.fillStyle = "#5d7e91";
+        pg.beginPath();
+        pg.arc(110, 120, 48, 0, Math.PI * 2);
+        pg.fill();
+        const paintTex = track(new T.CanvasTexture(paintCanvas));
+        if(state.studioImg){
+          const img = new Image();
+          img.onload = () => {
+            pg.drawImage(img, 0, 0);
+            paintTex.needsUpdate = true;
+          };
+          img.src = state.studioImg;
+        }
+        addMesh(new T.BoxGeometry(1.1, 1.3, 0.06), createMaterial({
+          map: paintTex,
+          roughness: 0.8
+        }), 0, 1.45, -1.68).rotation.x = -0.12;
+        addBox(1.8, 0.72, 0.85, createMaterial({
+          map: tex.wood("#876342", "#614328")
+        }), -2.8, 0.36, -2.5, true);
+        const paletteCols = [
+          "#c94c38",
+          "#386b9c",
+          "#e0ae3a",
+          "#4d804c",
+          "#2d2a28"
+        ];
+        let colIdx = 0;
+        paletteCols.forEach((c, i) => {
+          addCylinder(0.03, 0.03, 0.16, 8, createMaterial({
+            color: c
+          }), -3.3 + i * 0.18, 0.8, -2.4).rotation.z = Math.PI / 2;
+        });
+        addCylinder(0.08, 0.08, 0.18, 10, createMaterial({
+          color: 0xdde6ea,
+          transparent: true,
+          opacity: 0.65
+        }), -2.2, 0.82, -2.6);
+        addBox(0.36, 0.05, 0.48, createMaterial({
+          color: 0xf4efe2,
+          roughness: 0.9
+        }), -2.2, 0.75, -2.18, false);
+        addBox(0.9, 1.1, 0.08, createMaterial({
+          color: 0xd8ccb8
+        }), 3.8, 0.55, -3.6, true);
+        addBox(1.1, 1.3, 0.08, createMaterial({
+          color: 0xc9d3d6
+        }), 3.6, 0.65, -3.4, true);
+        addCylinder(0.22, 0.22, 0.46, 10, createMaterial({
+          map: tex.wood("#785233", "#52351e")
+        }), 0.9, 0.23, -0.6);
+        addInteract("stu_easel", V(0, 1.4, -1.6), "往画架画布上添一笔颜料", "叠加色块与笔触", () => {
+          pg.fillStyle = paletteCols[colIdx];
+          pg.globalAlpha = 0.78;
+          pg.beginPath();
+          pg.ellipse(40 + Math.random() * 176, 40 + Math.random() * 176, 14 + Math.random() * 28, 8 + Math.random() * 18, Math.random() * 3, 0, Math.PI * 2);
+          pg.fill();
+          pg.globalAlpha = 1;
+          paintTex.needsUpdate = true;
+          state.studioImg = paintCanvas.toDataURL();
+          sfx.play("paint");
+          showWhisper("刮刀抹上去一笔厚实的" + ["朱红", "群青", "藤黄", "橄榄绿", "煤黑"][colIdx] + "，松节油气味更浓了。");
+        });
+        addInteract("stu_paper", V(-2.2, 0.85, -2.18), "翻看桌上自印小论文", "《南方梅雨季廉价丙烯的起皮动力学》（长文六节）", () => openBook("studio"));
+        addInteract("stu_table", V(-3.0, 0.9, -2.5), "换一种桌面颜料管颜色", "切换下一管颜料", () => {
+          colIdx = (colIdx + 1) % paletteCols.length;
+          sfx.play("switch");
+          showWhisper("挑出了一管" + ["朱红", "群青", "藤黄", "橄榄绿", "煤黑"][colIdx] + "颜料。");
+        });
+        addCollectible("studio", -2.3, 0.85, -2.4, 0x3f6fa3);
+        bounds = {
+          minX: -3.8,
+          maxX: 3.8,
+          minZ: -3.8,
+          maxZ: 3.8
+        };
+        surfaceFn = () => "wood";
+        return {
+          pos: V(0, 1.65, 2.8),
+          yaw: 0,
+          whisper: "北向屋里透进柔和白光，颜料桌上压着一份自印的研究小册子。"
+        };
+      },
+
+      // ---------------------------------------------------------------
+      cave(){
+        scene.background = new T.Color(0x0b0e12);
+        scene.fog = new T.FogExp2(0x0b0e12, 0.048);
+        scene.add(new T.AmbientLight(0x23303d, 0.68));
+        const lantern = new T.PointLight(0xffb86b, 2.0, 16);
+        lantern.position.set(-1.5, 1.4, -1.5);
+        scene.add(lantern);
+        const poolGlow = new T.PointLight(0x47b5c9, 1.1, 12);
+        poolGlow.position.set(2.5, 0.6, -4.5);
+        scene.add(poolGlow);
+        const rockMat = createMaterial({
+          map: tex.concrete("#3a3d42", 0.26, "cave_r"),
+          roughness: 0.95
+        });
+        addBox(22, 0.4, 24, rockMat, 0, -0.2, 0, true, false, true);
+        addMesh(new T.PlaneGeometry(8, 7), createMaterial({
+          color: 0x226878,
+          emissive: 0x103842,
+          emissiveIntensity: 0.5,
+          roughness: 0.15
+        }), 3, 0.03, -4.5, false, false).rotation.x = -Math.PI / 2;
+        for(let i = 0; i < 22; i++){
+          const ang = (i / 22) * Math.PI * 2;
+          const r = 9.2 + Math.sin(i * 3) * 1.2;
+          addBox(2.8, 7.5, 2.8, rockMat, Math.cos(ang) * r, 3.5, Math.sin(ang) * r, true);
+        }
+        for(let i = 0; i < 18; i++){
+          const len = 1.0 + Math.random() * 2.2;
+          addMesh(new T.ConeGeometry(0.28, len, 6), rockMat, (Math.random() - 0.5) * 13, 6.8 - len / 2, (Math.random() - 0.5) * 13, false, false).rotation.x = Math.PI;
+        }
+        addCylinder(0.14, 0.18, 0.3, 8, createMaterial({
+          color: 0xd99b43,
+          emissive: 0xff8424,
+          emissiveIntensity: 0.8
+        }), -1.5, 0.22, -1.5);
+        addMesh(new T.OctahedronGeometry(0.45, 0), createMaterial({
+          color: 0x6bcce0,
+          emissive: 0x216b7d,
+          emissiveIntensity: 0.4,
+          roughness: 0.25
+        }), 4.2, 0.55, -6.2);
+        let lanternHigh = true;
+        updaters.push((dt, t) => {
+          lantern.intensity = (lanternHigh ? 2.0 : 0.45) + Math.sin(t * 7) * 0.12;
+        });
+        addInteract("cave_lantern", V(-1.5, 0.6, -1.5), "拧动露营煤油灯旋钮", "调亮或压暗洞内火光", () => {
+          lanternHigh = !lanternHigh;
+          sfx.play("switch");
+          showWhisper(lanternHigh ? "暖黄灯光扑到潮湿的钟乳石上，岩石反出湿漉漉的亮面。" : "灯光压暗，地下暗池泛出微弱蓝绿微光。");
+        });
+        addInteract("cave_pool", V(2.8, 0.4, -3.5), "朝地下暗池投一颗小石子", "听回声荡开", () => {
+          const stone = mkMesh(new T.SphereGeometry(0.04, 6, 6), createMaterial({
+            color: 0x888888
+          }), player.pos.x, 1.5, player.pos.z);
+          scene.add(stone);
+          const sx = player.pos.x;
+          const sz = player.pos.z;
+          const t0 = performance.now();
+          const iv = setInterval(() => {
+            const p = Math.min(1, (performance.now() - t0) / 600);
+            stone.position.set(sx + (2.8 - sx) * p, 1.5 + (0.4 - 1.5) * p + Math.sin(p * Math.PI) * 1.1, sz + (-3.5 - sz) * p);
+            if(p >= 1){
+              clearInterval(iv);
+              const idx = activeIntervals.indexOf(iv);
+              if(idx !== -1){
+                activeIntervals.splice(idx, 1);
+              }
+              scene.remove(stone);
+              stone.geometry.dispose();
+              stone.material.dispose();
+              sfx.play("splash");
+              showWhisper("咚——水声在岩壁间回响了三四次才慢慢散掉。");
+            }
+          }, 16);
+          activeIntervals.push(iv);
+        });
+        addCollectible("cave", 4.2, 1.1, -6.0, 0xe6b85c);
+        bounds = {
+          minX: -7.2,
+          maxX: 7.2,
+          minZ: -7.2,
+          maxZ: 7.2
+        };
+        surfaceFn = (x, z) => (x >= -1 && x <= 7 && z >= -8 && z <= -1) ? "water" : "stone";
+        return {
+          pos: V(0, 1.65, 5.5),
+          yaw: 0,
+          whisper: "头顶垂着湿润的灰岩，山洞深处有水滴落进暗池的声音。"
+        };
+      }
+    };
+
+    function loadScene(idx){
+      state.sceneIdx = (idx + SCENES_META.length) % SCENES_META.length;
+      if(modal.classList.contains("open")){
+        closeModal();
+      }else{
+        curBookKey = null;
+      }
+      closePanels();
+      const meta = SCENES_META[state.sceneIdx];
+      clearScene();
+      let info;
+      try{
+        info = builders[meta.id]();
+      }catch(e){
+        cleanup3D();
+        runFallback("场景构建失败：" + e.message);
+        return;
+      }
+      setupShadows();
+      player.pos.copy(info.pos);
+      player.vel.set(0, 0, 0);
+      player.yaw = info.yaw || 0;
+      player.pitch = 0;
+      camera.fov = state.fov;
+      camera.updateProjectionMatrix();
+      document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/17";
+      document.getElementById("ui-name").textContent = meta.name;
+      showWhisper(info.whisper, 4200);
+      sfx.setAmbient(meta.id);
+      updateSceneMenu();
+    }
+
+    const keys = {};
+    let pointerLocked = false;
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    const onKeyDown = e => {
+      keys[e.code] = true;
+      if(e.code === "Escape"){
+        if(modal.classList.contains("open")){
+          closeModal();
+          return;
+        }
+        closePanels();
+        return;
+      }
+      if(state.paused){
+        return;
+      }
+      if(e.code === "KeyE" || e.code === "Enter"){
+        triggerInteract();
+      }
+      if(e.code === "Space"){
+        e.preventDefault();
+        if(document.activeElement && document.activeElement.blur){
+          document.activeElement.blur();
+        }
+        if(sitTimer){
+          clearTimeout(sitTimer);
+          sitTimer = null;
+          player.height = 1.65;
+          player.pos.y = Math.max(player.pos.y, heightFn(player.pos.x, player.pos.z, player.pos.y - 1.65) + 1.65);
+        }
+        if(player.onGround){
+          player.vel.y = 5.4;
+          player.onGround = false;
+        }
+      }
+      if(e.code === "BracketLeft"){
+        loadScene(state.sceneIdx - 1);
+      }
+      if(e.code === "BracketRight"){
+        loadScene(state.sceneIdx + 1);
+      }
+    };
+
+    const onKeyUp = e => {
+      keys[e.code] = false;
+    };
+
+    const onBlur = () => {
+      for(const k in keys){
+        keys[k] = false;
+      }
+    };
+
+    const onMouseDown = e => {
+      if(state.paused){
+        return;
+      }
+      sfx.resume();
+      if(e.button === 0){
+        if(!pointerLocked){
+          if(canvas.requestPointerLock){
+            canvas.requestPointerLock();
+          }
+          dragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+        }else{
+          triggerInteract();
+        }
+      }
+    };
+
+    const onMouseUp = () => {
+      dragging = false;
+    };
+
+    const onMouseMove = e => {
+      if(state.paused){
+        return;
+      }
+      if(pointerLocked){
+        player.yaw -= e.movementX * 0.0022;
+        player.pitch = Math.max(-1.35, Math.min(1.35, player.pitch - e.movementY * 0.0022));
+      }else if(dragging){
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        player.yaw -= dx * 0.004;
+        player.pitch = Math.max(-1.35, Math.min(1.35, player.pitch - dy * 0.004));
+      }
+    };
+
+    const onPtrChange = () => {
+      pointerLocked = document.pointerLockElement === canvas;
+    };
+
+    const onPtrErr = () => {
+      showWhisper("视角锁定被浏览器拒绝，可继续按住鼠标左键拖动环视。");
+    };
+
+    let lookTouchId = null;
+    let lookLX = 0;
+    let lookLY = 0;
+
+    const onCTouchStart = e => {
+      if(e.target !== canvas || state.paused){
+        return;
+      }
+      sfx.resume();
+      for(const t of e.changedTouches){
+        if(lookTouchId === null){
+          lookTouchId = t.identifier;
+          lookLX = t.clientX;
+          lookLY = t.clientY;
+        }
+      }
+    };
+
+    const onCTouchMove = e => {
+      if(e.target !== canvas || state.paused){
+        return;
+      }
+      for(const t of e.changedTouches){
+        if(t.identifier === lookTouchId){
+          const dx = t.clientX - lookLX;
+          const dy = t.clientY - lookLY;
+          lookLX = t.clientX;
+          lookLY = t.clientY;
+          player.yaw -= dx * 0.0055;
+          player.pitch = Math.max(-1.35, Math.min(1.35, player.pitch - dy * 0.0055));
+        }
+      }
+    };
+
+    const onCTouchEnd = e => {
+      for(const t of e.changedTouches){
+        if(t.identifier === lookTouchId){
+          lookTouchId = null;
+        }
+      }
+    };
+
+    const joyZone = document.getElementById("joy-zone");
+    const joyKnob = document.getElementById("joy-knob");
+    let joyId = null;
+
+    function updateJoy(cx, cy){
+      const r = joyZone.getBoundingClientRect();
+      let dx = cx - (r.left + r.width / 2);
+      let dy = cy - (r.top + r.height / 2);
+      const max = 38;
+      const d = Math.hypot(dx, dy);
+      if(d > max){
+        dx = dx / d * max;
+        dy = dy / d * max;
+      }
+      joyKnob.style.transform = `translate(${dx}px,${dy}px)`;
+      joyVec.x = dx / max;
+      joyVec.y = dy / max;
+    }
+
+    const onJStart = e => {
+      if(state.paused){
+        return;
+      }
+      e.stopPropagation();
+      e.preventDefault();
+      sfx.resume();
+      const t = e.changedTouches[0];
+      joyId = t.identifier;
+      updateJoy(t.clientX, t.clientY);
+    };
+
+    const onJMove = e => {
+      if(state.paused){
+        return;
+      }
+      e.stopPropagation();
+      e.preventDefault();
+      for(const t of e.changedTouches){
+        if(t.identifier === joyId){
+          updateJoy(t.clientX, t.clientY);
+        }
+      }
+    };
+
+    const onJEnd = e => {
+      e.stopPropagation();
+      for(const t of e.changedTouches){
+        if(t.identifier === joyId){
+          joyId = null;
+          joyVec.x = 0;
+          joyVec.y = 0;
+          joyKnob.style.transform = "";
+        }
+      }
+    };
+
+    const onJCancel = e => {
+      e.stopPropagation();
+      joyId = null;
+      joyVec.x = 0;
+      joyVec.y = 0;
+      joyKnob.style.transform = "";
+    };
+
+    const touchAct = document.getElementById("touch-act");
+    const touchJump = document.getElementById("touch-jump");
+    const promptEl = document.getElementById("prompt");
+
+    function doJump(){
+      if(!state.paused){
+        if(sitTimer){
+          clearTimeout(sitTimer);
+          sitTimer = null;
+          player.height = 1.65;
+          player.pos.y = Math.max(player.pos.y, heightFn(player.pos.x, player.pos.z, player.pos.y - 1.65) + 1.65);
+        }
+        if(player.onGround){
+          player.vel.y = 5.4;
+          player.onGround = false;
+        }
+      }
+    }
+
+    function triggerInteract(){
+      if(state.paused){
+        return;
+      }
+      const now = performance.now();
+      if(now - lastInteractTime < 300){
+        return;
+      }
+      lastInteractTime = now;
+      if(targetInter){
+        targetInter.onInteract();
+      }
+    }
+
+    const onActTouch = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      sfx.resume();
+      triggerInteract();
+    };
+
+    const onActClick = e => {
+      e.stopPropagation();
+      sfx.resume();
+      triggerInteract();
+    };
+
+    const onJumpTouch = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      doJump();
+    };
+
+    const onJumpClick = e => {
+      e.stopPropagation();
+      doJump();
+    };
+
+    const onPromptClick = e => {
+      e.stopPropagation();
+      triggerInteract();
+    };
+
+    function resize(){
+      const pr = Math.min(window.devicePixelRatio || 1, 2) * state.resScale;
+      renderer.setPixelRatio(pr);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    }
+
+    const mq = window.matchMedia ? matchMedia("(resolution: " + devicePixelRatio + "dppx)") : null;
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", onBlur);
+    canvas.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("pointerlockchange", onPtrChange);
+    document.addEventListener("pointerlockerror", onPtrErr);
+    canvas.addEventListener("touchstart", onCTouchStart, {
+      passive: true
+    });
+    canvas.addEventListener("touchmove", onCTouchMove, {
+      passive: true
+    });
+    canvas.addEventListener("touchend", onCTouchEnd);
+    joyZone.addEventListener("touchstart", onJStart, {
+      passive: false
+    });
+    joyZone.addEventListener("touchmove", onJMove, {
+      passive: false
+    });
+    joyZone.addEventListener("touchend", onJEnd);
+    joyZone.addEventListener("touchcancel", onJCancel);
+    touchAct.addEventListener("touchstart", onActTouch, {
+      passive: false
+    });
+    touchAct.addEventListener("click", onActClick);
+    touchJump.addEventListener("touchstart", onJumpTouch, {
+      passive: false
+    });
+    touchJump.addEventListener("click", onJumpClick);
+    promptEl.addEventListener("click", onPromptClick);
+    window.addEventListener("resize", resize);
+    if(mq){
+      mq.addEventListener("change", resize);
+    }
+    resize();
+
+    function cleanup3D(){
+      alive = false;
+      clearScene();
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("blur", onBlur);
+      canvas.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("pointerlockchange", onPtrChange);
+      document.removeEventListener("pointerlockerror", onPtrErr);
+      canvas.removeEventListener("touchstart", onCTouchStart);
+      canvas.removeEventListener("touchmove", onCTouchMove);
+      canvas.removeEventListener("touchend", onCTouchEnd);
+      joyZone.removeEventListener("touchstart", onJStart);
+      joyZone.removeEventListener("touchmove", onJMove);
+      joyZone.removeEventListener("touchend", onJEnd);
+      joyZone.removeEventListener("touchcancel", onJCancel);
+      touchAct.removeEventListener("touchstart", onActTouch);
+      touchAct.removeEventListener("click", onActClick);
+      touchJump.removeEventListener("touchstart", onJumpTouch);
+      touchJump.removeEventListener("click", onJumpClick);
+      promptEl.removeEventListener("click", onPromptClick);
+      window.removeEventListener("resize", resize);
+      if(mq){
+        mq.removeEventListener("change", resize);
+      }
+      renderer.dispose();
+      canvas.style.display = "none";
+      window._clearHover = null;
+    }
+
+    const reticle = document.getElementById("reticle");
+
+    function findInteractable(){
+      _lookEuler.set(player.pitch, player.yaw, 0, "YXZ");
+      _lookDir.set(0, 0, -1).applyEuler(_lookEuler);
+      const closeThresh = 0.6;
+      let best = null;
+      let bestScore = -1;
+      for(const it of interactables){
+        _tmpVec.copy(it.pos).sub(player.pos);
+        const dist = _tmpVec.length();
+        if(dist > it.radius + 0.8){
+          continue;
+        }
+        const dot = _tmpVec.normalize().dot(_lookDir);
+        if(dot > 0.44 || dist < closeThresh){
+          const score = dot * 2 - dist * 0.25;
+          if(score > bestScore){
+            bestScore = score;
+            best = it;
+          }
+        }
+      }
+      if(targetInter && targetInter !== best){
+        restoreHover(targetInter);
+      }
+      targetInter = best;
+      if(best){
+        if(best.mesh){
+          const m = best.mesh.material;
+          if(m && "emissiveIntensity" in m){
+            if(best.mesh.userData._origEm === undefined){
+              best.mesh.userData._origEm = m.emissiveIntensity;
+            }
+            if(m.emissive && best.mesh.userData._origEmColor === undefined){
+              best.mesh.userData._origEmColor = m.emissive.getHex();
+            }
+            if(m.emissive && m.emissive.getHex() === 0){
+              m.emissive.setHex(0x443a28);
+            }
+            m.emissiveIntensity = Math.max(best.mesh.userData._origEm, 0.2) + 0.35;
+          }
+          if(!best.mesh.userData._origScale){
+            best.mesh.userData._origScale = best.mesh.scale.clone();
+          }
+          best.mesh.scale.copy(best.mesh.userData._origScale).multiplyScalar(1.1);
+        }
+        const lbl = best.getLabel ? best.getLabel() : best.label;
+        const hnt = best.getHint ? best.getHint() : best.hint;
+        reticle.classList.add("hit");
+        promptEl.textContent = "[E] " + lbl + " · " + hnt;
+        promptEl.classList.add("show");
+      }else{
+        reticle.classList.remove("hit");
+        promptEl.classList.remove("show");
+      }
+    }
+
+    const mm = document.getElementById("minimap").getContext("2d");
+    let lastMapMs = 0;
+
+    function drawMinimap(now){
+      if(now - lastMapMs < 42){
+        return;
+      }
+      lastMapMs = now;
+      mm.clearRect(0, 0, 128, 128);
+      mm.fillStyle = "rgba(22,24,28,0.75)";
+      mm.fillRect(0, 0, 128, 128);
+      const scale = 3.6;
+      const cx = 64;
+      const cy = 64;
+      mm.fillStyle = "rgba(160,165,170,0.28)";
+      for(const c of colliders){
+        if(!c.active){
+          continue;
+        }
+        if(Math.abs(c.minX - player.pos.x) > 12 || Math.abs(c.minZ - player.pos.z) > 12){
+          continue;
+        }
+        mm.fillRect(cx + (c.minX - player.pos.x) * scale, cy + (c.minZ - player.pos.z) * scale, (c.maxX - c.minX) * scale, (c.maxZ - c.minZ) * scale);
+      }
+      for(const it of interactables){
+        mm.fillStyle = it.id.startsWith("col_") ? "#e6c373" : "#7ec4cf";
+        mm.beginPath();
+        mm.arc(cx + (it.pos.x - player.pos.x) * scale, cy + (it.pos.z - player.pos.z) * scale, 2.6, 0, Math.PI * 2);
+        mm.fill();
+      }
+      mm.save();
+      mm.translate(cx, cy);
+      mm.rotate(-player.yaw);
+      mm.fillStyle = "rgba(235,220,185,0.28)";
+      mm.beginPath();
+      mm.moveTo(0, 0);
+      mm.lineTo(-10, -22);
+      mm.lineTo(10, -22);
+      mm.closePath();
+      mm.fill();
+      mm.fillStyle = "#f2ead8";
+      mm.beginPath();
+      mm.arc(0, 0, 3.2, 0, Math.PI * 2);
+      mm.fill();
+      mm.restore();
+    }
+
+    function resolveMove(nx, nz){
+      const STEP = 0.45;
+      const r = 0.35;
+      let x = Math.max(bounds.minX, Math.min(bounds.maxX, nx));
+      let z = Math.max(bounds.minZ, Math.min(bounds.maxZ, nz));
+      const py = player.pos.y - player.height;
+      for(const c of colliders){
+        if(!c.active || py + STEP > c.maxY || py + player.height < c.minY){
+          continue;
+        }
+        if(x + r > c.minX && x - r < c.maxX && z + r > c.minZ && z - r < c.maxZ){
+          const ox1 = (x + r) - c.minX;
+          const ox2 = c.maxX - (x - r);
+          const oz1 = (z + r) - c.minZ;
+          const oz2 = c.maxZ - (z - r);
+          const minO = Math.min(ox1, ox2, oz1, oz2);
+          if(minO === ox1){
+            x = c.minX - r;
+          }else if(minO === ox2){
+            x = c.maxX + r;
+          }else if(minO === oz1){
+            z = c.minZ - r;
+          }else{
+            z = c.maxZ + r;
+          }
+        }
+      }
+      return [x, z];
+    }
+
+    const clock = new T.Clock();
+    let stepAcc = 0;
+
+    function animate(now){
+      if(!alive){
+        return;
+      }
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+      if(!state.paused){
+        let fwd = 0;
+        let str = 0;
+        if(keys["KeyW"] || keys["ArrowUp"]){
+          fwd += 1;
+        }
+        if(keys["KeyS"] || keys["ArrowDown"]){
+          fwd -= 1;
+        }
+        if(keys["KeyA"] || keys["ArrowLeft"]){
+          str -= 1;
+        }
+        if(keys["KeyD"] || keys["ArrowRight"]){
+          str += 1;
+        }
+        fwd -= joyVec.y;
+        str += joyVec.x;
+        const len = Math.hypot(fwd, str);
+        if(len > 1){
+          fwd /= len;
+          str /= len;
+        }
+        const speed = keys["ShiftLeft"] ? 6.4 : 4.1;
+        const sinY = Math.sin(player.yaw);
+        const cosY = Math.cos(player.yaw);
+        const [nx, nz] = resolveMove(player.pos.x + (-sinY * fwd + cosY * str) * speed * dt, player.pos.z + (-cosY * fwd - sinY * str) * speed * dt);
+        const moved = Math.hypot(nx - player.pos.x, nz - player.pos.z);
+        player.pos.x = nx;
+        player.pos.z = nz;
+        if(sitTimer && (moved > 0.005 || len > 0.05)){
+          clearTimeout(sitTimer);
+          sitTimer = null;
+          player.height = 1.65;
+        }
+        const groundY = heightFn(player.pos.x, player.pos.z, player.pos.y - player.height);
+        player.vel.y -= 14.5 * dt;
+        player.pos.y += player.vel.y * dt;
+        if(player.pos.y <= groundY + player.height){
+          if(Math.abs(player.pos.y - (groundY + player.height)) < 0.35){
+            player.pos.y += ((groundY + player.height) - player.pos.y) * Math.min(1, dt * 18);
+          }else{
+            player.pos.y = groundY + player.height;
+          }
+          player.vel.y = 0;
+          player.onGround = true;
+        }
+        if(moved > 0.005 && player.onGround){
+          stepAcc += moved;
+          if(stepAcc > 1.45){
+            stepAcc = 0;
+            sfx.step(surfaceFn(player.pos.x, player.pos.z));
+          }
+        }
+        const bob = moved > 0.005 && player.onGround ? Math.sin(t * 10) * 0.032 : 0;
+        camera.position.set(player.pos.x, player.pos.y + bob, player.pos.z);
+        camera.rotation.order = "YXZ";
+        camera.rotation.y = player.yaw;
+        camera.rotation.x = player.pitch;
+        updaters.forEach(u => u(dt, t));
+        findInteractable();
+        drawMinimap(now || performance.now());
+      }
+      renderer.render(scene, camera);
+    }
+
+    window._engine = {
+      loadScene,
+      setRes(v){
+        state.resScale = v;
+        resize();
+      },
+      setPerf(v){
+        state.perf = v;
+        renderer.shadowMap.enabled = (v === "high");
+      },
+      setFov(v){
+        state.fov = v;
+        if(!state.zoomActive){
+          camera.fov = v;
+          camera.updateProjectionMatrix();
+        }
+      }
+    };
+
+    loadScene(state.sceneIdx);
+    requestAnimationFrame(animate);
+    setTimeout(() => {
+      const el = document.getElementById("loader");
+      el.classList.add("hide");
+      setTimeout(() => el.style.display = "none", 500);
+    }, 260);
+  }
+
+  function runFallback(msg){
+    const fc = document.getElementById("fallback");
+    fc.style.display = "block";
+    document.getElementById("minimap-wrap").style.display = "none";
+    const retryBtn = document.getElementById("fb-retry");
+    retryBtn.style.display = "inline-flex";
+    const g = fc.getContext("2d");
+
+    function fit(){
+      fc.width = window.innerWidth;
+      fc.height = window.innerHeight;
+    }
+
+    fit();
+    let px = 0;
+    let py = 0;
+    let joyId = null;
+    let fbAlive = true;
+    let dragId = null;
+    let lx = 0;
+    let ly = 0;
+    const joyZone = document.getElementById("joy-zone");
+    const joyKnob = document.getElementById("joy-knob");
+    const keys = {};
+
+    function updJ(cx, cy){
+      const r = joyZone.getBoundingClientRect();
+      let dx = cx - (r.left + r.width / 2);
+      let dy = cy - (r.top + r.height / 2);
+      const max = 38;
+      const d = Math.hypot(dx, dy);
+      if(d > max){
+        dx = dx / d * max;
+        dy = dy / d * max;
+      }
+      joyKnob.style.transform = `translate(${dx}px,${dy}px)`;
+      joyVec.x = dx / max;
+      joyVec.y = dy / max;
+    }
+
+    const onJStart = e => {
+      if(state.paused){
+        return;
+      }
+      e.stopPropagation();
+      e.preventDefault();
+      const t = e.changedTouches[0];
+      joyId = t.identifier;
+      updJ(t.clientX, t.clientY);
+    };
+
+    const onJMove = e => {
+      if(state.paused){
+        return;
+      }
+      e.stopPropagation();
+      e.preventDefault();
+      for(const t of e.changedTouches){
+        if(t.identifier === joyId){
+          updJ(t.clientX, t.clientY);
+        }
+      }
+    };
+
+    const onJEnd = e => {
+      e.stopPropagation();
+      joyId = null;
+      joyVec.x = 0;
+      joyVec.y = 0;
+      joyKnob.style.transform = "";
+    };
+
+    const onFStart = e => {
+      const t = e.changedTouches[0];
+      dragId = t.identifier;
+      lx = t.clientX;
+      ly = t.clientY;
+    };
+
+    const onFMove = e => {
+      for(const t of e.changedTouches){
+        if(t.identifier === dragId){
+          px += (t.clientX - lx) * 0.6;
+          py += (t.clientY - ly) * 0.6;
+          lx = t.clientX;
+          ly = t.clientY;
+        }
+      }
+    };
+
+    const onFEnd = () => {
+      dragId = null;
+    };
+
+    const onKeyDown = e => {
+      keys[e.code] = true;
+      if(e.code === "Escape"){
+        if(modal.classList.contains("open")){
+          closeModal();
+        }else{
+          closePanels();
+        }
+      }
+      if(!state.paused && e.code === "KeyE"){
+        const m = SCENES_META[state.sceneIdx].id;
+        if(BOOKS[m]){
+          openBook(m);
+        }
+      }
+    };
+
+    const onKeyUp = e => {
+      keys[e.code] = false;
+    };
+
+    const onBlur = () => {
+      for(const k in keys){
+        keys[k] = false;
+      }
+    };
+
+    const touchAct = document.getElementById("touch-act");
+    const touchJump = document.getElementById("touch-jump");
+
+    const onActTouch = e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if(!state.paused){
+        const m = SCENES_META[state.sceneIdx].id;
+        if(BOOKS[m]){
+          openBook(m);
+        }
+      }
+    };
+
+    const onActClick = () => {
+      if(!state.paused){
+        const m = SCENES_META[state.sceneIdx].id;
+        if(BOOKS[m]){
+          openBook(m);
+        }
+      }
+    };
+
+    const onJumpTouch = e => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    window.addEventListener("resize", fit);
+    joyZone.addEventListener("touchstart", onJStart, {
+      passive: false
+    });
+    joyZone.addEventListener("touchmove", onJMove, {
+      passive: false
+    });
+    joyZone.addEventListener("touchend", onJEnd);
+    fc.addEventListener("touchstart", onFStart, {
+      passive: true
+    });
+    fc.addEventListener("touchmove", onFMove, {
+      passive: true
+    });
+    fc.addEventListener("touchend", onFEnd);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", onBlur);
+    touchAct.addEventListener("touchstart", onActTouch, {
+      passive: false
+    });
+    touchAct.addEventListener("click", onActClick);
+    touchJump.addEventListener("touchstart", onJumpTouch, {
+      passive: false
+    });
+
+    function cleanup(){
+      fbAlive = false;
+      window.removeEventListener("resize", fit);
+      joyZone.removeEventListener("touchstart", onJStart);
+      joyZone.removeEventListener("touchmove", onJMove);
+      joyZone.removeEventListener("touchend", onJEnd);
+      fc.removeEventListener("touchstart", onFStart);
+      fc.removeEventListener("touchmove", onFMove);
+      fc.removeEventListener("touchend", onFEnd);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("blur", onBlur);
+      touchAct.removeEventListener("touchstart", onActTouch);
+      touchAct.removeEventListener("click", onActClick);
+      touchJump.removeEventListener("touchstart", onJumpTouch);
+    }
+
+    retryBtn.onclick = async () => {
+      retryBtn.textContent = "加载中…";
+      const ok = await ensureThree();
+      if(ok){
+        cleanup();
+        retryBtn.textContent = "重试加载 3D";
+        run3D();
+      }else{
+        retryBtn.textContent = "重试加载 3D";
+        showWhisper("仍未找到 three.min.js");
+      }
+    };
+
+    function draw(){
+      if(!fbAlive){
+        return;
+      }
+      if(!state.paused){
+        if(keys["KeyW"] || keys["ArrowUp"]){
+          py -= 3;
+        }
+        if(keys["KeyS"] || keys["ArrowDown"]){
+          py += 3;
+        }
+        if(keys["KeyA"] || keys["ArrowLeft"]){
+          px -= 3;
+        }
+        if(keys["KeyD"] || keys["ArrowRight"]){
+          px += 3;
+        }
+        px += joyVec.x * 3;
+        py += joyVec.y * 3;
+      }
+      g.fillStyle = "#181a1f";
+      g.fillRect(0, 0, fc.width, fc.height);
+      const meta = SCENES_META[state.sceneIdx];
+      g.fillStyle = "#cbb893";
+      g.font = "17px sans-serif";
+      g.textAlign = "center";
+      g.fillText(meta.name + "（轻量视图回退模式）", fc.width / 2, fc.height / 2 - 34);
+      g.fillStyle = "#9da1a8";
+      g.font = "12.5px sans-serif";
+      g.fillText(msg || "请将 three.min.js 放在同级目录以启用完整 3D 场景", fc.width / 2, fc.height / 2);
+      if(BOOKS[meta.id]){
+        g.fillStyle = "#e2cf9e";
+        g.fillText("此场景内含长篇读本，按 E 或点击右下「互动」可打开阅读", fc.width / 2, fc.height / 2 + 28);
+      }
+      g.fillStyle = "rgba(200,180,140,0.45)";
+      g.beginPath();
+      g.arc(fc.width / 2 + px, fc.height / 2 + 86 + py, 12, 0, Math.PI * 2);
+      g.fill();
+      requestAnimationFrame(draw);
+    }
+
+    window._engine = {
+      loadScene(i){
+        state.sceneIdx = (i + 17) % 17;
+        if(modal.classList.contains("open")){
+          closeModal();
+        }else{
+          curBookKey = null;
+        }
+        closePanels();
+        px = 0;
+        py = 0;
+        document.getElementById("ui-idx").textContent = String(state.sceneIdx + 1).padStart(2, "0") + "/17";
+        document.getElementById("ui-name").textContent = SCENES_META[state.sceneIdx].name;
+        updateSceneMenu();
+      },
+      setRes(){},
+      setPerf(){},
+      setFov(){}
+    };
+
+    draw();
+    setTimeout(() => {
+      const el = document.getElementById("loader");
+      el.classList.add("hide");
+      setTimeout(() => el.style.display = "none", 500);
+    }, 260);
+  }
+
+  function closePanels(){
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+    state.paused = modal.classList.contains("open");
+  }
+
+  window.closePanels = closePanels;
+
+  function togglePanel(id){
+    const el = document.getElementById(id);
+    const was = el.classList.contains("open");
+    closePanels();
+    if(!was){
+      if(document.pointerLockElement){
+        document.exitPointerLock();
+      }
+      if(window._clearHover){
+        window._clearHover();
+      }
+      joyVec.x = 0;
+      joyVec.y = 0;
+      document.getElementById("joy-knob").style.transform = "";
+      el.classList.add("open");
+      state.paused = true;
+    }
+  }
+
+  function updateSceneMenu(){
+    const grid = document.getElementById("scene-grid");
+    grid.innerHTML = "";
+    SCENES_META.forEach((m, i) => {
+      const b = document.createElement("button");
+      b.className = "sc-item" + (i === state.sceneIdx ? " cur" : "");
+      b.innerHTML = `<span class="sc-num">${String(i + 1).padStart(2, "0")}</span><span>${m.name}</span>`;
+      b.onclick = () => {
+        window._engine.loadScene(i);
+        closePanels();
+      };
+      grid.appendChild(b);
+    });
+  }
+
+  function updateColUI(){
+    document.getElementById("col-count").textContent = state.collected.size + "/17";
+    const list = document.getElementById("col-list");
+    list.innerHTML = "";
+    SCENES_META.forEach((m, i) => {
+      const got = state.collected.has(m.id);
+      const d = document.createElement("div");
+      d.className = "col-item " + (got ? "got" : "miss");
+      d.innerHTML = `<span>${String(i + 1).padStart(2, "0")} · ${got ? m.item : "未寻得"}</span><span>${got ? m.name : "?"}</span>`;
+      if(got){
+        d.style.cursor = "pointer";
+        d.onclick = () => openModal(m.item, m.desc + "\n\n发现地：" + m.name);
+      }
+      list.appendChild(d);
+    });
+  }
+
+  function updateTouchUI(){
+    const tui = document.getElementById("touch-ui");
+    if(state.touchMode === "1"){
+      tui.style.display = "block";
+    }else if(state.touchMode === "0"){
+      tui.style.display = "none";
+    }else{
+      tui.style.display = ("ontouchstart" in window || navigator.maxTouchPoints > 0) ? "block" : "none";
+    }
+  }
+
+  function bindSeg(id, cb){
+    const wrap = document.getElementById(id);
+    wrap.querySelectorAll("button").forEach(b => {
+      b.onclick = () => {
+        wrap.querySelectorAll("button").forEach(x => x.classList.remove("on"));
+        b.classList.add("on");
+        cb(b.dataset.v);
+      };
+    });
+  }
+
+  document.getElementById("btn-prev").onclick = () => {
+    if(window._engine){
+      window._engine.loadScene(state.sceneIdx - 1);
+    }
+    document.getElementById("prompt").classList.remove("show");
+  };
+
+  document.getElementById("btn-next").onclick = () => {
+    if(window._engine){
+      window._engine.loadScene(state.sceneIdx + 1);
+    }
+    document.getElementById("prompt").classList.remove("show");
+  };
+
+  document.getElementById("btn-scenes").onclick = () => {
+    updateSceneMenu();
+    togglePanel("panel-scenes");
+  };
+
+  document.getElementById("btn-col").onclick = () => {
+    updateColUI();
+    togglePanel("panel-col");
+  };
+
+  document.getElementById("btn-set").onclick = () => togglePanel("panel-set");
+
+  document.getElementById("btn-reset").onclick = () => {
+    if(window._engine){
+      state.collected.clear();
+      state.bookState = {};
+      state.studioImg = null;
+      state.roadBridge = false;
+      state.officePage = 0;
+      updateColUI();
+      window._engine.loadScene(state.sceneIdx);
+      sfx.play("switch");
+      showWhisper("现场已恢复初始状态。");
+    }
+    document.getElementById("prompt").classList.remove("show");
+  };
+
+  bindSeg("seg-res", v => window._engine && window._engine.setRes(parseFloat(v)));
+  bindSeg("seg-perf", v => window._engine && window._engine.setPerf(v));
+  bindSeg("seg-audio", v => {
+    state.audioOn = (v === "1");
+    sfx.setAmbient(SCENES_META[state.sceneIdx].id);
+  });
+  bindSeg("seg-touch", v => {
+    state.touchMode = v;
+    updateTouchUI();
+  });
+  bindSeg("seg-fov", v => window._engine && window._engine.setFov(parseInt(v, 10)));
+
+  updateSceneMenu();
+  updateColUI();
+  updateTouchUI();
+
+  ensureThree().then(ok => {
+    if(ok){
+      run3D();
+    }else{
+      runFallback("未找到本地 ./three.min.js，已切至轻量回退模式");
+    }
+  });
+})();
+</script>
+</body>
+</html>
